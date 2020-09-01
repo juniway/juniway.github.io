@@ -1,0 +1,732 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>P2P 网络核心技术：Gossip 协议 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="背景Gossip protocol 也叫 Epidemic Protocol （流行病协议），实际上它还有很多别名，比如：“流言算法”、“疫情传播算法”等。 这个协议的作用就像其名字表示的意思一样，非常容易理解，它的方式其实在我们日常生活中也很常见，比如电脑病毒的传播，森林大火，细胞扩散等等。 Gossip protocol 最早是在 1987 年发表在 ACM 上的论文 《Epidemic Al">
+<meta property="og:type" content="article">
+<meta property="og:title" content="P2P 网络核心技术：Gossip 协议">
+<meta property="og:url" content="https://juniway.net/Distributed-System/distributed-system-p2p-gossip/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="背景Gossip protocol 也叫 Epidemic Protocol （流行病协议），实际上它还有很多别名，比如：“流言算法”、“疫情传播算法”等。 这个协议的作用就像其名字表示的意思一样，非常容易理解，它的方式其实在我们日常生活中也很常见，比如电脑病毒的传播，森林大火，细胞扩散等等。 Gossip protocol 最早是在 1987 年发表在 ACM 上的论文 《Epidemic Al">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/p2p/gossip_demo.gif">
+<meta property="og:image" content="https://juniway.net/image/p2p/gossip_pseudo_code.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/gossip_pull_equation.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/gossip_push_equation.png">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.424Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="P2P 网络核心技术：Gossip 协议">
+<meta name="twitter:description" content="背景Gossip protocol 也叫 Epidemic Protocol （流行病协议），实际上它还有很多别名，比如：“流言算法”、“疫情传播算法”等。 这个协议的作用就像其名字表示的意思一样，非常容易理解，它的方式其实在我们日常生活中也很常见，比如电脑病毒的传播，森林大火，细胞扩散等等。 Gossip protocol 最早是在 1987 年发表在 ACM 上的论文 《Epidemic Al">
+<meta name="twitter:image" content="https://juniway.net/image/p2p/gossip_demo.gif">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Distributed-System/distributed-system-p2p-gossip/" title="P2P 网络核心技术：Gossip 协议" itemprop="url">P2P 网络核心技术：Gossip 协议</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2018-08-06T03:21:06.000Z"> 2018-08-06</time>
+    <span class="post-count">字数 2.2k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>Gossip protocol 也叫 Epidemic Protocol （流行病协议），实际上它还有很多别名，比如：“流言算法”、“疫情传播算法”等。</p>
+<p>这个协议的作用就像其名字表示的意思一样，非常容易理解，它的方式其实在我们日常生活中也很常见，比如电脑病毒的传播，森林大火，细胞扩散等等。</p>
+<p>Gossip protocol 最早是在 1987 年发表在 ACM 上的论文 《Epidemic Algorithms for Replicated Database Maintenance》中被提出。主要用在分布式数据库系统中各个副本节点同步数据之用，这种场景的一个最大特点就是组成的网络的节点都是对等节点，是非结构化网络，这区别与之前介绍的用于结构化网络中的 DHT 算法 Kadmelia。</p>
+<p>我们知道，很多知名的 P2P 网络或区块链项目，比如 IPFS，Ethereum 等，都使用了 Kadmelia 算法，而大名鼎鼎的 Bitcoin 则是使用了 Gossip 协议来传播交易和区块信息。</p>
+<p>实际上，只要仔细分析一下场景就知道，Ethereum 使用 DHT 算法并不是很合理，因为它使用节点保存整个链数据，不像 IPFS 那样分片保存数据，因此 Ethereum 真正适合的协议应该像 Bitcoin 那样，是 Gossip 协议。</p>
+<h5 id="这里先简单介绍一下-Gossip-协议的执行过程："><a href="#这里先简单介绍一下-Gossip-协议的执行过程：" class="headerlink" title="这里先简单介绍一下 Gossip 协议的执行过程："></a>这里先简单介绍一下 Gossip 协议的执行过程：</h5><p>Gossip 过程是由种子节点发起，当一个种子节点有状态需要更新到网络中的其他节点时，它会随机的选择周围几个节点散播消息，收到消息的节点也会重复该过程，直至最终网络中所有的节点都收到了消息。这个过程可能需要一定的时间，由于不能保证某个时刻所有节点都收到消息，但是理论上最终所有节点都会收到消息，因此它是一个最终一致性协议。</p>
+<p>下面，我们通过一个具体的实例来体会一下 Gossip 传播的完整过程</p>
+<p>为了表述清楚，我们先做一些前提设定：</p>
+<p>（1）Gossip 是周期性的散播消息，把周期限定为 1 秒<br>（2）被感染节点随机选择 k 个邻接节点（fan-out）散播消息，这里把 fan-out 设置为 3，每次最多往 3 个节点散播。<br>（3）每次散播消息都选择<strong>尚未发送过的节点</strong>进行散播<br>（4）收到消息的节点不再往发送节点散播，比如 A -&gt; B，那么 B 进行散播的时候，不再发给 A。</p>
+<p>这里一共有 16 个节点，节点 1 为初始被感染节点，通过 Gossip 过程，最终所有节点都被感染：</p>
+<p><img src="/image/p2p/gossip_demo.gif" alt=""></p>
+<p>下面来总结一下</p>
+<h3 id="Gossip-的特点（优势）"><a href="#Gossip-的特点（优势）" class="headerlink" title="Gossip 的特点（优势）"></a>Gossip 的特点（优势）</h3><p><strong>1）扩展性</strong><br>网络可以允许节点的任意增加和减少，新增加的节点的状态最终会与其他节点一致。</p>
+<p><strong>2）容错</strong><br>网络中任何节点的宕机和重启都不会影响 Gossip 消息的传播，Gossip 协议具有天然的分布式系统容错特性。</p>
+<p><strong>3）去中心化</strong><br>Gossip 协议不要求任何中心节点，所有节点都可以是对等的，任何一个节点无需知道整个网络状况，只要网络是连通的，任意一个节点就可以把消息散播到全网。</p>
+<p><strong>4）一致性收敛</strong><br>Gossip 协议中的消息会以一传十、十传百一样的指数级速度在网络中快速传播，因此系统状态的不一致可以在很快的时间内收敛到一致。消息传播速度达到了 logN。</p>
+<p><strong>5）简单</strong><br>Gossip 协议的过程极其简单，实现起来几乎没有太多复杂性。</p>
+<p>Márk Jelasity 在它的 《Gossip》一书中对其进行了归纳：</p>
+<p><img src="/image/p2p/gossip_pseudo_code.png" alt=""></p>
+<h3 id="Gossip-的缺陷"><a href="#Gossip-的缺陷" class="headerlink" title="Gossip 的缺陷"></a>Gossip 的缺陷</h3><p>分布式网络中，没有一种完美的解决方案，Gossip 协议跟其他协议一样，也有一些不可避免的缺陷，主要是两个：</p>
+<p><strong>1）消息的延迟</strong><br>由于 Gossip 协议中，节点只会随机向少数几个节点发送消息，消息最终是通过多个轮次的散播而到达全网的，因此使用 Gossip 协议会造成不可避免的消息延迟。<strong>不适合用在对实时性要求较高的场景下。</strong></p>
+<p><strong>2）消息冗余</strong><br>Gossip 协议规定，节点会定期随机选择周围节点发送消息，而收到消息的节点也会重复该步骤，因此就不可避免的存在消息重复发送给同一节点的情况，造成了<strong>消息的冗余</strong>，同时也增加了收到消息的节点的处理压力。而且，由于是定期发送而且不反馈，因此，即使节点收到了消息，还是会反复收到重复消息，加重了消息的冗余。</p>
+<h3 id="Gossip-类型"><a href="#Gossip-类型" class="headerlink" title="Gossip 类型"></a>Gossip 类型</h3><p>Gossip 有两种类型：</p>
+<ul>
+<li>Anti-Entropy（反熵）：以固定的概率传播所有的数据</li>
+<li>Rumor-Mongering（谣言传播）：仅传播新到达的数据</li>
+</ul>
+<p>Anti-Entropy 是 <strong>SI model</strong>，节点只有两种状态，Suspective 和 Infective，叫做 simple epidemics。<br>Rumor-Mongering 是 <strong>SIR model</strong>，节点有三种状态，Suspective，Infective 和 Removed，叫做 complex epidemics。</p>
+<p>其实，Anti-Entropy 反熵是一个很奇怪的名词，之所以定义成这样，Jelasity 进行了解释，因为 Entropy 是指混乱程度（disorder），而在这种模式下可以消除不同节点中数据的 disorder，因此 Anti-Entropy 就是 anti-disorder。换句话说，它可以提高系统中节点之间的 similarity。</p>
+<p>在 <strong>SI model</strong> 下，一个节点会把所有的数据都跟其他节点共享，以便消除节点之间数据的任何不一致，它可以保证最终、完全的一致。</p>
+<p>由于在 SI model 下消息会不断反复的交换，因此消息数量是非常庞大的，无限制的（unbounded），这对一个系统来说是一个巨大的开销。</p>
+<p>但是在 <strong>Rumor Mongering (SIR Model)</strong> 模型下，消息可以发送得更频繁，因为消息只包含最新 update，体积更小。而且，一个 Rumor 消息在某个时间点之后会被标记为 removed，并且不再被传播，因此，SIR model 下，系统有一定的概率会不一致。</p>
+<p>而由于，SIR Model 下某个时间点之后消息不再传播，因此消息是有限的，系统开销小。</p>
+<h3 id="Gossip-中的通信模式"><a href="#Gossip-中的通信模式" class="headerlink" title="Gossip 中的通信模式"></a>Gossip 中的通信模式</h3><p>在 Gossip 协议下，网络中两个节点之间有三种通信方式:</p>
+<ul>
+<li>Push: 节点 A 将数据 (key,value,version) 及对应的版本号推送给 B 节点，B 节点更新 A 中比自己新的数据</li>
+<li>Pull：A 仅将数据 key, version 推送给 B，B 将本地比 A 新的数据（Key, value, version）推送给 A，A 更新本地</li>
+<li>Push/Pull：与 Pull 类似，只是多了一步，A 再将本地比 B 新的数据推送给 B，B 则更新本地<br>如果把两个节点数据同步一次定义为一个周期，则在一个周期内，Push 需通信 1 次，Pull 需 2 次，Push/Pull 则需 3 次。虽然消息数增加了，但从效果上来讲，Push/Pull 最好，理论上一个周期内可以使两个节点完全一致。直观上，Push/Pull 的收敛速度也是最快的。</li>
+</ul>
+<h3 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><p>对于一个节点数为 N 的网络来说，假设每个 Gossip 周期，新感染的节点都能再感染至少一个新节点，那么 Gossip 协议退化成一个二叉树查找，经过 LogN 个周期之后，感染全网，时间开销是 O(LogN)。由于每个周期，每个节点都会至少发出一次消息，因此，消息复杂度（消息数量 = N * N）是 O(N^2) 。注意，这是 Gossip 理论上最优的收敛速度，但是在实际情况中，最优的收敛速度是很难达到的。</p>
+<p>假设某个节点在第 i 个周期被感染的概率为 pi，第 i+1 个周期被感染的概率为 pi+1 ，</p>
+<p>1）则 Pull 的方式:<br><img src="/image/p2p/gossip_pull_equation.png" alt=""></p>
+<p>2）Push 方式：<br><img src="/image/p2p/gossip_push_equation.png" alt=""></p>
+<p>可见，Pull 的收敛速度大于 Push ，而每个节点在每个周期被感染的概率都是固定的 p (0&lt;p&lt;1)，因此 Gossip 算法是基于 p 的平方收敛，也称为概率收敛，这在众多的一致性算法中是非常独特的。</p>
+<p>全文完！</p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Distributed-System/">Distributed System</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Distributed-System/distributed-system-p2p-gossip/" data-title="P2P 网络核心技术：Gossip 协议 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Distributed-System/distributed-system-candidate-like-friend/" title="寻找适合恋爱的区块链工程师">
+  <strong>Prev：</strong><br>
+  <span>
+  寻找适合恋爱的区块链工程师</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Distributed-System/distributed-system-p2p-upnp/" title="P2P 网络核心技术：UPnP 和 SSDP 协议">
+ <strong>Next：</strong><br>
+ <span>P2P 网络核心技术：UPnP 和 SSDP 协议
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

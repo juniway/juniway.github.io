@@ -1,0 +1,704 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>5 分钟理解什么是“响应式编程（Reactive Programming）” | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="背景许多人都听过异步编程，同步编程，但是好像对响应式编程这个新名称感到很陌生，即使我们在实际项目中已经在使用这种编程方式。 这篇文章就是来介绍响应式编程（Reactive Progamming）到底是怎么回事。 如果我们在 Google 中输入 Reactive Programming，试图了解这到底是怎样的一种编程模式，我们很快会发现大量的文章，但是看完我们就会迷糊，概念还是不是那么清晰。这可能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5 分钟理解什么是“响应式编程（Reactive Programming）”">
+<meta property="og:url" content="https://juniway.net/Programming/network-programming-reactive-programming/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="背景许多人都听过异步编程，同步编程，但是好像对响应式编程这个新名称感到很陌生，即使我们在实际项目中已经在使用这种编程方式。 这篇文章就是来介绍响应式编程（Reactive Progamming）到底是怎么回事。 如果我们在 Google 中输入 Reactive Programming，试图了解这到底是怎样的一种编程模式，我们很快会发现大量的文章，但是看完我们就会迷糊，概念还是不是那么清晰。这可能">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/network/reactive_demo.png">
+<meta property="og:image" content="https://juniway.net/image/network/thread_demo.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1452123-0bf067df9e5fb332.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/258/format/webp">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.440Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="5 分钟理解什么是“响应式编程（Reactive Programming）”">
+<meta name="twitter:description" content="背景许多人都听过异步编程，同步编程，但是好像对响应式编程这个新名称感到很陌生，即使我们在实际项目中已经在使用这种编程方式。 这篇文章就是来介绍响应式编程（Reactive Progamming）到底是怎么回事。 如果我们在 Google 中输入 Reactive Programming，试图了解这到底是怎样的一种编程模式，我们很快会发现大量的文章，但是看完我们就会迷糊，概念还是不是那么清晰。这可能">
+<meta name="twitter:image" content="https://juniway.net/image/network/reactive_demo.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Programming/network-programming-reactive-programming/" title="5 分钟理解什么是“响应式编程（Reactive Programming）”" itemprop="url">5 分钟理解什么是“响应式编程（Reactive Programming）”</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2018-10-16T14:21:06.000Z"> 2018-10-16</time>
+    <span class="post-count">字数 2.2k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>许多人都听过异步编程，同步编程，但是好像对<strong>响应式编程</strong>这个新名称感到很陌生，即使我们在实际项目中已经在使用这种编程方式。</p>
+<p>这篇文章就是来介绍响应式编程（Reactive Progamming）到底是怎么回事。</p>
+<p>如果我们在 Google 中输入 Reactive Programming，试图了解这到底是怎样的一种编程模式，我们很快会发现大量的文章，但是看完我们就会迷糊，概念还是不是那么清晰。这可能是因为许多介绍文章对领域的强关联导致的。比如最常见的一种介绍是用一种数据流（data stream）的方式来展现，还有就是前端领域的控件事件流，虽然这些场景是响应式编程适合的，但是对我来说，总觉得还是不够直观。因为我面对的是分布式系统的编程场景。</p>
+<p>其实响应式编程没必要跟具体的应用领域关联，它是一个可以普遍适用的概念和编程模型。</p>
+<h3 id="同步与异步"><a href="#同步与异步" class="headerlink" title="同步与异步"></a>同步与异步</h3><p>分布式网络系统中，各个参与方节点的运行是相互独立的，没有共享内存，没有全局时钟。各节点通过消息来进行沟通。在传统的理念中，我们会把这样的网络根据他们通信方式描述成同步和异步的。简单来说，同步网络是对消息的到达时间有限定要求（time bounded），以便保证网络活动的确定性。而异步的网络，则对消息的到达没有任何限制。即使发出的消息丢失了，也不会损害网络的活性。用一个具体的例子来理解就是，节点 A 发送了一个消息给节点 B，期待得到 B 的回复，以便通过某个决议或者完成某件后续事情，这个依赖等待的要求，就是同步网络。因为他依赖一个答复才能进行后续动作。换句话说，如果一个节点发送消息之后，不依赖另一个节点的答复也能正常运行，那么就是异步网络。</p>
+<p>在同步网络中，如果 B 由于网络原因（掉线，或者CPU繁忙，等等）没有在限定时间内回复，A 既不能确定消息已经发送给 B，也无法确定后续步骤什么时候才能开始，因此，网络活动变得不可预测，无法结束，也就是没有了确定性。业界已经证明了，在实际的网络中，如果不对网络条件施加任何限制，那么网络确定性是永远无法达到的。因此，为了保证网络活动的确定性，我们通常会网络条件施加一些限制，比如，最典型的就是消息到达的时间限制。</p>
+<p>解释了同步网络和异步网络的区别，我们再来看同步编程和异步编程，其实我们接触这两个编程模式很久了。同步编程简单来说就是，发出一个任务，然后等待执行。而异步编程就是，发出一个任务，不等待结果，就继续发出下一个任务。至于上一个任务的执行结果，我们可以通过两种方式获得，一个是主动的轮训，另一个是被动的接收反馈。由于在异步编程中，我们从不等待执行结果，就可以进行其他任务（前提是这个任务本身不依赖上一个任务的结果）。如果要执行的某个其他任务依赖于上一个任务的结果，那么我们可以每隔一段时间轮训一次，或者另外开一个线程去等待接收任务结果。无论哪种情况，我们的网络都不会阻塞在某一个单独的任务上。</p>
+<h3 id="响应式编程"><a href="#响应式编程" class="headerlink" title="响应式编程"></a>响应式编程</h3><p>现在，我们很自然的过渡到响应式编程（Reactive Programming）这个概念上，它是一种基于事件模式的模型。<strong>在上面的异步编程模式中，我们描述了两种获得上一个任务执行结果的方式，一个就是主动轮训，我们把它称为 Proactive 方式。另一个就是被动接收反馈，我们称为 Reactive。</strong> </p>
+<p>简单来说，在 Reactive 方式中，上一个任务执行结果的反馈就是一个事件，这个事件的到来将会触发下一个任务的执行。</p>
+<p>这也就是 Reactive 的内涵！我们把处理和发出事件的主体称为 Reactor，它可以接受事件并处理，也可以在处理完事件后，发出下一个事件给其他 Reactor。两个 Reactors 之间没有必然的强耦合，他们之间通过消息管道来传递消息。Reactor 可以定义一些事件处理函数，根据接收到的事件不同类型来进行不同的处理。如果我们的系统复杂，我们还可以专门定义不同功能类别的 Reactors，分别处理不同类型的事件。而在每个 Reactor 中对事件又进行细分处理。</p>
+<p>需要强调的是，实现 Reactive 模型最核心的是<strong>线程</strong>和<strong>消息管道</strong>。线程用于侦听事件，消息管道用于 Reactor 之间通信不同的消息。与他们相关的是事件管理器用于注册、注销事件，而消息分配器则会根据消息类型分发。</p>
+<p>下面是一个 Reactive 模型的示意图：</p>
+<p><img src="/image/network/reactive_demo.png" alt=""></p>
+<h3 id="术语理解"><a href="#术语理解" class="headerlink" title="术语理解"></a>术语理解</h3><p>在了解了上述异步编程模型的本质之后，我们再来看一些我们常见的术语，就会发现一切都变得清晰明了了。</p>
+<p>比如，依赖链（Dependency chain），假定我们有一个事件依赖链是这样：睡觉 -&gt; 吃饭 -&gt; 饿了，很直觉的是，在这个依赖链中，只有满足了后面的条件，前面的才会执行。</p>
+<p>这种依赖链是这个世界普遍的一种场景，一种正向的处理模式是，每隔一段时间就轮训检测是否满足睡觉的条件，在检查是否能睡觉的时候，会先检查是否已经吃饭，检查是否已经吃饭的时候，又会先检查是否饿了。那么这就是 Proactive 模式！而 Reactive 模式则反过来，先有事件的触发，然后事件来到响应方，响应方进行处理，这种方式也叫 Pub/Sub 模式。我们在 OOP 语言中，也会用到同样的概念和逻辑，我们把之叫做 Observer 模式，而在 Funcaitonal Programming 中，也有同样的概念，它可以用 monads 来实现。</p>
+<p>比如，我们有一个 Publisher ，会产生 “饿” 事件，同时还有一个或多个 Subscriber，在收到 “饿” 事件的发生之后，进行响应（比如更新状态或者作出其他预先注册好的行为）。</p>
+<p>总的来说，Reactive Programming 就是编写关于怎么响应事件的编程模式，这些事件包括：用户输入，数据流，系统状态的变化等等。</p>
+<p>总结一下，响应式编程通常会用在一个事件流相关的场景中，在一个事件流中，一旦触发第一个事件，后续的事件会被依次触发，就像一个 Pipeline 系统，不断有输入和输出。</p>
+<h3 id="响应式编程的设计与实现"><a href="#响应式编程的设计与实现" class="headerlink" title="响应式编程的设计与实现"></a>响应式编程的设计与实现</h3><p>接下来，讲一下实现上的架构设计与实现。</p>
+<p>通常 Reactor 的数量可以是预先定义的，因为一个系统，我们通常可以约束它处理哪些预定义的事件，比如有处理网络连接的 Reactor，处理日志收集的 Reactor，处理数据存储的 Reactor 等等，各司其职。而错误（未定义）事件则可以单独放在一个专门处理 Error/Exception 的 Reactor 中。通过事件管理器，每个 Reactor 可以根据要发出或者接收的消息，即时地创建一个线程/协程去执行响应的操作。发出和接收消息可以根据业务的复杂度，分开单独线程，也可以放在一个线程。这样的设计架构简单而清晰。</p>
+<p>下面是一个简单的示意图：</p>
+<p><img src="/image/network/thread_demo.png" alt=""></p>
+<p>全文完！</p>
+<p><strong>相关阅读：</strong></p>
+<p><a href="https://www.jianshu.com/p/8279d6fd65bb" target="_blank" rel="noopener">P2P 网络核心技术：Gossip 协议</a><br><a href="https://www.jianshu.com/p/e41aa1428df3" target="_blank" rel="noopener">P2P 网络核心技术：UPnP 和 SSDP 协议</a><br><a href="https://www.jianshu.com/p/eba4673b0d9a" target="_blank" rel="noopener">P2P 网络核心技术：Kademlia 协议</a></p>
+<p>…</p>
+<p>如果你喜欢我的文章，欢迎关注微信公众号“知辉”，搜索 “deliverit” 或</p>
+<p>扫描二维码</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1452123-0bf067df9e5fb332.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/258/format/webp" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Programming/">Programming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Programming/network-programming-reactive-programming/" data-title="5 分钟理解什么是“响应式编程（Reactive Programming）” | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Distributed-System/blockchain-part1-theory-foundamentals/" title="第一部分：区块链核心技术：分布式理论概述">
+  <strong>Prev：</strong><br>
+  <span>
+  第一部分：区块链核心技术：分布式理论概述</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Music/music-uk-cmajor-scale/" title="音阶图">
+ <strong>Next：</strong><br>
+ <span>音阶图
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

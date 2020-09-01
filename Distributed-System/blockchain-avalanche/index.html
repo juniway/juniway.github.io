@@ -1,0 +1,818 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>区块链新型共识算法：Snowflake to Avalanche | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="这篇文章介绍一个最新的区块链共识算法，它于 2018 年 5 月首次发布，是由一组共识协议构成的一个共识家族。相比于目前的主流的共识算法，它有一些重大创新和突破，非常值得探索。 1、前言在 2018 年 5 月纽约举行的 Token Summit III 上，康奈尔教授埃米·冈·瑟勒（Emin Gun Sirer）发布了一个新型的区块链共识协议，它是由一组算法组成的家族，声称它是公式算法的重大突破">
+<meta property="og:type" content="article">
+<meta property="og:title" content="区块链新型共识算法：Snowflake to Avalanche">
+<meta property="og:url" content="https://juniway.net/Distributed-System/blockchain-avalanche/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="这篇文章介绍一个最新的区块链共识算法，它于 2018 年 5 月首次发布，是由一组共识协议构成的一个共识家族。相比于目前的主流的共识算法，它有一些重大创新和突破，非常值得探索。 1、前言在 2018 年 5 月纽约举行的 Token Summit III 上，康奈尔教授埃米·冈·瑟勒（Emin Gun Sirer）发布了一个新型的区块链共识协议，它是由一组算法组成的家族，声称它是公式算法的重大突破">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/p2p/avalanche_ipfspublish.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/snowball_psuedocode.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/avalanche_dag.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/avalanche_pseudocode.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/avlanche_t.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/confidence_dut.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/confidence_dut1.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/ontime_query.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/dag_demo.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/hkn1.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/hkn2.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/tailbound.png">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.414Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="区块链新型共识算法：Snowflake to Avalanche">
+<meta name="twitter:description" content="这篇文章介绍一个最新的区块链共识算法，它于 2018 年 5 月首次发布，是由一组共识协议构成的一个共识家族。相比于目前的主流的共识算法，它有一些重大创新和突破，非常值得探索。 1、前言在 2018 年 5 月纽约举行的 Token Summit III 上，康奈尔教授埃米·冈·瑟勒（Emin Gun Sirer）发布了一个新型的区块链共识协议，它是由一组算法组成的家族，声称它是公式算法的重大突破">
+<meta name="twitter:image" content="https://juniway.net/image/p2p/avalanche_ipfspublish.jpeg">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Distributed-System/blockchain-avalanche/" title="区块链新型共识算法：Snowflake to Avalanche" itemprop="url">区块链新型共识算法：Snowflake to Avalanche</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2018-08-09T08:11:26.000Z"> 2018-08-09</time>
+    <span class="post-count">字数 4.3k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>这篇文章介绍一个最新的区块链共识算法，它于 2018 年 5 月首次发布，是由一组共识协议构成的一个共识家族。相比于目前的主流的共识算法，它有一些重大创新和突破，非常值得探索。</p>
+<h3 id="1、前言"><a href="#1、前言" class="headerlink" title="1、前言"></a>1、前言</h3><p>在 2018 年 5 月纽约举行的 Token Summit III 上，康奈尔教授埃米·冈·瑟勒（Emin Gun Sirer）发布了一个新型的区块链共识协议，它是由一组算法组成的家族，声称它是公式算法的重大突破和创新，这个算法家族集成了经典的 Non-Byzanting 共识算法和 Nakamoto 共识算法（即 POW） 两者的特点。用他们的话来说就是，简单而又强大无比。</p>
+<p>目前国内科技界对这个共识协议还甚少了解，所以我决定动手对它进行一个详尽的介绍和分析。</p>
+<p>这个算法的论文在 ipfs 讨论小组中被释出，如下：</p>
+<p><img src="/image/p2p/avalanche_ipfspublish.jpeg" alt=""></p>
+<h3 id="2、简介"><a href="#2、简介" class="headerlink" title="2、简介"></a>2、简介</h3><p>这篇论文中主要介绍的这种 BFT 协议是一组协议构成的（简称“协议家族”，Consensus family），它是基于亚稳态（metastable）模型的，这种模型可以提供很高概率的 BFT 安全性保证。 作者声称这个协议可以达到 1300 tps，交易也只需要 4 秒的确认延迟。</p>
+<p>论文中讲到，“协议家族”的思想主要受到 Gossip 协议的启发（关于 Gossip 的运作机制，我在另一篇文章中有<a href="http://mp.weixin.qq.com/s?__biz=MzI1NjExNDEzMQ==&mid=2247483770&idx=1&sn=38a6bdfa9b5ed48ae684c1a66ff9b33a&chksm=ea2aedc6dd5d64d0945421c4596a5a1875a5cfc936f8e376d25777bb53ecd3e1223ab017acd6&scene=21#wechat_redirect" target="_blank" rel="noopener">详细介绍</a>）。</p>
+<p>具体的思路是，通过不断反复对网络中的节点进行抽样（收集它们对某个提议的响应），最后可以把所有的诚实节点导向到同一个共识结果（agreement）。这里有一个关键的参数叫做 security parameter，通过调整这个参数可以把共识失败的可能性降到最低。</p>
+<p>作为与目前主流的 Nakamoto Consensus（POW）算法的对比，作者指出，“协议家族”是一种更加绿色环保，安静并且非常高效的算法。</p>
+<p>我们知道，在 POW 中，有一个重大的 tradeoff 就是用 Liveness 来换取冲突交易。我们知道 Liveness 是指在有效时间内一定会有一个确定结果（也叫 termination），而 POW 则不提供对每笔交易（包括冲突交易）的最终确定性的保证，但是提供了一个概率机制来保证这个结果的确定性程度。</p>
+<p>而在“共识家族”中，只会为 “virtuous transaction” 保证 Safty 和 Liveness。也就是说，对于那些诚实的节点，他们的交易不会冲突，而且可以保证最终结果的确定性。</p>
+<p>因为“共识家族”假定诚实节点总是会按规矩办事（correct clients follow the protocol as prescribed），它们不会作弊。而拜占庭节点则可能会发出流氓交易（rogue transactin）， “共识家族”对拜占庭发出的交易不做出任何 Liveness 的保证。（the protocols do not guarantee liveness for rogue transactions, submitted by Byzantine clients, which conflict with one another）</p>
+<h3 id="3、协议构成及特点"><a href="#3、协议构成及特点" class="headerlink" title="3、协议构成及特点"></a>3、协议构成及特点</h3><p>“协议家族”一共是由 4 个协议构成的，先从 Non-Byzantine 协议开始：Slush，在其基础上逐渐构建 Snowflake，Snowball 和 Avalanche 这 3个 BFT 协议。它们全都基于亚稳态模型（metastable mechenism）。 </p>
+<p><strong>下面就简单介绍下这组协议的特点：</strong></p>
+<p><strong>1）</strong>首先，与 Bitcoin 类似，采用的也是概率安全保证机制。但是不同之处在于，采用了适量的、非常小的 choice ε （抽样参数），使得共识失败（consensus failure）的可能性非常小，几乎不可能。 </p>
+<p><strong>2）</strong>其次，没有采用单一的 RSM （Replicated State Machine）模型，而是采用了一种叫做 <strong>“认证节点之间的并发共识模型”</strong>（Parallel Consensus Model with Authenticated Clients）。简单来说就是，可信的节点彼此维护自身独立的 RSM，并且他们之间还可以把自己的 RSM 的所有权（Ownership）进行 转移。系统为有关联的交易维护一个 Partial order（不了解 Partial Order 概念的可以去查看 Leslie Lamport 的论文《Time, Clocks, and the Ordering of Events in a Distributed System》）。 </p>
+<p><strong>3）</strong>最后，对不良节点（misbehavior clients），不保证 liveness。但是对诚实节点（Well-behaved clients），它们的交易最终会被正确处理，既保证 safty 也保证 liveness。</p>
+<p>整个系统实现的是类似比特币的机制，但是性能和扩展性都得到极大的提升。</p>
+<p><strong>这里需要注意的是：</strong></p>
+<p>“共识家族”对诚实节点（Correct nodes）和拜占庭节点（Byzanting nodes）的行为作了提前约定：诚实节点绝不会发出冲突交易，而拜占庭节点也不可能伪造一笔与诚实节点冲突的交易（也就是说，拜占庭节点发出的“伪造”交易，只会与自己以前发出过的交易冲突（比如双花 double spending），但是不可能与诚实节点的交易冲突），拜占庭节点可以伪造许多彼此冲突的交易，但是诚实节点只会采用其中一笔交易。</p>
+<p>也就是说，最终，“共识家族协议”可以保证在存在拜占庭交易的情况下，共识的最终结果只会是接受一组互不冲突的交易集合。</p>
+<p>此外，“共识家族”也采用了 UTXO 模型。</p>
+<p><strong>Safty 和 Liveness</strong></p>
+<ul>
+<li><p>Safty：没有两个诚实节点会接受冲突的交易</p>
+</li>
+<li><p>Liveness：任何一笔由诚实节点发出的交易都会被其他节点所接受</p>
+</li>
+</ul>
+<p>安全系数：ε<br>概率保证：1 - ε</p>
+<h3 id="4、Slush-协议"><a href="#4、Slush-协议" class="headerlink" title="4、Slush 协议"></a>4、Slush 协议</h3><p>Slush 是“协议家族”的第一个协议，它是一个非拜占庭协议（Non-byzanting protocol，后续三个协议都是 BFT 协议），这个协议的运作原理如下：</p>
+<p>1）所有节点最初是 uncolored 状态<br>2）当节点收到一个 client 发来的交易请求之后，它就立刻把自己变成 tx 中设置的 color，同时发起一笔 query。 </p>
+<p>2.1)  执行 query 时，节点会随机选择一个相对小的节点样本 k，向他们发出 query 。</p>
+<p>2.2)  如果是 uncolored 的节点收到 query，那么就染色，并回复 color。同时还会发起一个 query（也就是 Gossip）。</p>
+<p>2.3)  如果是已经 colored 的节点收到 query，那么就回复自己已染的 color。 </p>
+<p>2.4)  如果没有在限定时间内收到 k  个响应，那么节点就会从（之前 sample 后）剩余节点中继续选择一些节点发出 query。直到收集到所有 k  个 响应。 </p>
+<p>2.5)  一旦收集到 k 个响应，就判断是否能存在一个 同颜色/总颜色的比率 fraction ≥ αk，α &gt; 0.5，它是一个协议参数（protocol parameter）。 如果 αk 阈值（threshold）满足，并且并且 sampled color 跟节点自身的 color 不一样，那么节点就会把自己的 color 变成 sampled color。然后，继续回到 query 步骤，发起新一轮的 query，总共发起 m 轮。最终，节点会在 m 时间期限内决定最终的 color。</p>
+<p><strong>下面总结一下这个协议的特点：</strong> </p>
+<p>######（1）简单状态（simple state）</p>
+<p>节点是 memoryless 的，在每一轮 query 之间，除了 color，不保存其他任何状态。 </p>
+<p>######（2）小样本（small sample）</p>
+<p>不像其他共识算法，每轮必须向所有节点发出请求。Slush 只需要向一个很小（常量 k）的随机样本集发出 query。 </p>
+<p>######（3）反复抽样（repeated sampling）</p>
+<p>通过反复抽样，可以放大随机扰动。比如，即使初始状态是一个 50/50 的对等分裂状态（收到了两种冲突的 color 响应 ，且他们数量相同），抽样过程中的随机扰动（perturbation) 也会导致一种 color 会获得轻微的优势，然而协议通过反复的抽样可以不断放大这种优势。</p>
+<p>######（4）抽样轮数或时间期限（用 m 表示）</p>
+<p>如果 m 足够大，Slush 算法可以保证所有节点都有同等的机会被染色（colorized），每个节点每轮通信都会有一个常量的，可以预测的通信消耗。m 会随着 n 变大。 m 是指轮数或时间限制。 如果 Slush 被用在有 Byzantine 节点的网络中，那么由于 adversary 节点可以故意把自己翻转（flip）成一个与主流 color 不一样的 color 来打乱平衡，使得整个网络的安全性大大降低。 因此，我们把 Slush 协议作为 BFT 协议的原始状态，它不能提供完整的 BFT 保证。</p>
+<h3 id="5、Snowflake-协议"><a href="#5、Snowflake-协议" class="headerlink" title="5、Snowflake 协议"></a>5、Snowflake 协议</h3><p>也叫 “BFT Snowflake”，它是“协议家族”的第二个协议，在 Slush 的基础上扩展而来。</p>
+<p>Snowflake 为每个节点增加一个 counter， 用来记录一个节点当前 color 的可信度。 具体来说就是，counter 记录有多少连续的 sample 都产生了同一个 color。 如果一个节点的 counter 超过了某个阈值 β，它就会接受当前的 color。这个 β 是另外一个 security parameter。 </p>
+<p><strong>Snowflake 对 Slush 的改进非常简单，下面也做个总结：</strong></p>
+<p>（1）每个节点维护一个 counter 变量 。<br>（2）每当 color 进行改变，节点都会把 counter 值重置为 0。<br>（3）一旦 query 得到的响应结果中包含同一 color 的数量 ≥ αk，那么该节点就会把 counter 加 1。</p>
+<p>当 Snowflake 选择了一个合适的 β 参数，和一个理想的 ε 安全系数，就可以同时保证 Safty 和 Liveness。 </p>
+<p>论文在后面还介绍了一个 phase-shift 点，correct node 更倾向与做出一个决定而不是维持在一个 bivalent 状态。 并且，还会有一个叫做 point-of-no-return 的时间点，Byzantine node 在 phase-shift 之后失去控制，而 Correct node 则在 point-of-no-return 点之后开始 commit color。</p>
+<h3 id="6、Snowball-协议"><a href="#6、Snowball-协议" class="headerlink" title="6、Snowball 协议"></a>6、Snowball 协议</h3><p>Snowball 是共识家族中的第三个协议，它对 Snowflake 协议做了改进，进一步增加了共识结果的可靠性（confidence）。</p>
+<p>我们知道，Snowflake 中的状态标志是易逝的（ephemeral），counter 的值在每次 color 发生改变的时候都会被 reset。</p>
+<p>虽然，理论上来说，Snowflake 可以保证对最小的状态做出很强的保证。 但是 Snowball 进一步做出了改进，方法是添加一个更持久的可信度标志，使得协议安全性更高。 </p>
+<p>具体来说，Snowball 增加了一个 Confidence Counter ，用来记录能够产生指定 color 的达到 threshold 的 query 数量。 一个节点在经过一定数量的对某个 color 进行连续 query 之后，它对于该 color 的信心（信任程度）就会超过其他 color。 </p>
+<p><strong>总结，Snowball 对 Snowflake 的主要改进如下：</strong></p>
+<p>（1）每执行一次成功的 query，节点就把对该 color 的 confidence counter 值加 1。</p>
+<p>（2）当节点对自身当前 color 的 confidence counter 值小于对新的 color 的 confidence counter 的值时，把当前 color 置换成新的 color。</p>
+<p>Snowball 不仅比 Snowflake 更难攻击，而且协议更加通用化了。</p>
+<p>下图是论文中对 Snowball 执行流程的伪代码描述：</p>
+<p><img src="/image/p2p/snowball_psuedocode.jpeg" alt=""></p>
+<h3 id="7、Avalanche-协议（DAG）"><a href="#7、Avalanche-协议（DAG）" class="headerlink" title="7、Avalanche 协议（DAG）"></a>7、Avalanche 协议（DAG）</h3><p>Avalanche 是“共识家族”中的第四个协议，也是最后一个协议，它在 Snowball 的基础上添加一个动态的仅限追加（append-only）DAG 结构来记录所有的交易。</p>
+<p><img src="/image/p2p/avalanche_dag.jpeg" alt=""></p>
+<p>这个 DAG 有一个单一的 sink 节点，也就是上图中的 genesis vertex。 </p>
+<p>维护一个 DAG 这样的结构有两大优势： </p>
+<p><strong>1）高效</strong></p>
+<p>给 DAG 中的一个节点投票就意味着给从 genesis vertex 到该节点的路径上的所有节点都投票。 </p>
+<p><strong>2）安全</strong></p>
+<p>缠结了交易，类似比特币中对区块的组合方式，使得过去的决定非常难以被改变。 当节点创建一笔交易的时候，它需要引用一个或多个 parents 交易，由此，新的交易就与 parents 交易形成了 DAG 结构的边，不可分割。我们把后续发起的新交易叫做 child 交易，而过去的旧交易叫做 parent，child 和 parent 之间无需有任何的直接依赖关系。同时，我们把由 直接 parent 可以到达的所有祖先交易叫做祖先交易集（ancestor set），把可以引用的所有 child 叫做子孙交易（progeny）。 </p>
+<p>维护 DAG 结构最大的一个挑战就是在面对冲突交易（conflicting transactions）的时候如何抉择与处理。 为了简化，我们把交易称为 T，当一个 T 被 queried 的时候，所有由 T 可达的 ancestry 都是当前节点 u 会优先考虑发送 query 的选项（preferred options）。如果超过一定 threshold 的 responders 投了 positive 票。那么我们就说，这个交易 T 就收集到了一个 Chit。表示为 CuT = 1，否则的话， CuT = 0。 节点 u 根据交易 T 的 progeny 的 chit sum 来计算 confidence。</p>
+<p>论文中对 Avalanche 协议执行流程的伪代码描述如下：</p>
+<p><img src="/image/p2p/avalanche_pseudocode.jpeg" alt=""></p>
+<hr>
+<h4 id="Avalanche-论证与实现细节"><a href="#Avalanche-论证与实现细节" class="headerlink" title="Avalanche 论证与实现细节"></a>Avalanche 论证与实现细节</h4><p>Avalanche 是“共识家族”的核心协议，下面介绍它的论证和详细实现流程：</p>
+<p>先来看一个 T 的生成过程：</p>
+<p><img src="/image/p2p/avlanche_t.jpeg" alt=""></p>
+<p>我们用 Tu 表示节点 u 所记录的所有交易集合，它可以被拆分为互斥的两个冲突集合 PT , T ∈ Tu ，由于冲突是传递的，所以，如果 Ti 和 Tj  是互相冲突的交易的话，那么PTi = PTj 。</p>
+<p>如果 T 选择的 Parent 是 T’，那么我们就用 T’ ← T 来表示，用</p>
+<p><img src="/image/p2p/confidence_dut.png" alt=""></p>
+<p> 来表示存在一条路径从 T 到 T’。</p>
+<p>那么节点 u 就可以通过下面的公式来计算 confidence 值 du(T) ：</p>
+<p><img src="/image/p2p/confidence_dut1.png" alt=""></p>
+<p>除此之外，节点 u 还维护了一个本地已知的节点集合（Nu ⊆ N），为了简单起见，我们可以假定 Nu = N ，不同节点构建的 DAG 肯定是兼容的。具体来说就是，如果一个节点中存在  T’ ← T ，那么系统中其他节点也都必然满足 T’ ← T ，反则亦反。</p>
+<p>每个节点都会实现一个基于事件驱动的状态机模型，主要围绕发送 query 、收集 votes 以及通知其他节点新交易 T 的存在这三个过程。</p>
+<p><strong>具体流程就是：</strong></p>
+<p><img src="/image/p2p/ontime_query.png" alt=""></p>
+<p>当节点 u 收到 k 个响应，就检查其中是否存在至少 αk 个 yes-vote，如果存在，就表示 T 收集到了一个 Chit，记为 CT = 1，否则，记 CT = 0。</p>
+<p>上述的过程会为 DAG 结构中的每个元素（即交易）标记上 Chit 值以及它关联的 confidence 值的大小。Chit 值是一次 sample 过程产生的，是不可变的值，而 confidence 则是会累加的，随着交易的增多，DAG 图的扩展会不断增加。</p>
+<p>注意，confidence 之所以是会不断增加，是因为 Chit 值 CT 的取值只能是 0 或 1，所以 confidence 是 monotonic 增加的。</p>
+<p>下面是论文中展示的一个经过不断抽样 sampling query 之后，交易被打上 chit value 和 confidence value 的 DAG 图：</p>
+<p><img src="/image/p2p/dag_demo.jpeg" alt=""></p>
+<p>上图中，颜色更深的方块表示 confidence 更高。每个节点用一个 pair 对 <code>&lt;chit, confidence&gt;</code> 来表示。比如，T2 的 confidence 是 5，它比 T3 （0）的 confidence 高。这也就意味着，T2 的后代比 T3 的后代更容易收集到 Chits。</p>
+<p>最后，跟比特币一样，Avalanche 也把对最终交易的确认时间点（acceptance point）和决定权交给了应用层。应用层通过自己定义的谓词（Predicate），把接受交易的风险加入考虑。</p>
+<p>确认一笔交易可以通过一个叫做 “safe eary commitment” 的动作来完成。对于诚实交易 T（virtuous transaction)，如果它是在包含它的冲突交易集 PT 中的唯一交易，并且受到的 Chit 超过阈值 β1，那么就认为 T 是可以接受的。如果一个诚实交易 T 由于 liveness 问题没被接受，那么它依然可以通过重新选择不同的 parents 交易来被接受。</p>
+<p>由于不同的交易只会消费和生成自己的 UTXO，彼此互不相干，因此，任何交易都可以重新选择 parents。</p>
+<hr>
+<h4 id="网络模型与验证"><a href="#网络模型与验证" class="headerlink" title="网络模型与验证"></a>网络模型与验证</h4><p>为了验证“协议家族”的可靠性（Safety &amp; Liveness），对其网络模型以及实现条件进行了一些约束。</p>
+<p><strong>1）网络模型（Network Model）</strong></p>
+<p>假定是同步网络，同时，使用了一个全局的协调器（Scheduler）来随机选择发起节点。</p>
+<p><strong>2）参数及变量</strong></p>
+<p>用 C 表示诚实节点（Correct Node），B 表示拜占庭节点（Byzanting Node，c=|C|，b=|B|。</p>
+<p>样本大小 k ∈ N+，抽样率 α 的值设置为 ：0.5 &lt; α ≤1。</p>
+<p>Red 和 Blue 分别代表两种冲突的交易选择（conflicting choices）。</p>
+<p>抽样方式采用超几何抽样（hypergeometric sample），被采样的k 个节点在完成前不会进行替换。</p>
+<p>使用随机变量 <img src="/image/p2p/hkn1.jpeg" alt=""></p>
+<p> 表示 R 在一次 sample 中收到的投票数，x 表示 R 收到的总投票数。</p>
+<p>那么，query 达到阈值 αk 或者更多票的概率可以用下面的公式来表示：</p>
+<p><img src="/image/p2p/hkn2.png" alt=""></p>
+<p><strong>3）尾限（tail bound）</strong></p>
+<p><img src="/image/p2p/tailbound.png" alt=""></p>
+<p><strong>全文完！</strong></p>
+<p><strong>相关阅读：</strong></p>
+
+
+
+
+<p>…</p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+
+
+
+
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Distributed-System/">Distributed System</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Distributed-System/blockchain-avalanche/" data-title="区块链新型共识算法：Snowflake to Avalanche | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Music/music-uk-chord/" title="Ukulele Common Chords">
+  <strong>Prev：</strong><br>
+  <span>
+  Ukulele Common Chords</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Life/life-get-gv/" title="为什么你应该拥有一个 GV 号">
+ <strong>Next：</strong><br>
+ <span>为什么你应该拥有一个 GV 号
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

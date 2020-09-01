@@ -1,0 +1,702 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>第四章：区块链的设计缺陷 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="复杂度 ComplexityUntested Code &amp;amp; Untestable Code网络规模 Network size交易成本，网络速度网络拥堵：大量交易的确认延迟容量贪吃蛇：不断增长的区块数据目前区块链存在的问题： 扩容困难（看比特币扩容战争就知道了）交易很贵 (曾经参投ico，10个ETH转账费用用掉了0.1个ETH)链与链之间缺乏连接区块链近乎重新定义了整个网络架构 ，现有企业">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第四章：区块链的设计缺陷">
+<meta property="og:url" content="https://juniway.net/Blockchain/blockchain-04-tech-obstacles/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="复杂度 ComplexityUntested Code &amp;amp; Untestable Code网络规模 Network size交易成本，网络速度网络拥堵：大量交易的确认延迟容量贪吃蛇：不断增长的区块数据目前区块链存在的问题： 扩容困难（看比特币扩容战争就知道了）交易很贵 (曾经参投ico，10个ETH转账费用用掉了0.1个ETH)链与链之间缺乏连接区块链近乎重新定义了整个网络架构 ，现有企业">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.412Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第四章：区块链的设计缺陷">
+<meta name="twitter:description" content="复杂度 ComplexityUntested Code &amp;amp; Untestable Code网络规模 Network size交易成本，网络速度网络拥堵：大量交易的确认延迟容量贪吃蛇：不断增长的区块数据目前区块链存在的问题： 扩容困难（看比特币扩容战争就知道了）交易很贵 (曾经参投ico，10个ETH转账费用用掉了0.1个ETH)链与链之间缺乏连接区块链近乎重新定义了整个网络架构 ，现有企业">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Blockchain/blockchain-04-tech-obstacles/" title="第四章：区块链的设计缺陷" itemprop="url">第四章：区块链的设计缺陷</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2019-05-22T15:11:01.000Z"> 2019-05-22</time>
+    <span class="post-count">字数 2.5k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h3 id="复杂度-Complexity"><a href="#复杂度-Complexity" class="headerlink" title="复杂度 Complexity"></a>复杂度 Complexity</h3><h3 id="Untested-Code-amp-Untestable-Code"><a href="#Untested-Code-amp-Untestable-Code" class="headerlink" title="Untested Code &amp; Untestable Code"></a>Untested Code &amp; Untestable Code</h3><h3 id="网络规模-Network-size"><a href="#网络规模-Network-size" class="headerlink" title="网络规模 Network size"></a>网络规模 Network size</h3><h3 id="交易成本，网络速度"><a href="#交易成本，网络速度" class="headerlink" title="交易成本，网络速度"></a>交易成本，网络速度</h3><h3 id="网络拥堵：大量交易的确认延迟"><a href="#网络拥堵：大量交易的确认延迟" class="headerlink" title="网络拥堵：大量交易的确认延迟"></a>网络拥堵：大量交易的确认延迟</h3><h3 id="容量贪吃蛇：不断增长的区块数据"><a href="#容量贪吃蛇：不断增长的区块数据" class="headerlink" title="容量贪吃蛇：不断增长的区块数据"></a>容量贪吃蛇：不断增长的区块数据</h3><p>目前区块链存在的问题：</p>
+<p>扩容困难（看比特币扩容战争就知道了）<br>交易很贵 (曾经参投ico，10个ETH转账费用用掉了0.1个ETH)<br>链与链之间缺乏连接<br>区块链近乎重新定义了整个网络架构 ，现有企业应用起来非常困难</p>
+<h3 id="分级设计"><a href="#分级设计" class="headerlink" title="分级设计"></a>分级设计</h3><h3 id="分层设计"><a href="#分层设计" class="headerlink" title="分层设计"></a>分层设计</h3><h3 id="分片设计"><a href="#分片设计" class="headerlink" title="分片设计"></a>分片设计</h3><p>1、分级设计</p>
+<p>　　在比特币扩容争议中，小区块的支持者最常使用的一个支持小区块的逻辑就是应该采用分层设计——主链承当结算层，闪电网络充当支付层，或者称为大额交易走结算层，小额支付走闪电网络。但我觉得主链和闪电网络将这种行驶相同功能，按功能的规模设计分成“分层”，并不能真正称为分层设计，这个应该称为分级设计。</p>
+<p>　　我以前做机械设计的，设计过过滤粉尘的机器，就经常会用到分级设计。使用一个粗孔滤芯，先过滤掉一些大颗粒粉尘，然后再用细孔滤芯，过滤小颗粒粉尘。处理同一类对象但“物理大小”不一样，设计成多级。这样设计的好处在于节省运营成本。如果过滤器不分级，直接按最小颗粒来设计滤芯，那很快就要换滤芯，越细孔的滤芯成本越高。但分级成，使用两级来分担过滤任务，粗孔滤芯更便宜，让粗孔滤芯先过滤掉大粉尘，细孔滤芯压力就小，这样可以节省成本。</p>
+<p>　　分级设计在我们生活中是非常常见的，我们家庭常用的饮用水过滤器就是分级的。比特币扩容方案选择的时候，有人提出使用闪电网络来分流主链的压力，这属于分级设计。因为这种提议，主链和闪电网络行驶的功能是完全一样的，都是发交易的支付行为。虽然有人将主链的交易行为称为“结算”，但这个叫法无法改变行为的功能。</p>
+<p>　　因为比特币主链上发交易的成本是最高的，对个人来说，需要支付矿工费，对比特币系统来说需要所有节点来完整验证交易，需要系统的CPU、带宽、硬盘。而在闪电网络上发交易的成本是较低的，对个人来说，闪电网络里的手续费更低，速度更快，对比特币系统来说，并不需要所有节点去验证闪电网络内的交易，只需要验证进出闪电网络的交易。</p>
+<p>　　同样的，使用offchain钱包来完整同钱包内的转账，也属于分级设计。因为offchain钱包，只是钱包公司自己完整数据的调整就可以了，这和在比特币网络上发交易是完全不一样的成本。</p>
+<p>　　分级设计中，第一级(主链)是根本就不需要关心第二级是什么样子的，但第二级(闪电网络和offchain等)是需要关心主链的。比如闪电网络就需要监视主链，以保证不会出现支付通道的人做广播欺诈。</p>
+<p>　　分级设计中，第二级出了问题，并不会伤害第一级主链。比如offchain钱包被盗了，跟主链毛关系都没有。但反过来则不一样。</p>
+<p>　　分级设计其实是人对成本的考量而催生出来的，并不需要顶层设计，让市场自由博弈就能涌现出来分级解决方案。</p>
+<p>2、分层设计</p>
+<p>　　互联网最成功的分层设计应该是网络协议分层，就是我们熟知的七层网络结构，什么物理层、链路层、网络层……</p>
+<p>　　分层的基本设计原则是：</p>
+<p>　　各层是独立的，各自层做好自己的事即可。</p>
+<p>　　层和层之间的功能是不一样的。</p>
+<p>　　层和层之间的交流都是通过接口通信，只要接口保持不变，层内部的设计可以改变，且不会影响别的层。</p>
+<p>　　目前各种区块链的设计，各种宣称说自己是分层设计的，往往都是不符合上述原理。</p>
+<p>　　比特币比较接近分层设计的思想是侧链的设计原理。侧链可以完整独立设计成和主链完全不一样的功能，比如RSK目标是实现智能合约。而比特币主链实现的核心功能就是UTXO的转账和账本的更新维护。侧链和主链只是通过特定的交易来充当接口。但侧链往往需要关心主链在干吗，主链是不需要关心侧链的。这就是侧链和主链并不是相互独立的。</p>
+<p>　　比特币(包括BTC和BCH)，尤其是BCH的OP_Return就是一个将来非常好的扩展为分层的设计。比特币主链对OP_Return里的数据只关心是否为真，并不关心具体的数据。那OP_Return就可以在里面设计出一整套新的功能，只要这里面的代码最后在BCH主链的交易里为真。而主链和OP_Return设计出来的新层是不需要相互关心的。</p>
+<p>　　很早之前，以太坊的V神就想在OP_Return上实现他的以太坊的智能合约设想，可惜当时被Core开发组限制了。比特现金BCH的开发正在拿OP_Return大做文章。其实比特币的元币协议，就是一个很好的分层设计，只是一直没有被广泛使用起来。但现在我还没有充值理解元币协议，以后搞懂了再来讲。以太坊并不是分层设计，所有的功能都是在同一层上。以太坊所有的Dapp都是在同一套账本层里做事，并没有分层处理。</p>
+<p>　　3、分片设计</p>
+<p>　　分片设计目前还没有做完，无论是在比特币还是在以太坊上，都没有实现。但我可以简单讲下原理。现在比特币网络处理交易是这样的，一个节点收到一波交易，比如1万笔，节点会先将这些交易序列化，即给这些交易编个号排队，然后一笔一笔去验证。如果碰到某一笔验证无法通过，比如需要前置零确认的交易，那就先缓存起来。如果碰到有非法的交易，则直接丢弃。</p>
+<p>　　比特币现在的这种处理交易方式就是串行的，即一个时间点，只能处理一笔交易。这样做就会有很大的瓶颈，单一电脑再牛逼，处理能力也会有上限。那能不能分成两台电脑，比如将1万笔交易，分成两波，5000笔一波，分别发给一台服务器去验证呢?不能!目前比特币还不支持这种并行验证。如何要做到并行验证呢?那就是要讲到分片设计了。比特币的UTXO的“物理实体”是这样的，一笔UTXO在电脑里存的主要数据是以下四个部分：</p>
+<p>　　生成这笔UTXO的交易的txid;</p>
+<p>　　生成这笔UTXO的交易的输出序列号index。因为大部分交易是一个或多个输入，多个输出，第一个输入序列号是0，第二个是1。</p>
+<p>　　锁定脚本lockscript。</p>
+<p>　　是金额value</p>
+<p>　　其中txid是16进制表达，即使用0到F来表达，如果将首字符来分类，0归一类，1归一类……F归一类，就可以分为16类。如果使用首两个字符来分类，00一类，01一类……FF一类，那就可以分为256类……如果使用4个字符呢?16^4类。我们将上述的一类称为一个片，这就是分片。分片后，将一类分给一台电脑去处理，另一类分给另一台去处理……，256片就可以分成256台电脑来处理。而UTXO的txid就是交易的txid，则打包交易的区块，也可以按这种分类来打包，比如分成256片，则同一区块里，可以设成256个分区，一个分区打包一个片。也就是说，UTXO、交易、和区块都可以按同样的规则分片。</p>
+<p>　　这样比特币全网就可以实现节点可选择处理哪一个分片，比如我运行一个节点，我只收、验证和广播特定分片的UTXO、交易和区块。这样就实现了比特币网络的并行扩展。但这种分片还是很复杂的，我上面讲的只是基本的原理，要完成设计是非常复杂的。比如一个UTXO去花费两次，是可以实现不同的txid，然后发到不同的分片，如果分片之间没有机制来通信，则可能会双花成功，但如果分片之间还要为这种攻击大量通信，则还不如不分片呢。</p>
+<p>　　但如果实现了分片，那比特币网络则是可以实现无限扩展，什么百万TPS，都不在话下，什么1M、8M、32M根本就不是事，至少1G区块。因为一台电脑处理不了，可以搞16^n台来处理好了，一个人买不起16^n台电脑(中心化)的话，那就找16^n个人每人买一台好了。</p>
+<p>　　以太坊的分片更复杂，我暂时讲不明白。BCH的开发正在全力开发UTXO分片，我也在努力学习这些知识，以求能贡献一点知识。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Blockchain/">Blockchain</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Blockchain/blockchain-04-tech-obstacles/" data-title="第四章：区块链的设计缺陷 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Blockchain/blockchain-07-cryptography/" title="第七章：密码学原理">
+  <strong>Prev：</strong><br>
+  <span>
+  第七章：密码学原理</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Blockchain/blockchain-09-smart-contract/" title="第九章：智能合约">
+ <strong>Next：</strong><br>
+ <span>第九章：智能合约
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

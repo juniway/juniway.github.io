@@ -1,0 +1,759 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Golang 命令 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="本文简单介绍 Golang 提供的命令。我们执行 go help [command] 可以查看具体命令的帮助信息。执行 go help 可以看到，Golang 提供的命令有下列所示： build       compile packages and dependencies clean       remove object files doc         show documentation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang 命令">
+<meta property="og:url" content="https://juniway.net/Programming/go-go-commands/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="本文简单介绍 Golang 提供的命令。我们执行 go help [command] 可以查看具体命令的帮助信息。执行 go help 可以看到，Golang 提供的命令有下列所示： build       compile packages and dependencies clean       remove object files doc         show documentation">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.428Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang 命令">
+<meta name="twitter:description" content="本文简单介绍 Golang 提供的命令。我们执行 go help [command] 可以查看具体命令的帮助信息。执行 go help 可以看到，Golang 提供的命令有下列所示： build       compile packages and dependencies clean       remove object files doc         show documentation">
+<meta name="twitter:image" content="https://juniway.net/image/qrcode_258.jpg">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Programming/go-go-commands/" title="Golang 命令" itemprop="url">Golang 命令</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2017-06-23T11:51:48.000Z"> 2017-06-23</time>
+    <span class="post-count">字数 3.3k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>本文简单介绍 Golang 提供的命令。<br>我们执行 <code>go help [command]</code> 可以查看具体命令的帮助信息。<br>执行 <code>go help</code> 可以看到，Golang 提供的命令有下列所示：</p>
+<pre><code>build       compile packages and dependencies
+clean       remove object files
+doc         show documentation for package or symbol
+env         print Go environment information
+bug         start a bug report
+fix         run go tool fix on packages
+fmt         run gofmt on package sources
+generate    generate Go files by processing source
+get         download and install packages and dependencies
+install     compile and install packages and dependencies
+list        list packages
+run         compile and run Go program
+test        test packages
+tool        run specified go tool
+version     print Go version
+vet         run go tool vet on packages</code></pre><p>下面逐一介绍</p>
+<h4 id="go-build"><a href="#go-build" class="headerlink" title="go build"></a>go build</h4><p>命令样式：go build [-o output] [-i] [build flags] [packages]</p>
+<p>这个命令用于编译指定的源码文件或代码包以及它们的依赖包。编译时，会自动忽略以 ‘_test.go’ 文件名结尾的文件。</p>
+<p>-o<br>指定输出文件名，只支持在编译单个 package 时使用 。</p>
+<p>-i<br>安装目标 package 所需的依赖</p>
+<p>build, clean, get, install, list, run, test 这些命令共享以下的 flags，这些 flags 在不同的命令下语义不同</p>
+<p>-a<br>强行对所有涉及到的代码包进行重新构建，即使它们已经是最新的了。</p>
+<p>-n<br>打印编译期间所用到的其它命令，但是并不真正执行它们。</p>
+<p>-p n<br>指定编译过程中执行各任务的并行数量（确切地说应该是并发数量）。在默认情况下，该数量等于CPU的逻辑核数。但是在darwin/arm平台（即iPhone和iPad所用的平台）下，该数量默认是1。<em>n为正整数</em></p>
+<p>-race<br>开启竞态条件的检测。不过此标记目前仅在 <code>linux/amd64</code>、<code>freebsd/amd64</code>、<code>darwin/amd64</code> 和 <code>windows/amd64</code> 平台下受到支持。</p>
+<p>-v<br>打印出那些被编译的代码包的名字。</p>
+<p>-work<br> 打印出编译时生成的临时工作目录的路径，并在编译结束时保留它。在默认情况下，编译结束时会删除该目录。</p>
+<p>-x<br>打印编译期间所用到的其它命令。注意它与 -n 标记的区别。</p>
+<p>-asmflags ‘flag list’<br>此标记可以后跟另外一些标记，如 -D、-I、-S 等。这些后跟的标记用于控制 Go 语言编译器编译汇编语言文件时的行为。</p>
+<p>-buildmode mode<br>此标记用于指定编译模式，使用方式如 -buildmode=default。此标记支持的编译模式目前有 6 种。借此，我们可以控制编译器在编译完成后生成静态链接库 .a 文件、动态链接库 .so 文件或可执行文件（如 Windows下的 .exe ）。</p>
+<p>-compiler name<br>使用指定的 compiler，比如 runtime.Compiler 中的 gccgo 或 gc。</p>
+<p>-gccgoflags ‘arg list’<br>指定 gccgo 执行时所需的参数</p>
+<p>-gcflags ‘arg list’<br>指定需要传递给 <code>go tool compile</code> 命令的参数列表。<br>比如：</p>
+<pre><code>go build -gcflags &quot;-N -l&quot; -o test test.go</code></pre><p>-ldflags ‘flag list’<br>指定需要传递给 <code>go tool link</code> 命令的参数列表</p>
+<p>-linkshared<br>链接 -buildmode=shared 模式下指定的共享库</p>
+<h4 id="go-clean"><a href="#go-clean" class="headerlink" title="go clean"></a>go clean</h4><p>执行 <code>go clean</code> 命令会删除掉执行其它命令时产生的一些文件和目录，包括：<br>使用 <code>go build</code> 命令时在当前代码包下生成的与包名同名或者与 Go 源码文件同名的可执行文件。<br>执行 <code>go test</code> 命令并加入-c 标记时在当前代码包下生成的以包名加“.test”后缀为名的文件。<br>还有一些目录和文件是在编译 Go 或 C 源码文件时留在相应目录中的。包括：“_obj” 和 “_test” 目录，名称为 “_testmain.go”、“test.out”、“build.out”或 “a.out” 的文件，名称以 “.5”、“.6”、“.8”、“.a”、“.o” 或 “.so” 为后缀的文件。这些目录和文件是在执行 <code>go build</code> 命令时生成在临时目录中的。<br>go clean [-i] [-r] [-n] [-x] [build flags] [packages]</p>
+<p>-r<br>删除由 <code>go install</code> 命令所安装的可执行目标文件及其所有依赖的文件。</p>
+<p>-i<br>删除由 <code>go install</code> 命令所安装的可执行目标文件</p>
+<h4 id="go-doc"><a href="#go-doc" class="headerlink" title="go doc"></a>go doc</h4><p>打印附于 Go 语言程序实体上的文档。我们可以通过把程序实体的标识符作为该命令的参数来达到查看其文档的目的。<br>go doc [-u] [-c] [package|[package.]symbol[.method]]</p>
+<p>-c<br>加入此标记后会使go doc命令区分参数中字母的大小写。</p>
+<p>-cmd<br>打印出main包中的可导出的程序实体（其名称的首字母大写）的文档。</p>
+<p>-u<br>打印出不可导出的程序实体（其名称的首字母小写）的文档。</p>
+<h4 id="go-env"><a href="#go-env" class="headerlink" title="go env"></a>go env</h4><p>打印 Go 语言的环境信息。<br>命令格式：go env [var …]</p>
+<p>$ go env GOARCH=”amd64”  # 程序构建环境的目标计算架构。<br>GOBIN=””         # 存放可执行文件的目录的绝对路径。<br>GOCHAR=””     # 程序构建环境的目标计算架构的单字符标识。1.5以后的版本没有了GOEXE=””        # 可执行文件的后缀。<br>GOHOSTARCH=”amd64”  # 程序运行环境的目标计算架构。<br>GOHOSTOS=”linux”          # 程序运行环境的目标操作系统。<br>GOOS=”linux”                    # 程序构建环境的目标操作系统。GOPATH=”/home/lbb/workspace/go #工作区目录的绝对路径。<br>GORACE=”” #用于数据竞争检测的相关选项。<br>GOROOT=”/usr/local/go” # Go语言的安装目录的绝对路径。GOTOOLDIR=”/usr/local/go/pkg/tool/linux_amd64” # Go工具目录的绝对路径。GO15VENDOREXPERIMENT=”1”<br>CC=”gcc”<br>GOGCCFLAGS=”-fPIC -m64 -pthread -fmessage-length=0”CXX=”g++”CGO_ENABLED=”1” # 指明cgo工具是否可用的标识。</p>
+<h4 id="go-fix"><a href="#go-fix" class="headerlink" title="go fix"></a>go fix</h4><p>用来修复以前老版本的代码到新版本。它其实是命令 <code>go tool fix</code> 的简单封装。这甚至比 <code>go fmt</code> 命令对 <code>gofmt</code> 命令的封装更简单。像其它的 Go 命令一样，<code>go fix</code> 命令会先对作为参数的代码包导入路径进行验证，以确保它是正确有效的。</p>
+<p>-diff<br>不将修正后的内容写入文件，而只打印修正前后的内容的对比信息到标准输出。</p>
+<p>-r<br>只对目标源码文件做有限的修正操作。该标记的值即为允许的修正操作的名称。多个名称之间用英文半角逗号分隔。</p>
+<p>-force<br>使用此标记后，即使源码文件中的代码已经与Go语言的最新版本相匹配了，也会强行执行指定的修正操作。该标记的值就是需要强行执行的修正操作的名称，多个名称之间用英文半角逗号分隔。</p>
+<h4 id="go-fmt"><a href="#go-fmt" class="headerlink" title="go fmt"></a>go fmt</h4><p>命令格式：go fmt [-n] [-x] [packages]<br>该命令用于对 .go 源文件进行格式化。</p>
+<p>-n<br>打印编译期间所用到的其它命令，但是并不真正执行它们。</p>
+<p>-x<br>可以看到go get命令执行过程中所使用的所有命令。</p>
+<h4 id="go-generate"><a href="#go-generate" class="headerlink" title="go generate"></a>go generate</h4><p>是一个你可以用来自动自成 Go 代码的命令，你可以结合例如 jsonenums (一个用于为枚举类型自动生成 JSON 编组样板代码的类库)这样的元编程来使用 <code>go generate</code> 快速自动实现重复乏味代码的编写。在 Go 标准类库里面已经有大量可以用于解析 AST 的接口，而 AST 使得编写元编程工具更简单，更容易。</p>
+<h4 id="go-get"><a href="#go-get" class="headerlink" title="go get"></a>go get</h4><p>下载或更新指定的代码包及其依赖包，并对它们进行编译和安装。<br>go get [-d] [-f] [-fix] [-insecure] [-t] [-u] [build flags] [packages]</p>
+<p>-d<br>让命令程序只执行下载动作，而不执行安装动作。</p>
+<p>-f<br>仅在使用 -u 标记时才有效。该标记会让命令程序忽略掉对已下载代码包的导入路径的检查。如果下载并安装的代码包所属的项目是你从别人那里 Fork 过来的，那么这样做就尤为重要了。</p>
+<p>-fix<br>让命令程序在下载代码包后先执行修正动作，而后再进行编译和安装。之前解决相关性或建设中的代码。</p>
+<p>-insecure<br>允许命令程序使用非安全的scheme（如HTTP）去下载指定的代码包。如果你用的代码仓库（如公司内部的 Gitlab）没有HTTPS支持，可以添加此标记。请在确定安全的情况下使用它。</p>
+<p>-t<br>让命令程序同时下载并安装指定的代码包中的测试源码文件中依赖的代码包。</p>
+<p>-u<br>让命令利用网络来更新已有代码包及其依赖包。默认情况下，该命令只会从网络上下载本地不存在的代码包，而不会更新已有的代码包。</p>
+<p>-x<br>可以看到 <code>go get</code> 命令执行过程中所使用的所有命令<br><code>go get</code> 还有一个很值得称道的功能。在使用它检出或更新代码包之后，它会寻找与本地已安装 Go 语言的版本号相对应的标签（tag）或分支（branch）。比如，本机安装 Go 语言的版本是 1.x，那么 <code>go get</code> 命令会在该代码包的远程仓库中寻找名为 “go1” 的标签或者分支。如果找到指定的标签或者分支，则将本地代码包的版本切换到此标签或者分支。如果没有找到指定的标签或者分支，则将本地代码包的版本切换到主干的最新版本。<br>扩展显示下载进度条修改 <code>git clone</code> 命令, 添加 <code>--progress</code> 选项, 使其输出进度修改cmd.Run() 执行的地方, 使其将输出定位到标准输出流上</p>
+<h4 id="go-install"><a href="#go-install" class="headerlink" title="go install"></a>go install</h4><p>编译并安装指定的代码包及它们的依赖包。实际上，<code>go install</code> 命令只比 <code>go build</code> 命令多做了一件事，即：安装编译后的结果文件到指定目录。<br>go install [build flags] [packages]</p>
+<h4 id="go-list"><a href="#go-list" class="headerlink" title="go list"></a>go list</h4><p>命令的作用是列出指定的代码包的信息。与其他命令相同，我们需要以代码包导入路径的方式给定代码包。被给定的代码包可以有多个。这些代码包对应的目录中必须直接保存有Go语言源码文件，其子目录中的文件不算在内。否则，代码包将被看做是不完整的。go list [-e] [-f format] [-json] [build flags] [packages]</p>
+<h4 id="go-run"><a href="#go-run" class="headerlink" title="go run"></a>go run</h4><p>命令可以编译并运行命令源码文件。由于它其中包含了编译动作，因此它也可以接受所有可用于 go build 命令的标记。除了标记之外，go run 命令只接受 Go 源码文件作为参数，而不接受代码包。与 go build 命令和 go install 命令一样，go run 命令也不允许多个命令源码文件作为参数，即使它们在同一个代码包中也是如此。而原因也是一致的，多个命令源码文件会都有 main 函数声明。<br>go run [build flags] [-exec xprog] gofiles… [arguments…]<br>如果命令源码文件可以接受参数，那么在使用 go run 命令运行它的时候就可以把它的参数放在它的文件名后面，像这样：go run main.go -p ~/golang/gotest<br>。</p>
+<h4 id="go-test"><a href="#go-test" class="headerlink" title="go test"></a>go test</h4><p>-c<br>生成用于运行测试的可执行文件，但不执行它。这个可执行文件会被命名为“pkg.test”，其中的“pkg”即为被测试代码包的导入路径的最后一个元素的名称。</p>
+<p>-i<br>安装/重新安装运行测试所需的依赖包，但不编译和运行测试代码。</p>
+<p>-o<br>指定用于运行测试的可执行文件的名称。追加该标记不会影响测试代码的运行，除非同时追加了标记-c或-i。</p>
+<p>go tool<br>go tool [-n] command [args…]</p>
+<p><code>go tool pprof</code> 命令可以用来交互式的访问概要文件的内容。命令将会分析指定的概要文件，并会根据我们的要求为我们提供高可读性的输出信息。</p>
+<p><code>go tool cgo</code>这个工具可以使我们创建能够调用 C 语言代码的 Go 语言源码文件。这使得我们可以使用 Go 语言代码去封装一些 C 语言的代码库，并提供给 Go 语言代码或项目使用。</p>
+<p>go version<br>查看 Go 版本</p>
+<p>go vet<br>是一个用于检查 Go 语言源码中静态错误的简单工具<br>go vet [-n] [-x] [build flags] [packages]</p>
+<p><code>go vet</code> 是 <code>go tool vet</code> 命令的简单封装。它会首先载入和分析指定的代码包，并把指定代码包中的所有 Go 语言源码文件和以 “.s” 结尾的文件的相对路径作为参数传递给 <code>go tool vet</code>命令。</p>
+<p>-n<br>会让命令在执行过程中打印用到的系统命令，但不会真正执行它们。</p>
+<p>-x<br>既打印命令又执行命令。</p>
+<p>-r<br>包括当前代码包的所有依赖包的上述目录和文件。</p>
+<p><a href="http://www.jianshu.com/nb/4804356" target="_blank" rel="noopener">Golang</a></p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Programming/">Programming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Programming/go-go-commands/" data-title="Golang 命令 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Tools-and-Build/tool-and-build-etcd-usage/" title="Etcd 使用">
+  <strong>Prev：</strong><br>
+  <span>
+  Etcd 使用</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Tools-and-Build/tool-and-build-archlinux-install/" title="安装 Arch Linux">
+ <strong>Next：</strong><br>
+ <span>安装 Arch Linux
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

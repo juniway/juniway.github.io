@@ -1,0 +1,766 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>SSD notes | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="NAND Flash NAND flash is a type of non-volatile storage architecture used in SSDs and memory cards. It gets its name from the type of the logic gate (NOT-AND) used to determine how digital information">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSD notes">
+<meta property="og:url" content="https://juniway.net/Database/core-techs-storage-ssd/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="NAND Flash NAND flash is a type of non-volatile storage architecture used in SSDs and memory cards. It gets its name from the type of the logic gate (NOT-AND) used to determine how digital information">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/database/ssd_sequential_read.png">
+<meta property="og:image" content="https://juniway.net/image/database/ssd_sequential_write.png">
+<meta property="og:image" content="https://juniway.net/image/database/ssd_random_read.png">
+<meta property="og:image" content="https://juniway.net/image/database/ssd_random_write.png">
+<meta property="og:image" content="https://juniway.net/image/database/ssd_nand_flash.png">
+<meta property="og:image" content="https://juniway.net/image/database/ssd_new_write.png">
+<meta property="og:image" content="https://juniway.net/image/database/ssd_write_leave_idle.png">
+<meta property="og:image" content="https://juniway.net/image/database/ssd_over_provisioning.png">
+<meta property="og:image" content="https://juniway.net/image/database/ssd_garbage_collection.png">
+<meta property="og:image" content="https://juniway.net/image/database/no_wear_leveling.png">
+<meta property="og:image" content="https://juniway.net/image/database/perfect_wear_leveling.png">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.422Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSD notes">
+<meta name="twitter:description" content="NAND Flash NAND flash is a type of non-volatile storage architecture used in SSDs and memory cards. It gets its name from the type of the logic gate (NOT-AND) used to determine how digital information">
+<meta name="twitter:image" content="https://juniway.net/image/database/ssd_sequential_read.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Database/core-techs-storage-ssd/" title="SSD notes" itemprop="url">SSD notes</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-06-05T13:11:48.000Z"> 2016-06-05</time>
+    <span class="post-count">字数 2.9k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>NAND Flash</p>
+<p>NAND flash is a type of non-volatile storage architecture used in SSDs and memory cards. It gets its name from the type of the logic gate (NOT-AND) used to determine how digital information is stored in a flash device’s chips.</p>
+<p>SLC<br>Single-Level Cell SSDs store one bit in each cell, a design that yields enhanced endurance, accuracy and performance. For critical enterprise applications and storage services, SLC is the go-to flash technology. Of course, it carries the highest price tag.</p>
+<p>MLC<br>Considered the consumer-grade flavor of flash, Multi-Level Cell architectures can store two bits per cell. Although it may seem like packing more than one bit into a memory cell is a good use of space, it comes at the cost of a lower useful life and decreased reliability. MLC SSDs make it possible to economically add flash storage to PCs and laptops, relatively speaking.</p>
+<p>eMLC<br>Enterprise Multi-Level Cell is a hardier version of MLC NAND flash that somewhat bridges the performance and endurance gap between SLC and MLC. eMLC drives costs more than MLC drives, but much less than SLC their counterparts. Although it still stores two bits per cell, an eMLC drive’s controller manages data placement, wear leveling and other storage operations in a way that extends an eMLC SSD’s useful life.</p>
+<p>TLC<br>The least expensive of the bunch, Triple-Level Cell NAND flash stores three bits per cell and is typically used in consumer-grade electronics with comparatively low performance and endurance requirements. Best suited for read-heavy applications, TLC-based storage components were rarely, if ever, used in business environments but recent improvements in flash architectures, including 3D NAND (more on that later), and endurance-enhancing data placement and error correction techniques have earned the technology a place in read-intensive enterprise storage applications.</p>
+<p>SSD 高速的原因是它内部有多个闪存，在读写时，多个闪存同时读取，就相当于把每个闪存的速度加起来，所以就快了，SSD 能有4、8、16、个闪存颗粒<br>SSD 是从存储单元里读写数据，而 HDD 是机械的，磁头从盘片上读写数据，电子的当然比机械的快。<br>同时HDD是靠机械的磁头在盘片上读写数据，要经过寻道读写等过程，都需要时间，而ssd是通过电路选择存储位置进行读取，电的速度是非常快的，所以ssd比hdd更快。</p>
+<p>SSD 故事会<br><a href="https://diy.pconline.com.cn/610/6107477_all.html" target="_blank" rel="noopener">https://diy.pconline.com.cn/610/6107477_all.html</a><br><a href="https://diy.pconline.com.cn/750/7501340.html" target="_blank" rel="noopener">https://diy.pconline.com.cn/750/7501340.html</a></p>
+<p>SSD 为什么速度那么快？看完这篇你就懂了！<br><a href="http://news.moore.ren/industry/8159.htm" target="_blank" rel="noopener">http://news.moore.ren/industry/8159.htm</a></p>
+<p>程序员需要知道的SSD基本原理<br><a href="http://oserror.com/backend/ssd-principle/" target="_blank" rel="noopener">http://oserror.com/backend/ssd-principle/</a></p>
+<p>引言<br>SSD是目前商用服务器上非常流行的存储介质，因此，作为软件开发人员，需要了解的SSD基本原理，以便开发时能更好地发挥其优势，规避其劣势。本文总结了作为软件开发人员需要了解的SSD基本原理，全文组织结构如下：</p>
+<ul>
+<li>SSD的读写速度</li>
+<li>SSD内部芯片的简单存取原理</li>
+<li>SSD的读写特性</li>
+<li>SSD的over-provisioning和garbage-collection</li>
+<li>SSD的损耗均衡控制</li>
+<li>SSD的写放大问题</li>
+</ul>
+<h2 id="SSD-的读写速度"><a href="#SSD-的读写速度" class="headerlink" title="SSD 的读写速度"></a>SSD 的读写速度</h2><p>首先，从软件开发人员作为SSD的用户角度来讲，首先需要了解的是SSD和普通HDD的性能对比，如下：</p>
+<p>先来看顺序读和顺序写</p>
+<p><img src="/image/database/ssd_sequential_read.png" alt=""><br><img src="/image/database/ssd_sequential_write.png" alt=""></p>
+<p>其中，Seagate ST3000DM001是HDD，其他的都是SSD。从上述两图中可以看出，HDD的顺序读速度差不多为最慢的SSD的一半，顺序写稍微好点，但也比大部分慢一倍左右的速度。</p>
+<p>再来看随机读和随机写</p>
+<p><img src="/image/database/ssd_random_read.png" alt=""><br><img src="/image/database/ssd_random_write.png" alt=""></p>
+<p>可以看出，HDD的随机读的性能是普通SSD的几十分之一，随机写性能更差。</p>
+<p>因此，SSD的随机读和写性能要远远好于HDD，本文接下来的几个小节将会讨论为什么SSD的随机读写性能要远远高于HDD？</p>
+<p>备注：本小节测试数据全部来自于 <a href="http://www.pcgamer.com/hard-drive-vs-ssd-performance/2/" target="_blank" rel="noopener">HDD VS SSD</a>。</p>
+<h2 id="SSD-内部芯片的简单存储原理"><a href="#SSD-内部芯片的简单存储原理" class="headerlink" title="SSD 内部芯片的简单存储原理"></a>SSD 内部芯片的简单存储原理</h2><p>SSD 内部一般使用 NAND Flash 来作为存储介质，其逻辑结构如下：</p>
+<p><img src="/image/database/ssd_nand_flash.png" alt=""></p>
+<p>SSD 中一般有多个 NAND Flash，每个NAND Flash包含多个Block，每个Block包含多个Page。由于NAND的特性，其存取都必须以page为单位，即每次读写至少是一个page，通常地，每个page的大小为4k或者8k。另外，NAND还有一个特性是，其只能是读或写单个page，但不能覆盖写如某个page，必须先要清空里面的内容，再写入。由于清空内容的电压较高，必须是以block为单位。因此，没有空闲的page时，必须要找到没有有效内容的block，先擦写，然后再选择空闲的page写入。</p>
+<p>在 SSD 中，一般会维护一个 mapping table，维护逻辑地址到物理地址的映射。每次读写时，可以通过逻辑地址直接查表计算出物理地址，与传统的机械磁盘相比，省去了寻道时间和旋转时间。</p>
+<h2 id="SSD-读写特性"><a href="#SSD-读写特性" class="headerlink" title="SSD 读写特性"></a>SSD 读写特性</h2><p>从 NAND Flash的原理可以看出，其和 HDD 的主要区别为</p>
+<ul>
+<li>定位数据快：HDD需要经过寻道和旋转，才能定位到要读写的数据块，而SSD通过mapping table直接计算即可</li>
+<li>读取速度块：HDD的速度取决于旋转速度，而 SSD 只需要加电压读取数据，一般而言，要快于 HDD</li>
+</ul>
+<p>因此，在顺序读测试中，由于定位数据只需要一次，定位之后，则是大批量的读取数据的过程，此时，HDD 和 SSD 的性能差距主要体现在读取速度上，HDD 能到 200M 左右，而普通 SSD 是其两倍。</p>
+<p>在随机读测试中，由于每次读都要先定位数据，然后再读取，HDD的定位数据的耗费时间很多，一般是几毫秒到十几毫秒，远远高于SSD的定位数据时间(一般0.1ms左右)，因此，随机读写测试主要体现在两者定位数据的速度上，此时，SSD的性能是要远远好于HDD的。</p>
+<p>对于SSD的写操作，针对不同的情况，有不同的处理流程，主要是受到NAND Flash的如下特性限制</p>
+<p>NAND Flash每次写必须以page为单位，且只能写入空闲的page，不能覆盖写原先有内容的page<br>擦除数据时，由于电压较高，只能以block为单位擦除<br>SSD的写分为新写入和更新两种，处理流程不同。</p>
+<p>先看新写入的数据的流程，如下：</p>
+<p><img src="/image/database/ssd_new_write.png" alt="SSD New Write"></p>
+<p>假设新写入了一个page，其流程如下：</p>
+<p>找到一个空闲page<br>把数据写入到空闲page中<br>更新mapping table</p>
+<p>而更新操作的流程如下：</p>
+<p><img src="/image/database/ssd_write_leave_idle.png" alt="SSD Leave Idle"></p>
+<p>假设是更新了page G中的某些字节，流程如下：</p>
+<p>由于SSD不能覆盖写，因此，先找到一个空闲页H<br>读取page G中的数据到SSD内部的buffer中，把更新的字节更新到buffer<br>把buffer中的数据写入到H<br>更新mapping table中G页，置为无效页<br>更新mapping table中H页，添加映射关系<br>可以看出，如果在更新操作比较多的情况下，会产生较多的无效页，类似于磁盘碎片，此时，需要SSD的over-provisioning和garbage-collection。</p>
+<h2 id="SSD-的over-provisioning和garbage-collection"><a href="#SSD-的over-provisioning和garbage-collection" class="headerlink" title="SSD 的over-provisioning和garbage-collection"></a>SSD 的over-provisioning和garbage-collection</h2><p>over-provisioning是指SSD实际的存储空间比可写入的空间要大，比如，一块可用容量为120G的SSD，实际空间可能有128G。为什么需要over-provisioning呢？请看如下例子：</p>
+<p><img src="/image/database/ssd_over_provisioning.png" alt="SSD over-provisioning"></p>
+<p>如上图所示，假设系统中就两个 block，最终还剩下两个无效的 page，此时，要写入一个新page，根据NAND原理，必须要先对两个无效的 page 擦除才能用于写入。此时，就需要用到 SSD 提供的额外空间，才能用 garbage-collection 方法整理出可用空间。</p>
+<p><img src="/image/database/ssd_garbage_collection.png" alt="garbage collection"></p>
+<p>garbage collection 的整理流程如上图所示</p>
+<ul>
+<li>首先，从over-provisoning的空间中，找到一个空闲的block</li>
+<li>把Block0的ABCDEFH和Block1的A复制到空闲block</li>
+<li>擦除Block 0</li>
+<li>把Block1的BCDEFH复制到Block0，此时Block0就有两个空闲page了</li>
+<li>擦除BLock1</li>
+</ul>
+<p>有空闲page之后，就可以按照正常的流程来写入了。</p>
+<h3 id="SSD-的-garbage-collection会带来两个问题："><a href="#SSD-的-garbage-collection会带来两个问题：" class="headerlink" title="SSD 的 garbage-collection会带来两个问题："></a>SSD 的 garbage-collection会带来两个问题：</h3><p>SSD 的寿命减少，NAND Flash中每个原件都有擦写次数限制，超过一定擦写次数后，就只能读取不能写入了<br>写放大问题，即内部真正写入的数据量大于用户请求写入的数据量<br>如果频繁的在某些 block 上做 garbage-collection，会使得这些元件比其他部分更快到达擦写次数限制，因此，需要某个算法，能使得原件的擦写次数比较平均，这样才能延长 SSD 的寿命，这就需要下面要讨论的损耗均衡控制了。</p>
+<h2 id="SSD-损耗均衡控制"><a href="#SSD-损耗均衡控制" class="headerlink" title="SSD 损耗均衡控制"></a>SSD 损耗均衡控制</h2><p>为了避免某些 block 被频繁的更新，而另外一些 block 非常的空闲，SSD 控制器一般会记录各个 block 的写入次数，并且通过一定的算法，来达到每个 block 的写入都比较均衡。</p>
+<p>以一个例子，说明损耗均衡控制的重要性：</p>
+<p>假如一个NAND Flash总共有4096个block，每个block的擦写次数最大为10000。其中有3个文件，每个文件占用50个block，平均10分钟更新1个文件，假设没有均衡控制，那么只会3 * 50 + 50共200个block，则这个SSD的寿命如下：</p>
+<p><img src="/image/database/no_wear_leveling.png" alt="no wear leveling"></p>
+<p>大约为 278 天。而如果是完美的损耗均衡控制，即 4096 个 block 都均衡地参与更新，则使用寿命如下：</p>
+<p><img src="/image/database/perfect_wear_leveling.png" alt="perfect wear leveling"></p>
+<p>大约 5689 天。因此，设计一个好的损耗均衡控制算法是非常有必要的，主流的方法主要有两种：</p>
+<ul>
+<li>dynamic wear leveling</li>
+<li>static wear leveling<br>这里的 dynamic 和 static 是指的是数据的特性，如果数据频繁的更新，那么数据是 dynamic 的，如果数据写入后，不更新，那么是 static 的。</li>
+</ul>
+<p>dynamic wear leveling 的原理是记录每个 block 的擦写次数，每次写入数据时，找到被擦除次数最小的空 block。</p>
+<p>static wear leveling 的原理分为两块：</p>
+<p>每次找到每擦除次数最小的可用block<br>当某个block的擦除次数小于阈值时，会将它与擦写次数较高的block的数据进行交换<br>以一个例子来说明，两种擦写算法的不同点：</p>
+<p>假如SSD中有25%的数据是dynamic的，另外75%的数据是static的。对于dynamic wear leveling方法，每次要找的是擦除了数据的block，而static的block里面是有数据的，因此，每次都只会在dynamic的block中，即最多会在25%的block中做均衡；对于static算法，每次找的block既可能是dynamic的，也可能是static的，因此，最多有可能在全部的block中做均衡。</p>
+<p>相对而言，static算法能使得SSD的寿命更长，但也有其缺点：</p>
+<p>算法逻辑更复杂<br>在写入时，可能会移动数据，导致写放大，降低写入性能<br>更高的能耗</p>
+<h2 id="SSD写放大"><a href="#SSD写放大" class="headerlink" title="SSD写放大"></a>SSD写放大</h2><p>最后，我们分析一下SSD的写放大问题，一般由如下三个方面引起：</p>
+<p>SSD读写是以page为单位的，如果更新page中的部分数据，也需要写整个page<br>SSD的garbage collection中，会在block间移动数据<br>SSD的wear leveing中，可能也会在block间交换数据，导致写放大<br>通常的，需要在其他方面和SSD的写放大之间做权衡，例如，可以减少garbage collection的频率来减少写放大问题；可以把SSD分成多个zone，每个zone使用不同的wear leveling方法等等。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>个人理解，使用SSD时，我们需要考虑如下情况：</p>
+<p>需要充分利用其随机读写快的特性<br>尽可能在软件层面更新小块数据，减轻SSD写放大问题<br>避免频繁的更新数据，减轻SSD写放大及寿命减少的问题，尽可能使用追加的方式写数据</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Database/">Database</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Database/core-techs-storage-ssd/" data-title="SSD notes | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Database/core-techs-storage-raid/" title="RAID notes">
+  <strong>Prev：</strong><br>
+  <span>
+  RAID notes</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/VirtualBox/vbox-vbox-access-server-in-guestos/" title="Access the web server resides in Guest OS">
+ <strong>Next：</strong><br>
+ <span>Access the web server resides in Guest OS
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BN Stack</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://juniway.net/"/>
+  <updated>2020-05-09T09:08:39.479Z</updated>
+  <id>https://juniway.net/</id>
+  
+  <author>
+    <name>juniway</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>C++ 14 Summary</title>
+    <link href="https://juniway.net/C/cpp-cpp14/"/>
+    <id>https://juniway.net/C/cpp-cpp14/</id>
+    <published>2020-05-10T03:30:33.000Z</published>
+    <updated>2020-05-09T09:08:39.479Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="C-14"><a href="#C-14" class="headerlink" title="C++ 14"></a>C++ 14</h3><h5 id="1-New-language-features"><a href="#1-New-language-features" class="headerlink" title="1. New language features"></a>1. New language features</h5><ul><li>function return type deduction</li><li>alternate tuype deduction on declaration</li><li>relaxed constexpr restriction</li><li>variable template</li><li>aggregate member initialization</li><li>binary literals</li><li>digit separators</li><li>generic lambdas</li><li>lambda capture expressions</li><li>the attribute [[deprecated]]</li></ul><h5 id="2-New-standard-library-features"><a href="#2-New-standard-library-features" class="headerlink" title="2. New standard library features"></a>2. New standard library features</h5><ul><li>shared mutexes and locking</li><li>reader-writer locks</li><li>heterogeneous lookup in associative containers</li><li>standard user-defined literals</li><li>tuple addressing via type</li><li>smaller library features (make_unique, integral_constant, is_permutation)</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;C-14&quot;&gt;&lt;a href=&quot;#C-14&quot; class=&quot;headerlink&quot; title=&quot;C++ 14&quot;&gt;&lt;/a&gt;C++ 14&lt;/h3&gt;&lt;h5 id=&quot;1-New-language-features&quot;&gt;&lt;a href=&quot;#1-New-language-fea
+      
+    
+    </summary>
+    
+      <category term="C++" scheme="https://juniway.net/categories/C/"/>
+    
+    
+      <category term="C++" scheme="https://juniway.net/tags/C/"/>
+    
+      <category term="C++14" scheme="https://juniway.net/tags/C-14/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>C++ 11 Summary</title>
+    <link href="https://juniway.net/C/cpp-cpp11/"/>
+    <id>https://juniway.net/C/cpp-cpp11/</id>
+    <published>2020-05-10T03:30:33.000Z</published>
+    <updated>2020-05-09T09:15:58.291Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="C-11"><a href="#C-11" class="headerlink" title="C++ 11"></a>C++ 11</h3><h5 id="1-Core-language"><a href="#1-Core-language" class="headerlink" title="1. Core language"></a>1. Core language</h5><ul><li><p>rvalue reference and move constructors</p></li><li><p>constexpr</p></li><li><p>modification to the definition of plain old data</p></li><li><p>extern template</p></li><li><p>initializer lists</p></li><li><p>uniform initialization</p></li><li><p>type inference</p></li><li><p>range-based for loop</p></li><li><p>lambda functions and expressions</p></li><li><p>alternative function syntax</p></li><li><p>object construction improvement</p></li><li><p>explicit overrides and final</p></li><li><p>nullptr</p></li><li><p>strongly typed enumerations</p></li><li><p>right angle bracket</p></li><li><p>explicit conversion operators</p></li><li><p>template aliases</p></li><li><p>unrestricted unions</p></li><li><p>variadict templates</p></li><li><p>new string literals</p></li><li><p>user-defined literals</p></li><li><p>multi-threading memory model</p></li><li><p>thread-local storage</p></li><li><p>explicitly defaulted and deleted special member functions</p></li><li><p>type long long int</p></li><li><p>static assertions</p></li><li><p>allow sizeof to work on members of classes witout an explicit object</p></li><li><p>control and query object alignment</p></li><li><p>allow garbage collected implementations</p></li><li><p>attributes</p></li></ul><h5 id="2-C-standard-library-changes"><a href="#2-C-standard-library-changes" class="headerlink" title="2. C++ standard library changes"></a>2. C++ standard library changes</h5><ul><li>upgrades to standard library components</li><li>threading facilities</li><li>tuple types</li><li>hash types</li><li>regular expressions</li><li>general-purpose smart pointers</li><li>extensible random number facility</li><li>wrapper reference</li><li>polymorphic wrappers for function objects</li><li>type traits for metaprogramming</li><li>uniform method for computing the return type of funciton object</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;C-11&quot;&gt;&lt;a href=&quot;#C-11&quot; class=&quot;headerlink&quot; title=&quot;C++ 11&quot;&gt;&lt;/a&gt;C++ 11&lt;/h3&gt;&lt;h5 id=&quot;1-Core-language&quot;&gt;&lt;a href=&quot;#1-Core-language&quot; class=&quot;he
+      
+    
+    </summary>
+    
+      <category term="C++" scheme="https://juniway.net/categories/C/"/>
+    
+    
+      <category term="C++" scheme="https://juniway.net/tags/C/"/>
+    
+      <category term="C++11" scheme="https://juniway.net/tags/C-11/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>C++ 11 Summary</title>
+    <link href="https://juniway.net/C/cpp-cpp20/"/>
+    <id>https://juniway.net/C/cpp-cpp20/</id>
+    <published>2020-05-10T03:30:33.000Z</published>
+    <updated>2020-05-11T13:10:18.313Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+      <category term="C++" scheme="https://juniway.net/categories/C/"/>
+    
+    
+      <category term="C++" scheme="https://juniway.net/tags/C/"/>
+    
+      <category term="C++20" scheme="https://juniway.net/tags/C-20/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>C++ 17 Summary</title>
+    <link href="https://juniway.net/C/cpp-cpp17/"/>
+    <id>https://juniway.net/C/cpp-cpp17/</id>
+    <published>2020-05-10T03:30:33.000Z</published>
+    <updated>2020-05-09T09:22:29.408Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="C-17-Features"><a href="#C-17-Features" class="headerlink" title="C++ 17 Features"></a>C++ 17 Features</h3><h5 id="1-Language"><a href="#1-Language" class="headerlink" title="1. Language"></a>1. Language</h5><ul><li>Making the text message for <code>static_assert</code> optional[10]</li><li>Allow <code>typename</code> (as an alternative to <code>class</code>) in a template template parameter[11]</li><li>New rules for auto deduction from braced-init-list[12][7]</li><li>Nested namespace definitions, e.g., <code>namespace</code> X::Y { … } instead of <code>namespace</code> X { <code>namespace</code> Y { … } }[7][13]</li><li>Allowing attributes for namespaces and enumerators[14][15]</li><li>New standard attributes [[fallthrough]], [[maybe_unused]] and [[nodiscard]][16]</li><li>UTF-8 (u8) character literals[14][17] (UTF-8 string literals have existed since C++11; C++17 adds the corresponding character literals for consistency, though as they are restricted to a single byte they can only store ASCII)</li><li>Hexadecimal floating-point literals[18][19]</li><li>Constant evaluation for all non-type template arguments[14][20]</li><li>Fold expressions, for variadic templates[14][21]</li><li>A compile-time static <code>if</code> with the form <code>if constexpr</code>(expression)[22]</li><li>Structured binding declarations, allowing <code>auto</code> [a, b] = getTwoReturnValues();[23]</li><li>Initializers in <code>if</code> and <code>switch</code> statements[24]</li><li>copy-initialization and direct-initialization of objects of type T from prvalue expressions of type T (ignoring top-level cv-qualifiers) shall result in no copy or move constructors from the prvalue expression. See copy elision for more information.</li><li>Some extensions on over-aligned memory allocation[25]</li><li>Class template argument deduction (CTAD), introducing constructor deduction guides, eg. allowing std::pair(5.0, <code>false</code>) instead of requiring explicit constructor arguments types std::pair&lt;double, bool&gt;(5.0, <code>false</code>) or an additional helper template function std::make_pair(5.0, <code>false</code>).[26][27]</li><li>Inline variables, which allows the definition of variables in header files without violating the one definition rule. The rules are effectively the same as inline functions</li><li>__has_include, allowing the availability of a header to be checked by preprocessor directives[28]</li><li>Value of __cplusplus changed to 201703L[29]</li><li>Exception specifications were made part of the function type[30]</li></ul><h5 id="2-Library"><a href="#2-Library" class="headerlink" title="2. Library"></a>2. Library</h5><ul><li>Most of Library Fundamentals TS I, including:[31][32]</li><li>std::string_view, a read-only non-owning reference to a character sequence or string-slice[33]</li><li>std::optional, for representing optional objects, a data type that may not always be returned by a given algorithm with support for non-return</li><li>std::any, for holding single values of any type</li><li>std::uncaught_exceptions, as a replacement of std::uncaught_exception in exception handling[34][14]</li><li>New insertion functions try_emplace and insert_or_assign for std::map and std::unordered_map key-value associative data structures[35][36]</li><li>Uniform container access: std::size, std::empty and std::data[36][37]</li><li>Definition of “contiguous iterators”[36][38]</li><li>A file system library based on boost::filesystem[39]</li><li>Parallel versions of STL algorithms[40]</li><li>Additional mathematical special functions, including elliptic integrals and Bessel functions[41]</li><li>std::variant, a tagged union container[42]</li><li>std::byte, allowing char to be replaced for data types intending to model a byte of data as a byte rather than a character[43]</li><li>Logical operator traits: std::conjunction, std::disjunction and std::negation[44]</li></ul><p><a href="https://github.com/AnthonyCalandra/modern-cpp-features" target="_blank" rel="noopener">https://github.com/AnthonyCalandra/modern-cpp-features</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;C-17-Features&quot;&gt;&lt;a href=&quot;#C-17-Features&quot; class=&quot;headerlink&quot; title=&quot;C++ 17 Features&quot;&gt;&lt;/a&gt;C++ 17 Features&lt;/h3&gt;&lt;h5 id=&quot;1-Language&quot;&gt;&lt;a hr
+      
+    
+    </summary>
+    
+      <category term="C++" scheme="https://juniway.net/categories/C/"/>
+    
+    
+      <category term="C++" scheme="https://juniway.net/tags/C/"/>
+    
+      <category term="C++17" scheme="https://juniway.net/tags/C-17/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Manage multiple keys for different github repository</title>
+    <link href="https://juniway.net/Git/git-git-key-management/"/>
+    <id>https://juniway.net/Git/git-git-key-management/</id>
+    <published>2020-03-20T12:16:25.000Z</published>
+    <updated>2020-03-29T10:49:00.557Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>ssh search <code>~/.ssh/id_rsa</code> by default, if you have multiple keys or your key’s name is not the default, you should add the key into ssh-agent so that ssh can search for it.</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval "$(ssh-agent -s)"</span><br></pre></td></tr></table></figure><p>you can config <code>~/.ssh/config</code> file to automatically load keys into the ssh-agent and store passphrases in your keychain.</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Host *</span><br><span class="line">  AddKeysToAgent yes</span><br><span class="line">  UseKeychain yes</span><br><span class="line">  IdentityFile ~/.ssh/id_rsa</span><br></pre></td></tr></table></figure><p>If github still ask you for password, you’re probably using the HTTPS clone URL for your repository. To solve it,</p><p>(1) Update the URL of origin remote using SSH instead of HTTPS</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote set-url origin git@github.com:username/repo.git</span><br></pre></td></tr></table></figure><p>(2) Make Git store the username and password and it will never ask for them.</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure><h4 id="Calculate-fingerprint-from-RSA-keys"><a href="#Calculate-fingerprint-from-RSA-keys" class="headerlink" title="Calculate fingerprint from RSA keys"></a>Calculate fingerprint from RSA keys</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -lf ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure><p>In newer versions of OpenSSH, Base64 encoded SHA-256 is shown instead of hexadecimal MD5. To show the legacy style hash, use</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -l -E md5 -f ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;Introduction&quot;&gt;&lt;a href=&quot;#Introduction&quot; class=&quot;headerlink&quot; title=&quot;Introduction&quot;&gt;&lt;/a&gt;Introduction&lt;/h2&gt;&lt;p&gt;ssh search &lt;code&gt;~/.ssh/id_rsa
+      
+    
+    </summary>
+    
+      <category term="Git" scheme="https://juniway.net/categories/Git/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第二章：共识算法介绍</title>
+    <link href="https://juniway.net/Blockchain/blockchain-02-consensus-algorithms/"/>
+    <id>https://juniway.net/Blockchain/blockchain-02-consensus-algorithms/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.412Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="PoW"><a href="#PoW" class="headerlink" title="PoW"></a>PoW</h3><h3 id="PoS"><a href="#PoS" class="headerlink" title="PoS"></a>PoS</h3><h3 id="dPoS"><a href="#dPoS" class="headerlink" title="dPoS"></a>dPoS</h3><h3 id="PBFT"><a href="#PBFT" class="headerlink" title="PBFT"></a>PBFT</h3><h3 id="DAG"><a href="#DAG" class="headerlink" title="DAG"></a>DAG</h3>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;PoW&quot;&gt;&lt;a href=&quot;#PoW&quot; class=&quot;headerlink&quot; title=&quot;PoW&quot;&gt;&lt;/a&gt;PoW&lt;/h3&gt;&lt;h3 id=&quot;PoS&quot;&gt;&lt;a href=&quot;#PoS&quot; class=&quot;headerlink&quot; title=&quot;PoS&quot;&gt;&lt;/a&gt;PoS&lt;/h
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第一章：基本概念介绍</title>
+    <link href="https://juniway.net/Blockchain/blockchain-01-basic-concepts/"/>
+    <id>https://juniway.net/Blockchain/blockchain-01-basic-concepts/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.412Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="区块"><a href="#区块" class="headerlink" title="区块"></a>区块</h4><h4 id="区块链"><a href="#区块链" class="headerlink" title="区块链"></a>区块链</h4><h4 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h4><h4 id="挖矿、矿工、矿场、矿池"><a href="#挖矿、矿工、矿场、矿池" class="headerlink" title="挖矿、矿工、矿场、矿池"></a>挖矿、矿工、矿场、矿池</h4><h4 id="软分叉、硬分叉"><a href="#软分叉、硬分叉" class="headerlink" title="软分叉、硬分叉"></a>软分叉、硬分叉</h4><h4 id="算力-hashrate"><a href="#算力-hashrate" class="headerlink" title="算力 hashrate"></a>算力 hashrate</h4><h4 id="ICO"><a href="#ICO" class="headerlink" title="ICO"></a>ICO</h4><h4 id="去中心化"><a href="#去中心化" class="headerlink" title="去中心化"></a>去中心化</h4><h4 id="TPS、吞吐量"><a href="#TPS、吞吐量" class="headerlink" title="TPS、吞吐量"></a>TPS、吞吐量</h4><h4 id="点对点网络"><a href="#点对点网络" class="headerlink" title="点对点网络"></a>点对点网络</h4><h4 id="公有链、私有链、联盟链"><a href="#公有链、私有链、联盟链" class="headerlink" title="公有链、私有链、联盟链"></a>公有链、私有链、联盟链</h4><h4 id="智能合约"><a href="#智能合约" class="headerlink" title="智能合约"></a>智能合约</h4><h4 id="DAO"><a href="#DAO" class="headerlink" title="DAO"></a>DAO</h4><h4 id="DApps"><a href="#DApps" class="headerlink" title="DApps"></a>DApps</h4><h4 id="梅克尔树"><a href="#梅克尔树" class="headerlink" title="梅克尔树"></a>梅克尔树</h4><h4 id="比特币"><a href="#比特币" class="headerlink" title="比特币"></a>比特币</h4><h4 id="数字签名，公钥、私钥"><a href="#数字签名，公钥、私钥" class="headerlink" title="数字签名，公钥、私钥"></a>数字签名，公钥、私钥</h4><h4 id="共识算法"><a href="#共识算法" class="headerlink" title="共识算法"></a>共识算法</h4><h4 id="结构化网络-非结构化网络"><a href="#结构化网络-非结构化网络" class="headerlink" title="结构化网络/非结构化网络"></a>结构化网络/非结构化网络</h4><h4 id="Overlay-amp-Underlay"><a href="#Overlay-amp-Underlay" class="headerlink" title="Overlay &amp; Underlay"></a>Overlay &amp; Underlay</h4><h4 id="加密货币、虚拟货币、通证，数字证书"><a href="#加密货币、虚拟货币、通证，数字证书" class="headerlink" title="加密货币、虚拟货币、通证，数字证书"></a>加密货币、虚拟货币、通证，数字证书</h4><h4 id="主链-母链-子链-侧链"><a href="#主链-母链-子链-侧链" class="headerlink" title="主链/母链/子链/侧链"></a>主链/母链/子链/侧链</h4><p>以下是区块链领域中的一些常见术语，供有兴趣了解区块链技术的初学者参考。</p><p>1、地址(Addresses，加密数字货币地址)加密货币地址用于在网络上发送或接收交易。 地址通常表示为个数字字字符，但也可以表示为可扫描的QR码。</p><p>2、协议分类账(Agreement ledger)是由两方或多方用来协商和达成协议的分布式分类账。</p><p>3、Altcoin是“Bitcoin alternative”(比特币的替代品，或着说山寨版)的缩写。目前，大多数Altcoin都是比特币的分叉，通常比特币区块链的工作量证明(POW)算法有一些细微变化。最出名的Altcoin是莱特币。莱特币引入了原始比特币协议的变化，例如减少块生成时间，增加最大货币数量和不同的哈希算法。</p><p>4、认证分类账(Attestation Ledgers)是分类账，提供持久的协议，承诺或声明记录，提供证据(证明)这些协议，承诺或陈述是人为作出的。</p><p>5、ASIC是“专用集成电路”(Application Specific Integrated Circuit)的缩写。 通常，与GPU相比，ASIC专门用于挖矿，可能会节省大量能源。在比特币中，它们被设计为处理SHA-256散列问题以挖掘新的比特币。</p><p>6、比特币(Bitcoin)是一个众所周知的加密货币，基于POW区块链。</p><p>7、区块链(Blockchain)是一种分布式分类账，由不可更改的数字化记录的数据组成，称为数据块(更像是将数据整理成一张纸)。然后使用加密签名将每个块“链接”到下一个块。这允许块链像分类帐一样使用，可以由具有适当权限的任何人共享和访问。</p><p>8、分组密码(Block cipher)是一种对文本进行加密(以产生密文)的方法，其中密码密钥和算法一次作为一组应用于数据块，而不是一次一个bit。</p><p>9、块高度(Block height)是指块链中连接在一起的块的数量。例如，高度0即是第一块，也就是所谓的成因块。</p><p>10、块奖励(Block reward)给予已成功散列一个事务块的矿工。块奖励可以是硬币和交易费用的混合，取决于所讨论的加密货币使用的策略，以及所有的硬币是否已经被成功开采。比特币网络的当前块奖励是每个块有25个比特币。</p><p>11、中央分类帐(Central ledger)是指由中央机构维护的分类帐。</p><p>12、链式链接(Chain linking)是将两个区块链彼此连接的过程，从而允许在链之间进行交易。这将允许像比特币这样的区块链与其他侧链进行沟通，允许它们之间的资产交换。</p><p>13、密码(cipher)是用于信息加密和/或解密的算法。在通用语言中，“密码”也被用来指代加密消息，也被称为“代码”(code)。</p><p>14、确认(Confirmation)意味着区块链交易已经被网络验证。这是在POW系统(比如比特币)中所谓挖掘的过程发生的。一旦交易被确认，不能被撤销或双重消费。交易的确认越多，执行双重支出攻击就越困难。</p><p>15、共识流程(Consensus Process)是一组对等点，负责维护分布式账本的使用，以达到分类账内容的共识。</p><p>16、一个联盟区块链(Consortium blockchain)是一个共识过程由一组预先选定的节点控制的区块链;例如，可以想象一个由15个金融机构组成的联盟，每个联盟都运行一个节点，其中必须有十个成员在每个块上签字，才能使该块有效。阅读区块链的权利可能是公开的，也可能仅限于参与者。还有一些混合路由，例如块的根哈希值与API一起公开，允许公众成员进行有限数量的查询，并获得区块链状态某些部分的密码证明。这些区块链可能被认为是“半分布式的”。</p><p>17、密码分析(Cryptoanalysis)是研究获得加密信息的含义的方法，而不需要访问通常需要的秘密信息。</p><p>18、加密数字货币(Cryptocurrency)是基于数学的数字货币形式，其中使用加密技术来调节货币单位的生成并验证资金的转移。此外，加密货币独立于中央银行运作。</p><p>19、密码使用法(Cryptography)是指加密和解密信息的过程。</p><p>20、dApp是一个分散的应用程序，必须完全开放源代码，它必须自主运行，并且没有实体控制其大部分代币。</p><p>21、一个DAO(分散的自治组织)可以被认为是一个没有任何人的参与下运行的公司，在一套不可变的商业规则的控制之下。</p><p>22、DAO(是的，与一个DAO有区别)是建立在以太坊上的一个风险投资基金，它引发了一次软/硬分叉。</p><p>23、解密(Decryption)是将密文变成纯文本的过程。</p><p>24、加密(Encryption)是将明文消息(明文)转换成数据流(密文)的过程，使其看起来像一个无意义的随机的比特序列。</p><p>25、以太(Ether)是以太坊区块链的原生代币，它用于支付交易费用、矿工奖励和网络上的其他服务。</p><p>26、以太坊(Ethereum)是一个基于区块链技术的开放式软件平台，支持开发人员撰写智能合约，构建和部署分散式应用程序。</p><p>27、以太坊经典(Ethereum Classic)是现有加密数字货币的分拆，经过硬分叉后的以太坊。</p><p>28、EVM代码是以太坊区块链上的帐户可以包含代码的编程语言。每次向该帐户发送消息时，都会执行与帐户关联的EVM代码，且可以读取/写入存储并自行发送消息。</p><p>29、数字商品(Digital commodity)是一种稀缺的，可电子转让的，无形的，具有市场价值的虚拟商品。</p><p>30、数字身份(Digital identity)是由个人，组织或电子设备在网络空间中采用或声明的在线或网络身份。</p><p>31、分布式账本(Distributed ledger)是分布在多个站点，国家或机构中的一种数据库。记录一个接一个地存储在连续分类账中。分布式账本数据可以通过“许可”或“不许可”来控制谁可以查看它。</p><p>32、难度(Difficulty)，在“POW”挖掘中，验证区块链网络中的区块是非常困难的。在比特币网络中，采矿难度调整为每隔2016个块进行验。这是为了保持块验证时间在十分钟。</p><p>33、双倍支出(Double spend)指的是比特币网络中的一种情况，即有人试图同时向两个不同的收款人发送比特币交易。但是，一旦比特币交易得到确认，就几乎不可能将花费翻倍。特定交易的确认越多，双倍花费比特币就越难。</p><p>34、菲亚特货币(Fiat currency)是指政府宣布为履行财务义务而有效的任何货币(如美元或欧元)。</p><p>35、分叉(Fork)指向同一个父块的2个区块被同时生成的情况，某些部分的矿工看到其中一个区块，其他的矿工则看到另外一个区块。这导致2种区块链同时增长。通常来说，随着在一个链上的矿工得到幸运并且那条链增长的话，所有的矿工都会转到那条链上，数学上分几乎会在4个区块内完结自己。</p><p>36、气体(Gas)是一个与计算步骤大致相当的测量法(以太坊)。每笔交易都需要包括一个Gas限制和一个愿意为每个Gas支付的费用;矿工可以选择进行交易和收费。每个操作都有一个Gas支出;对于大多数操作来说，支出范围在3-10，虽然一些昂贵的操作花费高达700，但一般这种情况下，交易本身花费高达21000。</p><p>37、减半(Halving)：比特币的供应有限，这使得它们成为稀缺的数字商品。将要发行的比特币总量为2100万。每块产生的比特币数量每四年下降50%。这就是所谓的“减半”，最后的减半将在2140年完成。</p><p>38、硬分叉(Hardfork)是对区块链协议的改变，使先前无效的块/交易有效，因此要求所有用户升级其客户端。是当比特币协议规则发生改变，旧节点拒绝接受由新节点创造的区块的情况。违反规则的区块将被忽视，矿工会按照他们的规则集，在他们最后见证的区块之后创建区块。</p><p>39、Hashcash是一个用于限制垃圾邮件和拒绝服务攻击的POW系统，最近以其在比特币(和其他加密货币)中的使用而成为挖掘算法的一部分。</p><p>40、哈希率(Hashrate)是比特币矿工在给定的时间段(通常是一秒)内可执行的哈希值。</p><p>41、首次代币发行(ICO)是一种事件，指新的加密数字货币从总体基础币出售高级代币以换取前期资本。 ICO经常被用于新的加密数字货币的开发者来筹集资金。</p><p>42、分类账(Ledger)是一个仅追加记录的存储器，记录是不可变的，可能比财务记录拥有更多的一般信息。</p><p>43、莱特币(Litecoin)是基于Scrypt 工作量证明网络的点对点加密货币。有时被称为比特币黄金中的白银。</p><p>44、挖掘(Mining)是验证交易并将其添加到区块链的过程。这个使用计算硬件解决密码问题的过程也触发了加密货币的发行。</p><p>45、多重签名(multisig)地址允许多方要求多个密钥授权交易。在创建地址时同意所需的签名数量。多重签名地址对盗窃具有更大的抵抗力。</p><p>46、节点(Node)是连接到区块链网络的任何计算机。</p><p>47、完整节点(Full node)是完全实施区块链的所有规则的节点。</p><p>48、点对点(P2P)是指在高度互连的网络中至少两方之间发生的去中心化交互。 P2P参与者通过一个中介点直接处理彼此。</p><p>49、被许可的分类帐(Permissioned ledger)是行动者必须有权访问的分类帐。被许可的分类帐可能有一个或多个所有者。当添加新记录时，分类账的完整性将通过有限的共识流程进行检查。这是由信任的行动者(例如政府部门或银行)执行的，举个例子——未被许可的分类账使用的共识形成过程会使得维持一个共享记录要简单得多。</p><p>50、被许可的区块链(Permissioned blockchain)提供了高度可验证的数据集，因为共识流程创建了数字签名，各方都可以看到。</p><p>51、私钥(Private key)是一串数据，表明您可以访问特定钱包中的比特币。私钥可以被认为是一个密码;私钥绝不能透露给任何人，因为密钥允许你通过加密签名从你的比特币钱包里支付比特币。</p><p>52、权威证明(Proof of Authority)是私人区块链中的一种共识机制，它基本上为一个客户(或特定数量的客户)提供一个特定的私人密钥，使得区块链中的所有区块都成为可能。</p><p>53、权益证明(Proof of Stake)是工作量证明系统的替代方案，在这种系统中，您使用加密货币的现有股份(您持有货币的数量)来计算您可以挖掘的货币数量。该机制是当创造一个区块时，矿工需要创建一个“币权”交易，交易会按设定的比例把一些币发送给矿工本身，类似利息。</p><p>54、工作量证明(Proof of Work)是一个将挖掘能力与计算能力联系起来的系统。块必须被散列，这本身就是一个简单的计算过程，但是在散列过程中增加了一个额外的变量，使其变得更加困难。当一个块被成功散列时，散列必须花费一些时间和计算量。因此，散列块被认为是工作量的证明。</p><p>55、协议(Protocol)是描述如何传输或交换数据的正式规则集，特别是在整个网络中。</p><p>56、Ripple是建立在分布式账本上的支付网络，可以用来转账任何货币。该网络由支付节点和由当局运营的网关组成。付款是使用一系列的借条进行的，网络基于信任关系。</p><p>57、Scrypt是SHA-256工作系统的一个替代证明，旨在对CPU和GPU矿工特别友好，然而对ASIC矿工没有什么优势。</p><p>58、SHA 256是用作比特币工作证明系统基础的密码函数。</p><p>59、智能合约(Smart contract)是其条款以计算机语言记录而非法定语言的合约。智能合约可以由计算系统自动执行，例如合适的分布式账本系统。智能合约由直接在复制的网络上运行的程序组成。智能合约使用一种编程语言在区块链上对业务规则或合同进行编码，由网络中的所有参与者执行。这些程序在 Hyperledger Fabric 中称为链代码，它们被复制到网络中的每个节点，并由拥有权限的各方调用来传输资产。</p><p>60、软分叉(Softfork)是对比特币协议的一个修改，其中只有以前有效的块/事务被无效。由于旧节点会将新块识别为有效，所以软分叉是向后兼容的。这种分叉只需要大量矿工来升级执行新规则。是当比特币协议规则发生改变，旧的节点并不会意识到规则是不同的，它们将遵循改变后的规则集，继续接受由新节点创造的区块。矿工们可能会在他们完全没有理解，或者验证过的区块上进行工作。</p><p>61、流密码(Stream ciphers)是一种对文本(密文)进行加密的方法，其中密码密钥和算法一次一bit地应用于数据流中的每个二进制数字。</p><p>62、代币(Token)是可以被获取的东西的数字身份。</p><p>63、无代币分类帐(Tokenless ledger)是指不需要本地货币操作的分布式分类帐。</p><p>64、交易区块(Transaction block)是比特币网络上的交易集合，集合成一个块，然后可以将其散列并添加到区块链中。</p><p>65、交易费用(Transaction fees)是对通过比特币网络发送的一些交易征收的小额费用。交易费用授予那些成功散列包含相关交易的块的矿工。</p><p>66、像比特币这样的未经许可的分类账(Unpermissioned ledgers)没有单一的所有者——事实上，它们不能被拥有。未经许可的分类帐的目的是允许任何人向分类帐提供数据，并为拥有分类账的每个人提供相同的副本。</p><p>67、钱包(Wallet)是一个包含私钥集合的文件。</p><p>以上只是初级/中级水平上的常见区块链术语，且由于中英文差异可能会出现错误，若有所遗漏或错误请在下方评论区补充和指正。</p><p>68、区块链应用</p><p>一个区块链应用需要 3 个相互依赖的组件：面向用户的应用、智能合约和账本。顶层是面向用户的应用，用于满足网络参与者的需求。该应用让用户调用智能合约在业务网络中触发交易。智能合约 封装网络的业务逻辑：资产、所有权和传输方式。每次调用智能合约，都会在网络中创建一个交易并更新账本。账本 持有智能合约数据的当前值(如 vehicleOwner=Daisy)，并分发到整个网络。</p><p>69、零知识证明</p><p>指的是证明者能够在不向验证者提供任何有用的信息的情况下，使验证者相信某个论断是正确的。</p><p>“零知识证明”实质上是一种涉及两方或更多方的协议，即两方或更多方完成一项任务所需采取的一系列步骤。证明者向验证者证明并使其相信自己知道或拥有某一消息，但证明过程不能向验证者泄漏任何关于被证明消息的信息。</p><p>70、难度炸弹</p><p>为了确保以太坊的矿工能加入到新链条中来，开发团队引入了”难度炸弹”机制。它会使难度系数呈指数增加以至于让挖矿变得几乎不可能的。</p><p>71、挖矿</p><p>挖矿是反复总计交易，构建区块，并尝试不同的随机数，直到找到一个随机数可以符合工作证明的条件的过程。 如果一个矿工走运并产生一个有效的区块的话，会被授予的一定数量的币（区块中的交易全部费用）作为奖励。而且所有的矿工开始尝试创建新的区块，这个新区块 包含作为父块的最新的区块的散列。</p><p>72、工作量证明</p><p>一种共识机制，该机制是一方（通常称为证明人）出示计算结果，这个结果众所周知是很难计算的但却很容易验证的。通过验证这个结果，任何人都能够确认证明人执行了一定量的计算工作量来产生这个结果。</p><p>73、闪电网络</p><p>一个可扩展的微支付通道网络。交易双方若在区块链上预先设有支付通道，就可以多次、高频、双向地通过轧差方式实现瞬间确认的微支付；双方若无直接的点对点支付通道，只要网络中存在一条连通双方的、由多个支付通道构 成的支付路径，闪电网络也可以利用这条支付路径实现资金在双方之间的可靠转移。</p><p>Block Explorer（区块资源管理器）</p><p>区块资源管理器是一种用来来查看区块上的所有交易（过去和当前）在线工具。 它们提供有用的信息，如网络哈希率和交易增长率。</p><p>Block Height（区块高度）</p><p>连接在区块链上的块数</p><p>Block Reward 积分奖励</p><p>它是在采矿期间成功计算区块中的哈希的矿工的一种激励形式。 在区块链上的交易验证的过程中产生新的币，并且矿工被奖励其中的一部分。</p><p>Central Ledger 中央帐簿</p><p>由中央机构维持的分类帐。</p><p>Confirmation（确认）</p><p>去中心化的一次交易，将其添加到blockchain的成功确认</p><p>Consensus（共识）</p><p>当所有网络参与者同意交易的有效性时，达成共识，确保分布式账本是彼此的精确副本。</p><p>Cryptocurrency 加密货币</p><p>也称为令牌，加密货币是数字资产的呈现方式。</p><p>Cryptographic Hash Function（加密哈希函数）</p><p>密码哈希产生从可变大小交易输入固定大小和唯一哈希值。 SHA-256计算算法是加密散列的一个例子。</p><p>Dapp（去中心化应用程序）是一种开源的应用程序，自动运行，将其数据存储在区块链上，以密码令牌的形式激励，并以显示有价值证明的协议进行操作。</p><p>DAO（去中心化自治组织）</p><p>去中心化自治组织可以被认为是在没有任何人为干预的情况下运行的公司，并将一切形式的控制交给一套不可破坏的业务规则。</p><p>Distributed Ledger（分布式账本）</p><p>分布式账本，数据通过分布式节点网络进行存储。 分布式账本不是必须具有自己的货币，它可能会被许可和私有。</p><p>Distributed Network（分布式网络）</p><p>处理能力和数据分布在节点上而不是拥有集中式数据中心的一种网络。</p><p>Difficulty（容易程度）</p><p>这是指成功挖掘交易信息的数据块的容易程度。</p><p>Digital Signature 数字加密<br>通过公钥加密生成的数字代码，附加到电子传输的文档以验证其内容和发件人的身份</p><p>Double Spending 双重支付<br>当花费一笔钱多于一次支付限额时，就会发生双重支付</p><p>Ethereum（以太坊）<br>Ethereum是一个基于blockchain的去中心化运行智能合约的平台，旨在解决与审查，欺诈和第三方干扰相关的问题。</p><p>EVM（以太坊虚拟机）<br>Ethereum虚拟机（EVM）是一个图灵完整的虚拟机，允许任何人执行任意EVM字节码。 每个Ethereum节点都运行在EVM上，以保持整个块链的一致性。</p><p>Fork（分支）<br>分支可以创建区块链的交叉版本，在网络不同的地方兼容的运行两个区块链。</p><p>Genesis Block 创世区块</p><p>区块链的第一个区块。</p><p>Hard Fork（硬分支）<br>一种使以前无效的交易有效的分支类型，反之亦然。 这种类型的分支需要所有节点和用户升级到最新版本的协议软件。</p><p>Hash（哈希）<br>对输出数据执行散列函数的行为。 这是用于确认货币交易。</p><p>Hash Rate（哈希率）<br>采矿钻机的性能测量值以秒为单位表示。</p><p>Hybrid PoS/PoW（混合PoS / PoW）</p><p>POW（Proof of Work，工作证明）是指获得多少货币，取决于你挖矿贡献的工作量，电脑性能越好，分给你的矿就会越多。POS（Proof of Stake，股权证明）根据你持有货币的量和时间进行利息分配的制度，在POS模式下，你的“挖矿”收益正比于你的币龄，而与电脑的计算性能无关。</p><p>混合PoS / PoW可以将网络上的共享分发算法作为共享证明和工作证明。 在这种方法中，可以实现矿工和选民（持有者）之间的平衡，由内部人（持有人）和外部人（矿工）创建一个基于社区的治理体系。</p><p>Mining（挖矿）<br>挖矿是验证区块链交易的行为。 验证的必要性通常以货币的形式奖励给矿工。 在这个密码安全的繁荣期间，当正确完成计算，采矿可以是一个有利可图的业务。 通过选择最有效和最适合的硬件和采矿目标，采矿可以产生稳定的被动收入形式。</p><p>Multi-Signature 多重签名<br>多重签名地址需要一个以上的密钥来授权交易，从而增加了一层安全性。</p><p>Node（节点）<br>由区块链网络的参与者操作的分类帐的副本。</p><p>Oracles（数据库）<br>Oracle通过向智能合约提供数据，它现实世界和区块链之间的桥梁。</p><p>参考：<br><a href="http://graphics.reuters.com/TECHNOLOGY-BLOCKCHAIN/010070P11GN/index.html" target="_blank" rel="noopener">http://graphics.reuters.com/TECHNOLOGY-BLOCKCHAIN/010070P11GN/index.html</a><br><a href="https://t.cj.sina.com.cn/articles/view/6335372514/1799e1ce200100531v" target="_blank" rel="noopener">https://t.cj.sina.com.cn/articles/view/6335372514/1799e1ce200100531v</a></p><p><a href="https://yeasy.gitbooks.io/blockchain_guide/content/appendix/terms.html" target="_blank" rel="noopener">https://yeasy.gitbooks.io/blockchain_guide/content/appendix/terms.html</a></p><p>第 1 页 区块链小知识第（11）话：<br>共识机制的相关定义介绍Ⅱ•<br>第 2 页 验证池机制/ POOL•<br>第 3 页 51% 攻击/ 51% attack•<br>第 4 页 双重支付/ 双重花费/ 双花/ Double Spending•<br>第 5 页 拜占庭将军问题/ Byzantine Generals Problem / BGP•<br>第 6 页 改进型实用拜占庭容错/ Practical Byzantine Fault Tolerance / PBFT•<br>第 7 页 授权拜占庭容错算法/ Delegated Byzantine Fault Tolerance / dBFT•<br>第 8 页 联邦拜占庭协议/ Federated Byzantine Agreement /</p><p><a href="http://www.lianmenhu.com/blockchain-1266-1" target="_blank" rel="noopener">http://www.lianmenhu.com/blockchain-1266-1</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h4 id=&quot;区块&quot;&gt;&lt;a href=&quot;#区块&quot; class=&quot;headerlink&quot; title=&quot;区块&quot;&gt;&lt;/a&gt;区块&lt;/h4&gt;&lt;h4 id=&quot;区块链&quot;&gt;&lt;a href=&quot;#区块链&quot; class=&quot;headerlink&quot; title=&quot;区块链&quot;&gt;&lt;/a&gt;区块链&lt;/h4&gt;&lt;h
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第三章：区块链的安全风险</title>
+    <link href="https://juniway.net/Blockchain/blockchain-03-security-issues/"/>
+    <id>https://juniway.net/Blockchain/blockchain-03-security-issues/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.412Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="四种类型的攻击"><a href="#四种类型的攻击" class="headerlink" title="四种类型的攻击"></a>四种类型的攻击</h3><ol><li>Peer-to-peer network-based attacks</li><li>Consensus &amp; Ledger-based attacks</li><li>Smart Contract-based attacks</li><li>Wallet-based attacks</li></ol><h2 id="1-Peer-to-Peer-Network-based-Attacks"><a href="#1-Peer-to-Peer-Network-based-Attacks" class="headerlink" title="1. Peer-to-Peer Network-based Attacks"></a>1. Peer-to-Peer Network-based Attacks</h2><p><strong>Eclipse attack</strong><br>A node will depend on “x” number of nodes selected using a Peer selection strategy to have its view of the distributed ledger. But if an attacker can manage to make the node to choose all the “x” number of nodes from his malicious nodes alone, then he can eclipse the original ledger’s view and present his own manipulated ledger to the node.</p><p><img src="https://media.arubanetworks.com/blogs/Blockchain-Eclipse-Attack.jpg" alt=""><br>Source: <a href="http://cs-people.bu.edu/heilman/eclipse/" target="_blank" rel="noopener">http://cs-people.bu.edu/heilman/eclipse/</a></p><p><strong>Sybil attack</strong></p><p>While the Eclipse attack is about eclipsing a user’s view of the true ledger, the Sybil attack targets the whole network. In a Sybil attack, an attacker will flood the network with large number of nodes with pseudonymous identity and try to influence the network. These nodes, though appearing like unrelated individuals, are operated by a single operator at the back. In this case the objective is not to target one user, but a number of nodes or network as whole, and generate a fork in the ledger if possible, allowing the attacker to make double spending and other attacks.</p><h2 id="2-Consensus-Mechanism-and-Mining-based-Attacks"><a href="#2-Consensus-Mechanism-and-Mining-based-Attacks" class="headerlink" title="2. Consensus Mechanism and Mining-based Attacks"></a>2. Consensus Mechanism and Mining-based Attacks</h2><p><strong>Selfish mining attack</strong>: Many blockchains consider the longest chain to be the true latest version of the ledger. So a selfish miner can try to keep building blocks in stealth mode on top of the existing chain, and when he can build a lead of greater than two or more blocks than the current chain in the network, he can publish his private fork, which will be accepted as a new truth as it is the longest chain. He can do transactions in the public network just before publishing his longer stealth chain to reverse the transaction he just did. This effectively provides a small window for the attacker to do double spending based on this ability to build a stealth chain by building sufficient block lead (Finney attack).</p><p><strong>Mining malware</strong>: Malware uses the computing power of unsuspecting victims’ computer to mine cryptocurrencies for hackers. China reported that over a million computers were infected by this malware and helped attackers mine more than 26 million tokens of various cryptocurrencies.</p><p><strong>51% attack</strong>: This attack is possible when a miner or a group of miners controls 51% or more of the mining power of the blockchain network. Though it is very difficult to happen for large networks, the possibility of a 51% attack is higher in small networks. Once a group has majority control over transactions on a blockchain network, it can prevent specific transaction or even reverse older transactions.</p><p><strong>Timejack attack</strong>: Nodes in certain blockchain networks like Bitcoin depend on internal timing derived from median time reported by its peer nodes. For example, you depend on your friends to know the time. Let us say an attacker manages to put a lot of malicious people in your friends’ list, then he can manipulate your time. The first step to this attack can be an Eclipse attack on the target node. Once this attack is complete on a target node, then the target node will not accept blocks from the actual network as the timestamp of the blocks will not be in line with its timestamp. This provides an opportunity for the attacker to be double spending or do transactions with the targeted node as these transactions can’t be submitted to the actual blockchain network.</p><p><strong>Finney attack</strong>: If you can mine a block with one of your transactions in it and keep it in stealth, there is an opportunity for you to double spend the money. If a merchant accepts the unconfirmed transaction, you can transfer him this earlier transacted currency. Next you publish the earlier mined block, which was kept in stealth, before your new transaction is confirmed on network.</p><p><strong>Race attack</strong>: This attack is minor variation of the Finney attack. The difference is that the attacker need not pre-mine the block with his transaction, which he intends to double spend. During the attack, the attacker submits an unconfirmed transaction to a merchant (victim) and simultaneously does another transaction which he broadcasts to the network. It is easier for the attacker to launch the attack if he is directly connected to the merchant’s node. This would give the merchant an illusion that his transaction is the first, but that is never submitted to the blockchain network by the attacker.</p><h2 id="3-Smart-Contract-based-Attacks"><a href="#3-Smart-Contract-based-Attacks" class="headerlink" title="3. Smart Contract-based Attacks"></a>3. Smart Contract-based Attacks</h2><p>Smart contracts are completely automated contracts, which execute transactions in an agreed upon way between participants, with inputs from the real world and without intervention from any middlemen. So once started, a smart contract cannot be stopped. The transaction once completed and written into blockchain becomes immutable. This gives a guarantee to participants of returns based on their performance, as agreed upon while entering the contract. But think what would happen if the Smart Contract has bugs: Millions of dollars are in stake and no one can change it. We are going to look at such attacks or attack vectors relating to smart contracts.</p><p><strong>The DAO attack</strong>: The biggest exploitation in the history of cryptocurrencies is the “THE DAO” hack. Decentralized Autonomous Organization was an ambitious feature of Ethereum. A company called Slock started crowdfunding for a project called “The DAO”. The crowdfunding got an overwhelming response, collecting 12.7 million Ether, valued at $150 million then ($2 billion today). But an attacker identified a vulnerability in the code where by a recursive withdraw function could be executed without checking the settlement of the current transaction. So the attacker started the attack by contributing a small amount and requesting withdrawal with a recursive function. This allowed him to pull out almost $70 million dollars out of the crowdfund.After this the events took an interesting turn. The Ethereum Foundation threatened the attacker to stop the attack and freeze the account. The attacker responded saying that he was playing as per the agreed upon contract and an intervention through a soft or hard fork will be a breach of contract, which he can take to court (Read the Attacker’s open letter.) But he stopped the attack. Later the Ethereum Foundation went with a hard fork to recover the money, though this decision raised many concerns of autonomy of smart contracts. This hard folk resulted in two Ethereum currencies – Ethereum &amp; Ethereum classic and a lot of controversy.</p><h2 id="4-Wallet-based-Attack"><a href="#4-Wallet-based-Attack" class="headerlink" title="4. Wallet-based Attack"></a>4. Wallet-based Attack</h2><p><strong>Parity Multisig Wallet Attack</strong>: This was the case of a vulnerability with the parity client wallet hacked by an attacker resulting in holding up of 500,000 Ether ($77 million today). Wallet contracts are additional logic than can be built on user wallets for regular automated payments. To reduce the gas or transaction fees, the parity Multisig wallet functionality (Multisig wallet is like a joint account in bank with multiple owners) used a centralized Library contract. But they left some critical functions open, resulting in a vulnerability, which was exploited by the attacker. The attacker added his account as owner in the library contract, so for all wallets implemented after a particular date, the attacker became a joint owner. Then he triggered a kill function, which froze the currencies in the wallet. He basically locked $155 million as of that day, forever in cryptographically inaccessible wallets.</p><h3 id="51-攻击"><a href="#51-攻击" class="headerlink" title="51% 攻击"></a>51% 攻击</h3><h3 id="双重花费攻击（分叉攻击）"><a href="#双重花费攻击（分叉攻击）" class="headerlink" title="双重花费攻击（分叉攻击）"></a>双重花费攻击（分叉攻击）</h3><h3 id="贿赂攻击、P-Epsilon-Attack"><a href="#贿赂攻击、P-Epsilon-Attack" class="headerlink" title="贿赂攻击、P+Epsilon Attack"></a>贿赂攻击、P+Epsilon Attack</h3><h3 id="黑名单-Blocklisting"><a href="#黑名单-Blocklisting" class="headerlink" title="黑名单 Blocklisting"></a>黑名单 Blocklisting</h3><h3 id="timejacking"><a href="#timejacking" class="headerlink" title="timejacking"></a>timejacking</h3><h3 id="Sibyl-Attack"><a href="#Sibyl-Attack" class="headerlink" title="Sibyl Attack"></a>Sibyl Attack</h3><h3 id="DDos"><a href="#DDos" class="headerlink" title="DDos"></a>DDos</h3><h3 id="Replay-Attack"><a href="#Replay-Attack" class="headerlink" title="Replay Attack"></a>Replay Attack</h3><h3 id="Routing-Attacks"><a href="#Routing-Attacks" class="headerlink" title="Routing Attacks"></a>Routing Attacks</h3><h3 id="私钥丢失"><a href="#私钥丢失" class="headerlink" title="私钥丢失"></a>私钥丢失</h3><h3 id="代码漏洞：智能合约之殇"><a href="#代码漏洞：智能合约之殇" class="headerlink" title="代码漏洞：智能合约之殇"></a>代码漏洞：智能合约之殇</h3><h3 id="多重签名漏洞"><a href="#多重签名漏洞" class="headerlink" title="多重签名漏洞"></a>多重签名漏洞</h3><h3 id="隐私泄漏"><a href="#隐私泄漏" class="headerlink" title="隐私泄漏"></a>隐私泄漏</h3><h3 id="Vendor-Risk"><a href="#Vendor-Risk" class="headerlink" title="Vendor Risk"></a>Vendor Risk</h3><h3 id="政治风险：审查与监管"><a href="#政治风险：审查与监管" class="headerlink" title="政治风险：审查与监管"></a>政治风险：审查与监管</h3><p>参考：<br><a href="https://blockgeeks.com/guides/hypothetical-attacks-on-cryptocurrencies/" target="_blank" rel="noopener">https://blockgeeks.com/guides/hypothetical-attacks-on-cryptocurrencies/</a><br><a href="https://medium.com/zkcapital/beginners-guide-on-blockchain-security-attacks-part-1-network-ca4e74435723" target="_blank" rel="noopener">https://medium.com/zkcapital/beginners-guide-on-blockchain-security-attacks-part-1-network-ca4e74435723</a><br><a href="https://blogs.arubanetworks.com/solutions/10-blockchain-and-new-age-security-attacks-you-should-know/" target="_blank" rel="noopener">https://blogs.arubanetworks.com/solutions/10-blockchain-and-new-age-security-attacks-you-should-know/</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;四种类型的攻击&quot;&gt;&lt;a href=&quot;#四种类型的攻击&quot; class=&quot;headerlink&quot; title=&quot;四种类型的攻击&quot;&gt;&lt;/a&gt;四种类型的攻击&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;Peer-to-peer network-based attacks&lt;/li&gt;
+&lt;li&gt;
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第五章：P2P 网络技术</title>
+    <link href="https://juniway.net/Blockchain/blockchain-05-p2p-communication/"/>
+    <id>https://juniway.net/Blockchain/blockchain-05-p2p-communication/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.412Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="Gossip-Protocol"><a href="#Gossip-Protocol" class="headerlink" title="Gossip Protocol"></a>Gossip Protocol</h3><h3 id="DHT-Kadmlia"><a href="#DHT-Kadmlia" class="headerlink" title="DHT: Kadmlia"></a>DHT: Kadmlia</h3><h3 id="Overlay-amp-Underlay"><a href="#Overlay-amp-Underlay" class="headerlink" title="Overlay &amp; Underlay"></a>Overlay &amp; Underlay</h3><h3 id="Peer-Discovery"><a href="#Peer-Discovery" class="headerlink" title="Peer Discovery"></a>Peer Discovery</h3>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;Gossip-Protocol&quot;&gt;&lt;a href=&quot;#Gossip-Protocol&quot; class=&quot;headerlink&quot; title=&quot;Gossip Protocol&quot;&gt;&lt;/a&gt;Gossip Protocol&lt;/h3&gt;&lt;h3 id=&quot;DHT-Kadmlia&quot;&gt;
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第六章：数据结构探索</title>
+    <link href="https://juniway.net/Blockchain/blockchain-06-data-structure/"/>
+    <id>https://juniway.net/Blockchain/blockchain-06-data-structure/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.412Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="Merkle-Tree"><a href="#Merkle-Tree" class="headerlink" title="Merkle Tree"></a>Merkle Tree</h4><h4 id="Block-Data-structure"><a href="#Block-Data-structure" class="headerlink" title="Block Data structure"></a>Block Data structure</h4><h4 id="UTXO"><a href="#UTXO" class="headerlink" title="UTXO"></a>UTXO</h4><h4 id="GAS"><a href="#GAS" class="headerlink" title="GAS"></a>GAS</h4>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h4 id=&quot;Merkle-Tree&quot;&gt;&lt;a href=&quot;#Merkle-Tree&quot; class=&quot;headerlink&quot; title=&quot;Merkle Tree&quot;&gt;&lt;/a&gt;Merkle Tree&lt;/h4&gt;&lt;h4 id=&quot;Block-Data-structure&quot;&gt;&lt;a href
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第八章：比特币详解</title>
+    <link href="https://juniway.net/Blockchain/blockchain-08-bitcoin-explained/"/>
+    <id>https://juniway.net/Blockchain/blockchain-08-bitcoin-explained/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.413Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="比特币的交易"><a href="#比特币的交易" class="headerlink" title="比特币的交易"></a>比特币的交易</h4><ul><li>比特币的脚本</li><li>比特币脚本的应用</li><li>比特币的区块</li><li>比特币网络</li><li>限制与优化</li></ul><h4 id="如何储存和使用比特币"><a href="#如何储存和使用比特币" class="headerlink" title="如何储存和使用比特币"></a>如何储存和使用比特币</h4><ul><li>简单的本地储存</li><li>热储存与冷储存</li><li>密钥分存和密钥共享</li><li>在线钱包和交易所</li><li>支付服务</li><li>交易费</li><li>货币兑换市场</li></ul><h4 id="比特币挖矿"><a href="#比特币挖矿" class="headerlink" title="比特币挖矿"></a>比特币挖矿</h4><ul><li>比特币矿工的任务</li><li>挖矿所需硬件</li><li>能源消耗和生态环保</li><li>矿池</li><li>挖矿的激励和策略</li></ul><p>比特币区块验证 -&gt; 交易验证</p><p>提交区块时，必须先验证区块，在验证区块时，先验证区块中包含的交易。</p><p>1）CheckBlock()</p><p>（1）CheckBlockHeader() -&gt; pow<br>（2）CheckMerkleRoot<br>（3）check tx size 交易数量限制<br>（4）最大输出 OpSig</p><p>2) CheckTransaction()</p><p>（1）验证输入和输出<br>交易必须有输入（Input）和输出（Output）</p><p>（2）输出的数值合法<br>不能是负数，也不能超过比特币总量 2100 万</p><p>（3）输入不能重复</p><p>（4）coinbase tx</p><p>对于 coinbase 的 tx，其 scriptSig 的 size 范围限制 2-100<br>如果是普通 tx，则检测每笔 input 的 prevOut 是否为 Null</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h4 id=&quot;比特币的交易&quot;&gt;&lt;a href=&quot;#比特币的交易&quot; class=&quot;headerlink&quot; title=&quot;比特币的交易&quot;&gt;&lt;/a&gt;比特币的交易&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;比特币的脚本&lt;/li&gt;
+&lt;li&gt;比特币脚本的应用&lt;/li&gt;
+&lt;li&gt;比特币的区块&lt;/li&gt;
+&lt;l
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第七章：密码学原理</title>
+    <link href="https://juniway.net/Blockchain/blockchain-07-cryptography/"/>
+    <id>https://juniway.net/Blockchain/blockchain-07-cryptography/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.412Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h4><ul><li>哈希计算</li><li>哈希算法的种类</li><li>区块链中的哈希算法</li></ul><h4 id="公钥加密"><a href="#公钥加密" class="headerlink" title="公钥加密"></a>公钥加密</h4><ul><li>公钥和私钥</li><li>RSA算法</li><li>椭圆曲线密码算法</li></ul><h4 id="编码-解码算法"><a href="#编码-解码算法" class="headerlink" title="编码/解码算法"></a>编码/解码算法</h4><ul><li>Base64 87</li><li>Base58 88</li><li>Base58Check 89</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h4 id=&quot;哈希算法&quot;&gt;&lt;a href=&quot;#哈希算法&quot; class=&quot;headerlink&quot; title=&quot;哈希算法&quot;&gt;&lt;/a&gt;哈希算法&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;哈希计算&lt;/li&gt;
+&lt;li&gt;哈希算法的种类&lt;/li&gt;
+&lt;li&gt;区块链中的哈希算法&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第四章：区块链的设计缺陷</title>
+    <link href="https://juniway.net/Blockchain/blockchain-04-tech-obstacles/"/>
+    <id>https://juniway.net/Blockchain/blockchain-04-tech-obstacles/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.412Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="复杂度-Complexity"><a href="#复杂度-Complexity" class="headerlink" title="复杂度 Complexity"></a>复杂度 Complexity</h3><h3 id="Untested-Code-amp-Untestable-Code"><a href="#Untested-Code-amp-Untestable-Code" class="headerlink" title="Untested Code &amp; Untestable Code"></a>Untested Code &amp; Untestable Code</h3><h3 id="网络规模-Network-size"><a href="#网络规模-Network-size" class="headerlink" title="网络规模 Network size"></a>网络规模 Network size</h3><h3 id="交易成本，网络速度"><a href="#交易成本，网络速度" class="headerlink" title="交易成本，网络速度"></a>交易成本，网络速度</h3><h3 id="网络拥堵：大量交易的确认延迟"><a href="#网络拥堵：大量交易的确认延迟" class="headerlink" title="网络拥堵：大量交易的确认延迟"></a>网络拥堵：大量交易的确认延迟</h3><h3 id="容量贪吃蛇：不断增长的区块数据"><a href="#容量贪吃蛇：不断增长的区块数据" class="headerlink" title="容量贪吃蛇：不断增长的区块数据"></a>容量贪吃蛇：不断增长的区块数据</h3><p>目前区块链存在的问题：</p><p>扩容困难（看比特币扩容战争就知道了）<br>交易很贵 (曾经参投ico，10个ETH转账费用用掉了0.1个ETH)<br>链与链之间缺乏连接<br>区块链近乎重新定义了整个网络架构 ，现有企业应用起来非常困难</p><h3 id="分级设计"><a href="#分级设计" class="headerlink" title="分级设计"></a>分级设计</h3><h3 id="分层设计"><a href="#分层设计" class="headerlink" title="分层设计"></a>分层设计</h3><h3 id="分片设计"><a href="#分片设计" class="headerlink" title="分片设计"></a>分片设计</h3><p>1、分级设计</p><p>　　在比特币扩容争议中，小区块的支持者最常使用的一个支持小区块的逻辑就是应该采用分层设计——主链承当结算层，闪电网络充当支付层，或者称为大额交易走结算层，小额支付走闪电网络。但我觉得主链和闪电网络将这种行驶相同功能，按功能的规模设计分成“分层”，并不能真正称为分层设计，这个应该称为分级设计。</p><p>　　我以前做机械设计的，设计过过滤粉尘的机器，就经常会用到分级设计。使用一个粗孔滤芯，先过滤掉一些大颗粒粉尘，然后再用细孔滤芯，过滤小颗粒粉尘。处理同一类对象但“物理大小”不一样，设计成多级。这样设计的好处在于节省运营成本。如果过滤器不分级，直接按最小颗粒来设计滤芯，那很快就要换滤芯，越细孔的滤芯成本越高。但分级成，使用两级来分担过滤任务，粗孔滤芯更便宜，让粗孔滤芯先过滤掉大粉尘，细孔滤芯压力就小，这样可以节省成本。</p><p>　　分级设计在我们生活中是非常常见的，我们家庭常用的饮用水过滤器就是分级的。比特币扩容方案选择的时候，有人提出使用闪电网络来分流主链的压力，这属于分级设计。因为这种提议，主链和闪电网络行驶的功能是完全一样的，都是发交易的支付行为。虽然有人将主链的交易行为称为“结算”，但这个叫法无法改变行为的功能。</p><p>　　因为比特币主链上发交易的成本是最高的，对个人来说，需要支付矿工费，对比特币系统来说需要所有节点来完整验证交易，需要系统的CPU、带宽、硬盘。而在闪电网络上发交易的成本是较低的，对个人来说，闪电网络里的手续费更低，速度更快，对比特币系统来说，并不需要所有节点去验证闪电网络内的交易，只需要验证进出闪电网络的交易。</p><p>　　同样的，使用offchain钱包来完整同钱包内的转账，也属于分级设计。因为offchain钱包，只是钱包公司自己完整数据的调整就可以了，这和在比特币网络上发交易是完全不一样的成本。</p><p>　　分级设计中，第一级(主链)是根本就不需要关心第二级是什么样子的，但第二级(闪电网络和offchain等)是需要关心主链的。比如闪电网络就需要监视主链，以保证不会出现支付通道的人做广播欺诈。</p><p>　　分级设计中，第二级出了问题，并不会伤害第一级主链。比如offchain钱包被盗了，跟主链毛关系都没有。但反过来则不一样。</p><p>　　分级设计其实是人对成本的考量而催生出来的，并不需要顶层设计，让市场自由博弈就能涌现出来分级解决方案。</p><p>2、分层设计</p><p>　　互联网最成功的分层设计应该是网络协议分层，就是我们熟知的七层网络结构，什么物理层、链路层、网络层……</p><p>　　分层的基本设计原则是：</p><p>　　各层是独立的，各自层做好自己的事即可。</p><p>　　层和层之间的功能是不一样的。</p><p>　　层和层之间的交流都是通过接口通信，只要接口保持不变，层内部的设计可以改变，且不会影响别的层。</p><p>　　目前各种区块链的设计，各种宣称说自己是分层设计的，往往都是不符合上述原理。</p><p>　　比特币比较接近分层设计的思想是侧链的设计原理。侧链可以完整独立设计成和主链完全不一样的功能，比如RSK目标是实现智能合约。而比特币主链实现的核心功能就是UTXO的转账和账本的更新维护。侧链和主链只是通过特定的交易来充当接口。但侧链往往需要关心主链在干吗，主链是不需要关心侧链的。这就是侧链和主链并不是相互独立的。</p><p>　　比特币(包括BTC和BCH)，尤其是BCH的OP_Return就是一个将来非常好的扩展为分层的设计。比特币主链对OP_Return里的数据只关心是否为真，并不关心具体的数据。那OP_Return就可以在里面设计出一整套新的功能，只要这里面的代码最后在BCH主链的交易里为真。而主链和OP_Return设计出来的新层是不需要相互关心的。</p><p>　　很早之前，以太坊的V神就想在OP_Return上实现他的以太坊的智能合约设想，可惜当时被Core开发组限制了。比特现金BCH的开发正在拿OP_Return大做文章。其实比特币的元币协议，就是一个很好的分层设计，只是一直没有被广泛使用起来。但现在我还没有充值理解元币协议，以后搞懂了再来讲。以太坊并不是分层设计，所有的功能都是在同一层上。以太坊所有的Dapp都是在同一套账本层里做事，并没有分层处理。</p><p>　　3、分片设计</p><p>　　分片设计目前还没有做完，无论是在比特币还是在以太坊上，都没有实现。但我可以简单讲下原理。现在比特币网络处理交易是这样的，一个节点收到一波交易，比如1万笔，节点会先将这些交易序列化，即给这些交易编个号排队，然后一笔一笔去验证。如果碰到某一笔验证无法通过，比如需要前置零确认的交易，那就先缓存起来。如果碰到有非法的交易，则直接丢弃。</p><p>　　比特币现在的这种处理交易方式就是串行的，即一个时间点，只能处理一笔交易。这样做就会有很大的瓶颈，单一电脑再牛逼，处理能力也会有上限。那能不能分成两台电脑，比如将1万笔交易，分成两波，5000笔一波，分别发给一台服务器去验证呢?不能!目前比特币还不支持这种并行验证。如何要做到并行验证呢?那就是要讲到分片设计了。比特币的UTXO的“物理实体”是这样的，一笔UTXO在电脑里存的主要数据是以下四个部分：</p><p>　　生成这笔UTXO的交易的txid;</p><p>　　生成这笔UTXO的交易的输出序列号index。因为大部分交易是一个或多个输入，多个输出，第一个输入序列号是0，第二个是1。</p><p>　　锁定脚本lockscript。</p><p>　　是金额value</p><p>　　其中txid是16进制表达，即使用0到F来表达，如果将首字符来分类，0归一类，1归一类……F归一类，就可以分为16类。如果使用首两个字符来分类，00一类，01一类……FF一类，那就可以分为256类……如果使用4个字符呢?16^4类。我们将上述的一类称为一个片，这就是分片。分片后，将一类分给一台电脑去处理，另一类分给另一台去处理……，256片就可以分成256台电脑来处理。而UTXO的txid就是交易的txid，则打包交易的区块，也可以按这种分类来打包，比如分成256片，则同一区块里，可以设成256个分区，一个分区打包一个片。也就是说，UTXO、交易、和区块都可以按同样的规则分片。</p><p>　　这样比特币全网就可以实现节点可选择处理哪一个分片，比如我运行一个节点，我只收、验证和广播特定分片的UTXO、交易和区块。这样就实现了比特币网络的并行扩展。但这种分片还是很复杂的，我上面讲的只是基本的原理，要完成设计是非常复杂的。比如一个UTXO去花费两次，是可以实现不同的txid，然后发到不同的分片，如果分片之间没有机制来通信，则可能会双花成功，但如果分片之间还要为这种攻击大量通信，则还不如不分片呢。</p><p>　　但如果实现了分片，那比特币网络则是可以实现无限扩展，什么百万TPS，都不在话下，什么1M、8M、32M根本就不是事，至少1G区块。因为一台电脑处理不了，可以搞16^n台来处理好了，一个人买不起16^n台电脑(中心化)的话，那就找16^n个人每人买一台好了。</p><p>　　以太坊的分片更复杂，我暂时讲不明白。BCH的开发正在全力开发UTXO分片，我也在努力学习这些知识，以求能贡献一点知识。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;复杂度-Complexity&quot;&gt;&lt;a href=&quot;#复杂度-Complexity&quot; class=&quot;headerlink&quot; title=&quot;复杂度 Complexity&quot;&gt;&lt;/a&gt;复杂度 Complexity&lt;/h3&gt;&lt;h3 id=&quot;Untested-Code-amp
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第九章：智能合约</title>
+    <link href="https://juniway.net/Blockchain/blockchain-09-smart-contract/"/>
+    <id>https://juniway.net/Blockchain/blockchain-09-smart-contract/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.413Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第十一章：跨链与通证经济</title>
+    <link href="https://juniway.net/Blockchain/blockchain-11-cross-chain-and-token-economy/"/>
+    <id>https://juniway.net/Blockchain/blockchain-11-cross-chain-and-token-economy/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.413Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="去中心化交易所"><a href="#去中心化交易所" class="headerlink" title="去中心化交易所"></a>去中心化交易所</h4><h4 id="公证人机制（Notary-schemes）"><a href="#公证人机制（Notary-schemes）" class="headerlink" title="公证人机制（Notary schemes）"></a>公证人机制（Notary schemes）</h4><ul><li>瑞波Interledger协议</li></ul><h4 id="侧链-中继（Sidechains-relays）"><a href="#侧链-中继（Sidechains-relays）" class="headerlink" title="侧链/中继（Sidechains/relays）"></a>侧链/中继（Sidechains/relays）</h4><ul><li>侧链：BTC Relay</li><li>中继：Polkadot, Cosmos</li></ul><h4 id="哈希锁定（Hash-locking）"><a href="#哈希锁定（Hash-locking）" class="headerlink" title="哈希锁定（Hash-locking）"></a>哈希锁定（Hash-locking）</h4><ul><li>Lighting network</li></ul><h4 id="分布式私钥控制（Distributed-private-key-control）"><a href="#分布式私钥控制（Distributed-private-key-control）" class="headerlink" title="分布式私钥控制（Distributed private key control）"></a>分布式私钥控制（Distributed private key control）</h4><ul><li>WanChain</li></ul><p>参考：<br><a href="https://36kr.com/p/5117175" target="_blank" rel="noopener">https://36kr.com/p/5117175</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h4 id=&quot;去中心化交易所&quot;&gt;&lt;a href=&quot;#去中心化交易所&quot; class=&quot;headerlink&quot; title=&quot;去中心化交易所&quot;&gt;&lt;/a&gt;去中心化交易所&lt;/h4&gt;&lt;h4 id=&quot;公证人机制（Notary-schemes）&quot;&gt;&lt;a href=&quot;#公证人机制（Notary
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第十章：以太坊详解</title>
+    <link href="https://juniway.net/Blockchain/blockchain-10-ethereum-explained/"/>
+    <id>https://juniway.net/Blockchain/blockchain-10-ethereum-explained/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.413Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第十二章：匿名货币</title>
+    <link href="https://juniway.net/Blockchain/blockchain-12-anonymous-coin/"/>
+    <id>https://juniway.net/Blockchain/blockchain-12-anonymous-coin/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.413Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="匿名的基础知识"><a href="#匿名的基础知识" class="headerlink" title="匿名的基础知识"></a>匿名的基础知识</h4><ul><li>如何对比特币去匿名化</li></ul><h4 id="零知识证明"><a href="#零知识证明" class="headerlink" title="零知识证明"></a>零知识证明</h4><h4 id="混币"><a href="#混币" class="headerlink" title="混币"></a>混币</h4><ul><li>分布式混币</li></ul><h4 id="零币和零钞"><a href="#零币和零钞" class="headerlink" title="零币和零钞"></a>零币和零钞</h4>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h4 id=&quot;匿名的基础知识&quot;&gt;&lt;a href=&quot;#匿名的基础知识&quot; class=&quot;headerlink&quot; title=&quot;匿名的基础知识&quot;&gt;&lt;/a&gt;匿名的基础知识&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;如何对比特币去匿名化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;零知识证明&quot;&gt;&lt;a href
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第十三章：另类币</title>
+    <link href="https://juniway.net/Blockchain/blockchain-13-alt-coins/"/>
+    <id>https://juniway.net/Blockchain/blockchain-13-alt-coins/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.413Z</updated>
+    
+    <content type="html"><![CDATA[<p>另类币和加密货币生态系统<br>另类币的历史和诱因<br>几种另类币的详细介绍<br>比特币和另类币的关系<br>另类币的夭折与共同挖矿<br>不可分割的交叉链互换<br>侧链——基于比特币的另类币<br>以太坊和智能合约</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;另类币和加密货币生态系统&lt;br&gt;另类币的历史和诱因&lt;br&gt;几种另类币的详细介绍&lt;br&gt;比特币和另类币的关系&lt;br&gt;另类币的夭折与共同挖矿&lt;br&gt;不可分割的交叉链互换&lt;br&gt;侧链——基于比特币的另类币&lt;br&gt;以太坊和智能合约&lt;/p&gt;
+
+      
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第十五章：DApp 应用开发</title>
+    <link href="https://juniway.net/Blockchain/blockchain-15-DApps/"/>
+    <id>https://juniway.net/Blockchain/blockchain-15-DApps/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.413Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>第十六章：区块链数据统计</title>
+    <link href="https://juniway.net/Blockchain/blockchain-16-statistic/"/>
+    <id>https://juniway.net/Blockchain/blockchain-16-statistic/</id>
+    <published>2019-05-22T15:11:01.000Z</published>
+    <updated>2019-12-10T06:19:50.413Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+      <category term="Blockchain" scheme="https://juniway.net/categories/Blockchain/"/>
+    
+    
+  </entry>
+  
+</feed>

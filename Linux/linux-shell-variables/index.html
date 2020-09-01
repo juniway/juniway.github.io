@@ -1,0 +1,810 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Advanced Shell Variables | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="Bash 变量只有两种类型，字符串和数组。 变量的赋值与引用 变量通过等于号= (左右两边无空格)来赋值，通过 $ 来引用, 引用未定义过的变量，那么会以空字符取代。 数组变量的赋值：  Arr[index]=value declare -a Arr Arr=(value1 value2 … valueN) 注意：每个 value 以空格隔开e.g.ch=(1 2 3 4)echo “${ch[0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Advanced Shell Variables">
+<meta property="og:url" content="https://juniway.net/Linux/linux-shell-variables/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="Bash 变量只有两种类型，字符串和数组。 变量的赋值与引用 变量通过等于号= (左右两边无空格)来赋值，通过 $ 来引用, 引用未定义过的变量，那么会以空字符取代。 数组变量的赋值：  Arr[index]=value declare -a Arr Arr=(value1 value2 … valueN) 注意：每个 value 以空格隔开e.g.ch=(1 2 3 4)echo “${ch[0">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-03-25T23:18:36.176Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Advanced Shell Variables">
+<meta name="twitter:description" content="Bash 变量只有两种类型，字符串和数组。 变量的赋值与引用 变量通过等于号= (左右两边无空格)来赋值，通过 $ 来引用, 引用未定义过的变量，那么会以空字符取代。 数组变量的赋值：  Arr[index]=value declare -a Arr Arr=(value1 value2 … valueN) 注意：每个 value 以空格隔开e.g.ch=(1 2 3 4)echo “${ch[0">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Linux/linux-shell-variables/" title="Advanced Shell Variables" itemprop="url">Advanced Shell Variables</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-01-28T11:51:48.000Z"> 2016-01-28</time>
+    <span class="post-count">字数 2.5k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>Bash 变量只有两种类型，字符串和数组。</p>
+<p>变量的赋值与引用</p>
+<p>变量通过等于号<code>=</code> (左右两边无空格)来赋值，通过 <code>$</code> 来引用, 引用未定义过的变量，那么会以空字符取代。</p>
+<p>数组变量的赋值：</p>
+<ul>
+<li>Arr[index]=value</li>
+<li>declare -a Arr</li>
+<li>Arr=(value1 value2 … valueN) 注意：每个 value 以空格隔开<br>e.g.<br>ch=(1 2 3 4)<br>echo “${ch[0]}”</li>
+</ul>
+<p>注：数组下标的范围没有任何限制,同时也不必使用连续的分量.</p>
+<p>关联数组：</p>
+<ul>
+<li>declare -A Map</li>
+</ul>
+<p>关联数组赋值：</p>
+<pre><code>Map=([x]=a, [y]=b)</code></pre><p>往现有数组批量添加元素：</p>
+<pre><code>Arr+=(a b c)
+Map+=([a]=1 [b]=2)</code></pre><p>取值（引用）</p>
+<pre><code>${Arr[INDEX]}
+${Map[KEY]}</code></pre><p>${A[@]} 展开成所有的变量，而<strong>获取数组长度</strong>使用 ${#A[@]}</p>
+<p>切片：</p>
+<pre><code>${ARY[@]:N:M}   注：N 是 offset，M 是 length</code></pre><p>返回索引，相当于keys()：</p>
+<pre><code>${!MAP[@]}</code></pre><p>More examples:</p>
+<pre><code>declare -a Arr
+declare -A Map
+Map+=([a]=1 [b]=2)
+Arr+=(a b c)
+
+echo ${Arr[1]}
+echo ${Map[a]}
+echo &quot;${Arr[@]}&quot;
+echo &quot;${Map[@]}&quot;
+echo &quot;${Arr[@]:0:1}&quot;
+echo &quot;${!Map[@]}&quot;
+
+Arr[4]=a
+echo ${Arr[@]}
+echo ${Arr[3]}</code></pre><p><strong>与变量有关的内建命令（关键字）</strong></p>
+<p>(1) declare 和 typeset.两者具有一样的功能.其选项有:</p>
+<p>[-/+]a    设置/撤消变量的数组属性<br>[-/+]i    设置/撤消变量的整数属性<br>[-/+]r    设置/撤消变量的只读属性<br>[-/+]x    设置/撤消变量的输出属性<br>-p var    显示变量属性</p>
+<p>(2) export 和 local.</p>
+<p>export 把变量输出到环境中,用法为:</p>
+<pre><code>export name
+export name=value</code></pre><p>export 的作用: 当Bash shell执行一个 程序时,将首先为该程序建立一个新的执行环境,称为子shell,<br>在Bash Shell中变量都是局部的,即它们只是在创建它们的子 Shell中是有意义的,使用export后,变量被设置为全局变量,这时可以被其它子Shell所识别</p>
+<p>local 标记变量为局部的(如只能被函数内部使用),用法为:</p>
+<pre><code>local name
+local name=value</code></pre><p>(3) readonly.</p>
+<p>指定变量为只读,执行后,改变量不能被再次赋值,用法为:</p>
+<pre><code>readonly name</code></pre><h4 id="位置变量-或-Shell-参数"><a href="#位置变量-或-Shell-参数" class="headerlink" title="位置变量 或 Shell 参数"></a>位置变量 或 Shell 参数</h4><p>Bash Shell 在解释用户命令时，会把命令行的第一元素（也即脚本或者命令本身）个作为 $0, 而其它字作为参数通过位置变量传递给程序.$1,…,$9分别代表第一,…,九个参数.<br>其中1-9是真正的参数名，”$”符只是用来标识变量的替换。</p>
+<p>其它的还有:<br>$#    送给命令的参数个数<br>$@    所有的参数，每个用双括号括起<br>$*    所有的参数作为一个整体，用双括号括起</p>
+<p>(1) 与 Shell 自身有关的常用变量<br>LINENO       正在执行的命令在脚本中的行号<br>PWD          用户当前目录的全名<br>OLDPWD       最近一次执行cd之前，用户当前目录的全名<br>PPID         父进程ID<br>$            当前进程ID<br>RANDOM       随机数(范围0-32767)<br>SECONDS      Bash Shell的运行时间,单位是秒<br>REPLY        select和read命令使用,以后会讲到<br>OPTARG<br>ORTIND       这两个变量由getopt命令设置<br>UID          当前用户的User ID<br>_            上一条命令使用的最后一个参数</p>
+<p>(2) 影响Shell行为的一些常用环境变量:</p>
+<p>PATH         命令搜索路径,以冒号为分隔符.注意与DOS下不同的是, 当前目录不在系统路径里<br>HOME         用户home目录的路径名,是cd命令的默认参数<br>COLUMNS      定义了命令编辑模式下可使用命令行的长度<br>EDITOR       默认的行编辑器<br>VISUAL       默认的可视编辑器<br>FCEDIT       命令fc使用的编辑器<br>HISTFILE     命令历史文件<br>HISTSIZE     命令历史文件中最多可包含的命令条数<br>HISTFILESIZE 命令历史文件中包含的最大行数<br>IFS          定义SHELL使用的分隔符<br>LOGNAME      用户登录名<br>MAIL         指向一个需要SHELL监视其修改时间的文件.当该文件修改后, SHELL将发消息You hava mail给用户<br>MAILCHECK    SHELL检查MAIL文件的周期,单位是秒<br>MAILPATH     功能与MAIL类似.但可以用一组文件,以冒号分隔,每个文件后 可跟一个问号和一条发向用户的消息<br>SHELL        SHELL的路径名<br>TERM         终端类型<br>TMOUT        SHELL自动退出的时间,单位为秒,若设为0则禁止SHELL自动退出<br>PROMPT_COMMAND       指定在主命令提示符前应执行的命令<br>PS1          主命令提示符<br>PS2          二级命令提示符,命令执行过程中要求输入数据时用<br>PS3          select的命令提示符<br>PS4          调试命令提示符<br>MANPATH      寻找手册页的路径,以冒号分隔<br>LD_LIBRARY_PATH      寻找库的路径,以冒号分隔</p>
+<h4 id="Bash中对变量的操作"><a href="#Bash中对变量的操作" class="headerlink" title="Bash中对变量的操作"></a>Bash中对变量的操作</h4><p>Bash Shell可以进行变量的条件替换，即只有某种条件发生时才进行替换，替换条件放在{}中.<br>(1) ${value:-word}<br>    当变量未定义或者值为空时,返回值为word的内容,否则返回变量的值.<br>(2) ${value:=word}<br>    与前者类似,只是若变量未定义或者值为空时,在返回word的值的同时将 word赋值给value<br>(3) ${value:?message}<br>若变量已赋值的话,正常替换.否则将消息message送到标准错误输出(若此替换出现在Shell程序中,那么该程序将终止运行)</p>
+<p>Bash中有一项特性，你可以方便地检查某个变量是否设置了，如果没有设置，就赋予一个默认值。尤其在处理环境变量的时候，这项特性会非常有用。<br>语法是 ${VAR:=VALUE}。此外，还有一个相似的语法，${VAR:=VALUE}和${VAR：=VALUE}。</p>
+<p>下面展示下两者的区别</p>
+<pre><code># expand to default variable
+echo ${NULL-&quot;Not null&quot;} # Not null
+echo ${NULL} #
+
+# set default variable
+echo ${NIL=&quot;Not nil&quot;} # Not nil
+echo ${NIL} # Not nil</code></pre><p>最后介绍一个，当目标变量不存在时，指定报错信息的语法。</p>
+<pre><code>echo ${TARGET?Not Found} # 当$TARGET不存在时，显示TARGET: Not Found，并结束程序。</code></pre><p><strong>大小写变换</strong></p>
+<pre><code>HI=HellO
+
+echo &quot;$HI&quot; # HellO
+echo ${HI^} # HellO
+echo ${HI^^} # HELLO
+echo ${HI,} # hellO
+echo ${HI,,} # hello
+echo ${HI~} # hellO
+echo ${HI~~} #hELLo</code></pre><p>^大写，,小写， ~大小写切换<br>重复一次只修改首字母，重复两次则应用于所有字母。</p>
+<h3 id="Advance-Variable-Operations"><a href="#Advance-Variable-Operations" class="headerlink" title="Advance Variable Operations"></a>Advance Variable Operations</h3><ol>
+<li>Variable Extension （变量扩展)</li>
+</ol>
+<p>基本形式:${var_name}<br>变量扩展含义:一种简易的条件判断,对不同的条件赋予变量不同的值替换.它和变量存在与否的关系很大.</p>
+<p>1.1 测试变量是否存在的基本用法<br>语法: ${待测变量-默认值}<br>说明:若待测变量不存在则符合判断条件,以传回默认值作为处置.<br>解析:若待测变量不存在则返回默认值,否则返回变量的值</p>
+<p>实例:</p>
+<pre><code>$ unset a
+$ echo ${a-&apos;default&apos;}
+default</code></pre><p>1.2 测试变量不存在或其值为空时传回一个默认值<br>语法:${a:-default}<br>实例:</p>
+<pre><code>$ a=
+$ echo ${a:-&apos;default&apos;}
+default</code></pre><p>1.3 测试变量不存在或其值为空给变量赋予一个默认值<br>语法:${待测变量:=默认值}<br>实例:</p>
+<pre><code>$ a=
+$ echo ${a:=&apos;default&apos;}
+default
+$ echo $a
+default</code></pre><p>1.4 测试变量不存在或其值为空,输出一个提示信息<br>语法:${待测变量:?提示信息}<br>实例:</p>
+<pre><code>$ a=
+$ echo r={a:?Not Found}
+Not Found</code></pre><p>1.5 测试变量存在且为非空则返回真值<br>语法:${待测变量:+真值}<br>实例:</p>
+<pre><code>$ a=hello
+$ echo ${a:+world}
+world</code></pre><dl><dt><strong>总结：</strong><br>符号     作用</dt><dd>判断变量是否为空，若为空则为真</dd></dl><ul>
+<li>正向，判断变量是否存在且不为空，若存在且不为空则为真</li>
+</ul>
+<ul>
+<li>反向，判断变量是否不存在，若不存在则为空<br>=       赋值，<br>?       提示信息</li>
+</ul>
+<p>2.取字符串切片，获得字符串长度</p>
+<p>2.1 取字符串切片<br>语法:<br>[1].${变量:开始的位置索引}<br>作用：截取从指定的位置开始到字符串结束的所有字符,开始字符的索引为0<br>实例：</p>
+<pre><code>$ str=&quot;hello world&quot;
+$ echo ${str:6}
+world</code></pre><p>[2].${变量:起始位置:长度}<br>作用：截取从指定的起始位置开始的指定长度的字符串。<br>实例：</p>
+<pre><code>$ str=&quot;hello world&quot;
+$ echo ${str:6:2}
+wo</code></pre><p>2.2 计算字符串长度<br>语法：${ #变量名称 }<br>实例:</p>
+<pre><code>$ str=&quot;hello world&quot;
+$ echo ${ #str }
+11</code></pre><p>3.对比样式<br>目的:截取变量值(字符串)的某一个部分<br>做法:将符合样式的部分字符串删除或替换</p>
+<p>3.1 由字符串前面开始对比删除最短的相符者<br>语法:${待测变量#样式}<br>说明:从待测变量的值的左边开始对比，删除最短符合样式的字符串<br>实例：</p>
+<pre><code>$ filename=&quot;/usr/sbin/ntpdate&quot;
+$ echo ${filename#/*/}
+sbin/ntpdate</code></pre><p>3.2 由字符串前面开始对比删除最长的相符者<br>语法:${待测变量##样式}<br>实例:</p>
+<pre><code>$ filename=&quot;/usr/sbin/ntpdate&quot;
+$ echo ${filename##/*/}
+ntpdate</code></pre><p>3.3 由字符串后面开始对比删除最短的相符者<br>语法:${待测变量%样式}<br>实例:</p>
+<pre><code>$ filename=&quot;/usr/sbin/ntpdate&quot;
+$ echo ${filename%/*}
+/usr/sbin</code></pre><p>3.4 由字符串后面开始对比删除最长的相符者<br>语法:${待测变量%%样式}<br>实例:</p>
+<pre><code>$ filename=&quot;hello/usr/sbin/ntpdate&quot;
+$ echo ${filename%%/*}
+hello</code></pre><p>4.替换或删除部分字符串<br>4.1 只替换找到的第一个字符串<br>语法:${待测变量/样式/替换}<br>实例：</p>
+<pre><code>$ str=&quot;hello hello&quot;
+$ echo ${str/hello/world}
+world hello</code></pre><p>4.2 替换找到的所有样式字符串<br>语法:${待测变量//样式/替换}<br>实例：</p>
+<pre><code>$ str=&quot;hello hello&quot;
+$ echo ${str/hello/world}
+world world</code></pre><p>4.3 删除第一个指定的字符串<br>语法:${待测变量/要删除的字符串/}<br>实例:</p>
+<pre><code>$ str=&quot;hello hello&quot;
+$ echo ${str/hello/}
+hello</code></pre><p>4.4 删除所有指定的字符串<br>语法:${待测变量//要删除的变量/}<br>实例:</p>
+<pre><code>$ str=&quot;hello world hello&quot;
+$ echo ${str//hello/}
+world</code></pre><p>5.命令扩展<br>语法:$(命令)<br>实例: time=$(date) 等价 time=<code>date</code></p>
+<p>6.算术扩展<br>语法:$((算术))<br>实例：</p>
+<pre><code>$ echo &quot;a=$((5*5))&quot;
+a=25</code></pre><p><strong>Reference</strong><br><a href="http://blog.chinaunix.net/uid-338594-id-2131863.html" target="_blank" rel="noopener">http://blog.chinaunix.net/uid-338594-id-2131863.html</a><br><a href="http://blog.csdn.net/shallowgrave/article/details/12423239" target="_blank" rel="noopener">http://blog.csdn.net/shallowgrave/article/details/12423239</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Linux/linux-shell-variables/" data-title="Advanced Shell Variables | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Linux/linux-fish-programming/" title="Fish Shell Programming">
+  <strong>Prev：</strong><br>
+  <span>
+  Fish Shell Programming</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Programming/test-stress-test/" title="How to perform stress test?">
+ <strong>Next：</strong><br>
+ <span>How to perform stress test?
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

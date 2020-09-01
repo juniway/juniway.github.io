@@ -1,0 +1,778 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>两种高效的服务器设计模型：Reactor 和 Proactor 模型 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="在编写服务端软件的时候，如何处理各种 I/O 事件是其中很重要的一部分。在 Unix Network Programming 一书中介绍了 5 种Unix/Linux下可用的 I/O 编程模型：  1) 阻塞式 I/O 2) 非阻塞式 I/O 3) I/O 复用 4) 信号驱动式 I/O 5) 异步 I/O。  这 5 种 I/O 模型都是基本的 I/O 编程模型，我们可以单独使用其中一种，也可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="两种高效的服务器设计模型：Reactor 和 Proactor 模型">
+<meta property="og:url" content="https://juniway.net/Programming/network-programming-reactor-proactor/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="在编写服务端软件的时候，如何处理各种 I/O 事件是其中很重要的一部分。在 Unix Network Programming 一书中介绍了 5 种Unix/Linux下可用的 I/O 编程模型：  1) 阻塞式 I/O 2) 非阻塞式 I/O 3) I/O 复用 4) 信号驱动式 I/O 5) 异步 I/O。  这 5 种 I/O 模型都是基本的 I/O 编程模型，我们可以单独使用其中一种，也可以">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1452123-35a5505c0d9928f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1452123-16bac3419936124b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1452123-bfb7ef28b21ba29e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1452123-306883d5deec0b56?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1452123-d5bb25d670d1285b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.440Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="两种高效的服务器设计模型：Reactor 和 Proactor 模型">
+<meta name="twitter:description" content="在编写服务端软件的时候，如何处理各种 I/O 事件是其中很重要的一部分。在 Unix Network Programming 一书中介绍了 5 种Unix/Linux下可用的 I/O 编程模型：  1) 阻塞式 I/O 2) 非阻塞式 I/O 3) I/O 复用 4) 信号驱动式 I/O 5) 异步 I/O。  这 5 种 I/O 模型都是基本的 I/O 编程模型，我们可以单独使用其中一种，也可以">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1452123-35a5505c0d9928f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Programming/network-programming-reactor-proactor/" title="两种高效的服务器设计模型：Reactor 和 Proactor 模型" itemprop="url">两种高效的服务器设计模型：Reactor 和 Proactor 模型</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-09-25T13:11:07.000Z"> 2016-09-25</time>
+    <span class="post-count">字数 6.4k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>在编写服务端软件的时候，如何处理各种 I/O 事件是其中很重要的一部分。在 Unix Network Programming 一书中介绍了 5 种Unix/Linux下可用的 I/O 编程模型：</p>
+<ul>
+<li>1) 阻塞式 I/O</li>
+<li>2) 非阻塞式 I/O</li>
+<li>3) I/O 复用</li>
+<li>4) 信号驱动式 I/O</li>
+<li>5) 异步 I/O。</li>
+</ul>
+<p>这 5 种 I/O 模型都是基本的 I/O 编程模型，我们可以单独使用其中一种，也可以组合使用。其中，前四种都是同步模型，最后一种是异步模型。为了应对高并发量的情形，在经典 C10K Problem 一文中另外总结了 5 种高性能的 I/O 编程模型，它们是：</p>
+<ul>
+<li>1) 单线程非阻塞式水平触发 I/O (Serve many clients with each thread, and use nonblocking I/O and level-triggered readiness notification)</li>
+<li>2) 单线程非阻塞式边沿触发 I/O (Serve many clients with each thread, and use nonblocking I/O and readiness change notification)</li>
+<li>3) 多线程异步 I/O 模型 (Serve many clients with each server thread, and use asynchronous I/O)</li>
+<li>4) 单个服务线程对应单个客户 (Serve one client with each server thread)</li>
+<li>5) 将服务线程放到内核 (Build the server code into the kernel)。</li>
+</ul>
+<p>本文下面将要介绍的两种模型都是基于 I/O 多路复用的单线程处理模型。</p>
+<h4 id="Reactor-模式"><a href="#Reactor-模式" class="headerlink" title="Reactor 模式"></a>Reactor 模式</h4><p>Reactor 模式是处理并发 I/O 比较常见的一种模式，用于同步 I/O，其核心思想是将所有要处理的 I/O 事件注册到一个中心 I/O 多路复用器上，同时主线程/进程阻塞在多路复用器上；一旦有 I/O 事件到来或是准备就绪(文件描述符或socket可读、写)，多路复用器返回并将事先注册的相应 I/O 事件分发到对应的处理器中。</p>
+<p>Reactor是一种事件驱动机制，和普通函数调用的不同之处在于：应用程序不是主动的调用某个API完成处理，而是恰恰相反，Reactor 逆置了事件处理流程，应用程序需要事先提供相应的接口并注册到 Reactor 上，如果相应的事件发生，Reactor 将主动调用应用程序注册的接口，这些接口又称为“回调函数”。用“好莱坞原则”来形容Reactor再合适不过了：“不要打电话给我们，我们会打电话通知你。”</p>
+<p>Reactor 模式有三个重要的组件：</p>
+<ul>
+<li>多路复用器：由操作系统提供，在 Linux 上一般是 select, poll, epoll 等系统调用。</li>
+<li>事件分发器：将多路复用器中返回的就绪事件分到对应的处理函数中。</li>
+<li>事件处理器：负责处理特定事件的处理函数。</li>
+</ul>
+<p>因为这种模型经常使用，所有不少人对简单的系统调用做了一层封装，形成跨平台的事件处理库，比较典型的有:<a href="http://libevent.org/" target="_blank" rel="noopener">libevent</a>，<a href="http://software.schmorp.de/pkg/libev.html" target="_blank" rel="noopener">libev</a>，<a href="http://www.boost.org/" target="_blank" rel="noopener">boost asio</a> 等。</p>
+<p>Reactor 中文翻译成反应器模式或者反应堆模式，通常，可以直接叫 Reactor 模式。其实我觉着叫应答者模式更好理解一些。通过了解，这个模式更像一个侍卫，一直在等待你的召唤，或者叫召唤兽。</p>
+<p>并发系统通常使用 Reactor 模式来代替常用的多线程的处理方式，节省系统的资源，提高系统的吞吐量。</p>
+<p>Reactor 模式与 Observer 模式在某些方面极为相似：当一个主体发生改变时，所有依属体都得到通知。不过，观察者模式与单个事件源关联，而反应器模式则与多个事件源关联 。</p>
+<p>在 Reactor 模式中，有5个关键的参与者：</p>
+<ul>
+<li>描述符（handle）：由操作系统提供的资源，用于识别每一个事件，如Socket描述符、文件描述符、信号的值等。在 Linux 中，它用一个整数来表示。事件可以来自外部，如来自客户端的连接请求、数据等。事件也可以来自内部，如信号、定时器事件。</li>
+<li>同步事件多路分离器（event demultiplexer）：事件的到来是随机的、异步的，无法预知程序何时收到一个客户连接请求或收到一个信号。所以程序要循环等待并处理事件，这就是事件循环。在事件循环中，等待事件一般使用I/O复用技术实现。在linux系统上一般是select、poll、epol_waitl等系统调用，用来等待一个或多个事件的发生。I/O框架库一般将各种I/O复用系统调用封装成统一的接口，称为事件多路分离器。调用者会被阻塞，直到分离器分离的描述符集上有事件发生。</li>
+<li>事件处理器（event handler）：I/O框架库提供的事件处理器通常是由一个或多个模板函数组成的接口。这些模板函数描述了和应用程序相关的对某个事件的操作，用户需要继承它来实现自己的事件处理器，即具体事件处理器。因此，事件处理器中的回调函数一般声明为虚函数，以支持用户拓展。</li>
+<li>具体的事件处理器（concrete event handler）：是事件处理器接口的实现。它实现了应用程序提供的某个服务。每个具体的事件处理器总和一个描述符相关。它使用描述符来识别事件、识别应用程序提供的服务。</li>
+<li>Reactor 管理器（reactor）：定义了一些接口，用于应用程序控制事件调度，以及应用程序注册、删除事件处理器和相关的描述符。它是事件处理器的调度核心。 Reactor管理器使用同步事件分离器来等待事件的发生。一旦事件发生，Reactor管理器先是分离每个事件，然后调度事件处理器，最后调用相关的模 板函数来处理这个事件。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1452123-35a5505c0d9928f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>可以看出，Reactor 管理器并不是应用程序负责等待事件、分离事件和调度事件。Reactor 并没有被具体的事件处理器调度，而是管理器调度具体的事件处理器，由事件处理器对发生的事件作出处理，这就是 Hollywood 原则。应用程序要做的仅仅是实现一个具体的事件处理器，然后把它注册到 Reactor 管理器中。接下来的工作由管理器来完成：如果有相应的事件发生，Reactor 会主动调用具体的事件处理器，由事件处理器对发生的事件作出处理。</p>
+<p>应用场景<br>场景：长途客车在路途上，有人上车有人下车，但是乘客总是希望能够在客车上得到休息。传统做法：每隔一段时间（或每一个站），司机或售票员对每一个乘客询问是否下车。Reactor做法：汽车是乘客访问的主体（Reactor），乘客上车后，到售票员（acceptor）处登记，之后乘客便可以休息睡觉去了，当到达乘客所要到达的目的地时（指定的事件发生，乘客到了下车地点），售票员将其唤醒即可。</p>
+<p>为什么使用 Reactor<br>网络编程为什么要用反应堆？有了 I/O 复用，有了 epoll 已经可以使服务器并发几十万连接的同时，维持高 TPS 了，难道这还不够吗？<br>答案是，技术层面足够了，但在软件工程层面却是不够的。</p>
+<p>程序使用 IO 复用的难点在哪里呢？<br>1个请求可能由多次 IO 处理完成，但相比传统的单线程完整处理请求生命期的方法，IO复用在人的大脑思维中并不自然，因为，程序员编程中，处理请求A的时候，假定A请求必须经过多个IO操作A1-An（两次IO间可能间隔很长时间），每经过一次IO操作，再调用IO复用时，IO复用的调用返回里，非常可能不再有A，而是返回了请求B。即请求A会经常被请求B打断，处理请求B时，又被C打断。这种思维下，编程容易出错。</p>
+<p>形象例子：<br>本部分和下部分内容来自：<a href="http://blog.csdn.net/russell_tao/article/details/17452997" target="_blank" rel="noopener">高性能网络编程6–reactor反应堆与定时器管理</a><br>**    传统编程方法<strong>就好像是到了银行营业厅里，每个窗口前排了长队，业务员们在窗口后一个个的解决客户们的请求。一个业务员可以尽情思考着客户A依次提出的问题，例如：<br>“我要买2万XX理财产品。“<br>“看清楚了，5万起售。”<br>“等等，查下我活期余额。”<br>“余额5万。”<br>“那就买 5万吧。”<br>业务员开始录入信息。<br>”对了，XX理财产品年利率8%？”<br>“是预期8%，最低无利息保本。“<br>”早不说，拜拜，我去买余额宝。“<br>业务员无表情的删着已经录入的信息进行事务回滚。<br>”下一个！“<br>    用了</strong>IO 复用<strong>则是大师业务员开始挑战极限，在超大营业厅里给客户们人手一个牌子，黑压压的客户们都在大厅中，有问题时举牌申请提问，大师目光敏锐点名指定某人提问，该客户迅速得到大师的答复后，要经过一段时间思考，查查自己的银袋子，咨询下LD，才能再次进行下一个提问，直到得到完整的满意答复退出大厅。例如：大师刚指导A填写转帐单的某一项，B又来申请兑换泰铢，给了B兑换单后，C又来办理定转活，然后D与F在争抢有限的圆珠笔时出现了不和谐现象，被大师叫停业务，暂时等待。<br>    这就是</strong>基于事件驱动的 IO 复用编程**比起传统1线程1请求的方式来，有难度的设计点了，客户们都是上帝，既不能出错，还不能厚此薄彼。当没有反应堆时，我们可能的设计方法是这样的：大师把每个客户的提问都记录下来，当客户 A 提问时，首先查阅 A 之前问过什么做过什么，这叫联系上下文，然后再根据上下文和当前提问查阅有关的银行规章制度，有针对性的回答 A，并把回答也记录下来。当圆满回答了A的所有问题后，删除 A 的所有记录。</p>
+<p>在程序中：<br>    某一瞬间，服务器共有 10 万个并发连接，此时，一次 IO 复用接口的调用返回了 100 个活跃的连接等待处理。先根据这100个连接找出其对应的对象，这并不难，epoll 的返回连接数据结构里就有这样的指针可以用。接着，循环的处理每一个连接，找出这个对象此刻的上下文状态，再使用 read、write 这样的网络 IO 获取此次的操作内容，结合上下文状态查询此时应当选择哪个业务方法处理，调用相应方法完成操作后，若请求结束，则删除对象及其上下文。<br>    这样，我们就<strong>陷入了面向过程编程方法之中</strong>了，在面向应用、快速响应为王的移动互联网时代，这样做早晚得把自己玩死。<strong>我们的主程序需要关注各种不同类型的请求，在不同状态下，对于不同的请求命令选择不同的业务处理方法</strong>。这会导致随着请求类型的增加，请求状态的增加，请求命令的增加，主程序复杂度快速膨胀，导致维护越来越困难，苦逼的程序员再也不敢轻易接新需求、重构。</p>
+<pre><code>**反应堆是解决上述软件工程问题的一种途径**，它也许并不优雅，开发效率上也不是最高的，但**其执行效率与面向过程的使用 IO 复用却几乎是等价的**，所以，无论是 nginx、memcached、redis 等等这些高性能组件的代名词，都义无反顾的一头扎进了反应堆的怀抱中。
+**反应堆模式**可以在软件工程层面，**将事件驱动框架分离出具体业务，将不同类型请求之间用 OO 的思想分离**。通常，**反应堆不仅使用 IO 复用处理网络事件驱动，还会实现定时器来处理时间事件的驱动（请求的超时处理或者定时任务的处理）**，就像下面的示意图：</code></pre><p><img src="http://upload-images.jianshu.io/upload_images/1452123-16bac3419936124b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>这幅图有5点意思：<br>（1）处理应用时基于 OO 思想，<strong>不同的类型的请求处理间是分离的</strong>。例如，A 类型请求是用户注册请求，B 类型请求是查询用户头像，那么当我们把用户头像新增多种分辨率图片时，更改B类型请求的代码处理逻辑时，完全不涉及A类型请求代码的修改。</p>
+<p>（2）<strong>应用处理请求的逻辑，与事件分发框架完全分离</strong>。什么意思呢？即写应用处理时，不用去管何时调用 IO 复用，不用去管什么调用 epoll_wait，去处理它返回的多个 socket 连接。应用代码中，只关心如何读取、发送 socket 上的数据，如何处理业务逻辑。事件分发框架有一个抽象的事件接口，所有的应用必须实现抽象的事件接口，通过这种抽象才把应用与框架进行分离。</p>
+<p>（3）反应堆上提供注册、移除事件方法，供应用代码使用，而<strong>分发事件方法，通常是循环的调用而已</strong>，是否提供给应用代码调用，还是由框架简单粗暴的直接循环使用，这是框架的自由。</p>
+<p>（4）IO 多路复用也是一个抽象，它可以是具体的 select，也可以是 epoll，它们只必须提供采集到某一瞬间所有待监控连接中活跃的连接。</p>
+<p>（5）定时器也是由反应堆对象使用，它必须至少提供4个方法，包括添加、删除定时器事件，这该由应用代码调用。最近超时时间是需要的，这会被反应堆对象使用，用于确认 select 或者 epoll_wait 执行时的阻塞超时时间，防止 IO 的等待影响了定时事件的处理。遍历也是由反应堆框架使用，用于处理定时事件。</p>
+<p>Reactor 的几种模式<br>参考资料：<a href="http://gee.cs.oswego.edu/dl/cpjslides/nio.pdf" target="_blank" rel="noopener"><strong>Scalable IO in Java</strong></a><br>在web服务中，很多都涉及基本的操作：read request、decode request、process service、encod reply、send reply等。</p>
+<p>1 单线程模式<br>      这是最简单的单 Reactor 单线程模型。Reactor 线程是个多面手，负责多路分离套接字，Accept 新连接，并分派请求到处理器链中。该模型适用于处理器链中业务处理组件能快速完成的场景。不过这种单线程模型不能充分利用多核资源，所以实际使用的不多。<img src="http://upload-images.jianshu.io/upload_images/1452123-bfb7ef28b21ba29e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>2 多线程模式（单 Reactor）<br>       该模型在事件处理器（Handler）链部分采用了多线程（线程池），也是后端程序常用的模型。<br><img src="http://upload-images.jianshu.io/upload_images/1452123-306883d5deec0b56?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""><br>3 多线程模式（多个Reactor）<br>       比起第二种模型，它是将 Reactor 分成两部分，mainReactor 负责监听并 accept 新连接，然后将建立的 socket 通过多路复用器（Acceptor）分派给 subReactor。subReactor 负责多路分离已连接的 socket，读写网络数据；业务处理功能，其交给 worker 线程池完成。通常，subReactor 个数上可与 CPU 个数等同。<br><img src="http://upload-images.jianshu.io/upload_images/1452123-d5bb25d670d1285b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h4 id="Proacotr模型"><a href="#Proacotr模型" class="headerlink" title="Proacotr模型"></a>Proacotr模型</h4><p>Proactor 是和异步 I/O 相关的。<br>       在 Reactor 模式中，事件分离者等待某个事件或者可应用或个操作的状态发生（比如文件描述符可读写，或者是 socket 可读写），事件分离器就把这个事件传给事先注册的处理器（事件处理函数或者回调函数），由后者来做实际的读写操作。在 Proactor 模式中，事件处理者(或者代由事件分离者发起)直接发起一个异步读写操作(相当于请求)，而实际的工作是由操作系统来完成的。发起时，需要提供的参数包括用于存放读到数据的缓存区，读的数据大小，或者用于存放外发数据的缓存区，以及这个请求完后的回调函数等信息。事件分离者得知了这个请求，它默默等待这个请求的完成，然后转发完成事件给相应的事件处理者或者回调。</p>
+<p>可以看出两者的区别：<br>Reactor 是在事件发生时就通知事先注册的事件（读写由处理函数完成）；<br>Proactor 是在事件发生时进行异步I/O（读写由 OS 完成），待 IO 完成事件分离器才调度处理器来处理。</p>
+<p>为了帮助理解 Reactor 与 Proactor 二者的差异，以读操作为例（其他操作类似）。<br><strong>在Reactor（同步）中实现读：</strong> </p>
+<ul>
+<li>注册读就绪事件和相应的事件处理器 </li>
+<li>事件分离器等待事件 - 事件到来，激活分离器，分离器调用事件对应的处理器。</li>
+<li>事件处理器完成实际的读操作，处理读到的数据，注册新的事件，然后返还控制权。</li>
+</ul>
+<p><strong>Proactor（异步）中的读：</strong> </p>
+<ul>
+<li>处理器发起异步读操作（注意：操作系统必须支持异步IO）。在这种情况下，处理器无视IO就绪事件，<strong>它关注的是完成事件</strong>。 </li>
+<li>事件分离器等待操作完成事件</li>
+<li>在分离器等待过程中，操作系统利用并行的内核线程执行实际的读操作，并将结果数据存入用户自定义缓冲区，最后通知事件分离器读操作完成。 </li>
+<li>事件分离器呼唤处理器。 </li>
+<li>事件处理器处理用户自定义缓冲区中的数据，然后启动一个新的异步操作，并将控制权返回事件分离器。</li>
+</ul>
+<p>工业实现</p>
+<h5 id="开源-C-框架：ACE"><a href="#开源-C-框架：ACE" class="headerlink" title="开源 C++ 框架：ACE"></a>开源 C++ 框架：ACE</h5><p>开源 C++ 开发框架 ACE 提供了大量平台独立的底层并发支持类(线程、互斥量等)。 同时在更高一层它也提供了独立的几组 C++ 类，用于实现 Reactor 及 Proactor 模式。 尽管它们都是平台独立的单元，但他们都提供了不同的接口。ACE Proactor 在 MS-Windows上无论是性能还在健壮性都更胜一筹，这主要是由于 Windows 提供了一系列高效的底层异步 API。(这段可能过时了点吧) 不幸的是，<strong>并不是所有操作系统都为底层异步提供健壮的支持</strong>。举例来说， 许多 Unix 系统就有麻烦。因此， <strong>ACE Reactor 可能是 Unix 系统上更合适的解决方案</strong>。 正因为系统底层的支持力度不一，为了在各系统上有更好的性能，开发者不得不维护独立的好几份代码: 为 Windows 准备的 ACE Proactor 以及为 Unix 系列提供的 ACE Reactor。真正的异步模式需要操作系统级别的支持。由于事件处理者及操作系统交互的差异，为 Reactor 和 Proactor 设计一种通用统一的外部接口是非常困难的。这也是设计通行开发框架的难点所在。</p>
+<p>ACE 是一个大型的中间件产品，代码20万行左右，过于宏大，一堆的设计模式，架构了一层又一层，使用的时候，要根据情况，看从那一层来进行使用。支持跨平台。</p>
+<p>设计模式 ：ACE 主要应用了 Reactor，Proactor 等；<br>层次架构 ：ACE 底层是 C 风格的 OS 适配层，上一层基于 C++ 的 wrap 类，再上一层是一些框架 （Accpetor, Connector, Reactor, Proactor等），最上一层是框架上服务；<br>可移植性 ：ACE 支持多种平台，可移植性不存在问题，据说 socket 编程在 Linux 下有不少 bugs；<br>事件分派处理 ：ACE主要是注册 handler 类，当事件分派时，调用其 handler 的虚挂勾函数。实现 ACE_Handler/ACE_Svc_Handler/ACE_Event_handler 等类的虚函数；<br>涉及范围 ：ACE 包含了日志，IPC,线程池，共享内存，配置服务，递归锁，定时器等；<br>线程调度 ：ACE 的 Reactor 是单线程调度，Proactor 支持多线程调度；<br>发布方式 ：ACE 是开源免费的，不依赖于第三方库，一般应用使用它时，以动态链接的方式发布动态库；<br>开发难度 ：基于 ACE 开发应用，对程序员要求比较高，要用好它，必须非常了解其框架。在其框架下开发，往往 new 出一个对象，不知在什么地方释放好。</p>
+<h5 id="C-网络库：libevent"><a href="#C-网络库：libevent" class="headerlink" title="C 网络库：libevent"></a>C 网络库：libevent</h5><p>libevent 是一个 C 语言写的网络库，官方主要支持的是类 Linux 操作系统，最新的版本添加了对 windows 的IOCP 的支持。在跨平台方面主要通过 select 模型来进行支持。<br>设计模式 ：<strong>libevent 为 Reactor 模式</strong>； 
+层次架构：livevent 在不同的操作系统下，做了多路复用模型的抽象，可以选择使用不同的模型，通过事件函数提供服务；<br>可移植性 ：libevent 主要支持 Linux 平台，freebsd 平台，其他平台下通过 select 模型进行支持，效率不是太高；<br>事件分派处理：libevent <strong>基于注册的事件回调函数来实现事件分发</strong>；
+涉及范围 ：libevent 只提供了简单的网络 API 的封装，线程池，内存池，递归锁等均需要自己实现；<br>线程调度 ：libevent 的线程调度需要自己来注册不同的事件句柄；<br>发布方式 ：libevent 为开源免费的，一般编译为静态库进行使用；<br>开发难度 ：基于 libevent 开发应用，相对容易，具体可以参考 memcached 这个开源的应用，里面使用了 libevent 这个库。 </p>
+<h5 id="改进方案：模拟异步"><a href="#改进方案：模拟异步" class="headerlink" title="改进方案：模拟异步"></a>改进方案：模拟异步</h5><p>在改进方案中，我们<strong>将 Reactor 原来位于事件处理器内的  read/write 操作移至分离器</strong>(不妨将这个思路称为“模拟异步”)，以此寻求将 Reactor 多路同步 IO 转化为模拟异步 IO。<br>以读操作为例子，<strong>改进过程如下</strong>：</p>
+<ul>
+<li>注册读就绪事件及其处理器，并为分离器提供数据缓冲区地址，需要读取数据量等信息。 </li>
+<li>分离器等待事件（如在 select()上等待） </li>
+<li>事件到来，激活分离器。分离器执行一个非阻塞读操作（它有完成这个操作所需的全部信息），最后调用对应处理器。</li>
+<li>事件处理器处理用户自定义缓冲区的数据，注册新的事件（当然同样要给出数据缓冲区地址，需要读取的数据量等信息），最后将控制权返还分离器。</li>
+</ul>
+<p>如我们所见，通过对多路IO模式功能结构的改造，可将 Reactor 转化为 Proactor 模式。改造前后，模型实际完成的工作量没有增加，只不过参与者间对工作职责稍加调换。没有工作量的改变，自然不会造成性能的削弱。对如下各步骤的比较，可以证明工作量的恒定：</p>
+<p><strong>标准/典型的 Reactor：</strong> </p>
+<ul>
+<li>步骤1：等待事件到来（Reactor 负责） </li>
+<li>步骤2：将读就绪事件分发给用户定义的处理器（Reactor 负责） </li>
+<li>步骤3：读数据（用户处理器负责） </li>
+<li>步骤4：处理数据（用户处理器负责）****</li>
+</ul>
+<p><strong>改进实现的模拟Proactor：</strong> </p>
+<ul>
+<li>步骤1：等待事件到来（Proactor 负责） </li>
+<li>步骤2：得到读就绪事件，执行读数据（现在由 Proactor 负责） </li>
+<li>步骤3：将读完成事件分发给用户处理器（Proactor 负责） </li>
+<li>步骤4：处理数据（用户处理器负责）  </li>
+</ul>
+<p>对于不提供异步 IO API 的操作系统来说，这种办法可以隐藏 socket API 的交互细节，从而对外暴露一个完整的异步接口。借此，我们就可以进一步构建完全可移植的，平台无关的，有通用对外接口的解决方案。上述方案已经由<a href="http://www.terabit.com.au/" target="_blank" rel="noopener">Terabit P/L</a>公司实现为 TProactor。它有两个版本：C++ 和 JAVA 的。C++ 版本采用 ACE 跨平台底层类开发，为所有平台提供了通用统一的主动式异步接口。</p>
+<h5 id="Boost-Asio类库"><a href="#Boost-Asio类库" class="headerlink" title="Boost.Asio类库"></a>Boost.Asio类库</h5><p>Boost.Asio 类库，其就是<strong>以 Proactor 这种设计模式来实现</strong>，参见：Proactor（The Boost.Asio library is based on the Proactor pattern. This design note outlines the advantages and disadvantages of this approach.）<br>其设计文档链接：<a href="http://asio.sourceforge.net/boost_asio_0_3_7/libs/asio/doc/design/index.html" target="_blank" rel="noopener">http://asio.sourceforge.net/boost_asio_0_3_7/libs/asio/doc/design/index.html</a></p>
+<p>本文来源：<br><a href="http://blog.csdn.net/u013074465/article/details/46276967" target="_blank" rel="noopener">http://blog.csdn.net/u013074465/article/details/46276967</a></p>
+<p>参考资料<br>1、<a href="http://www.cnblogs.com/hzbook/archive/2012/07/19/2599698.html" target="_blank" rel="noopener">Reactor 构架模式及框架概述</a><br>2、<a href="http://blog.csdn.net/russell_tao/article/details/17452997" target="_blank" rel="noopener">高性能网络编程6–reactor反应堆与定时器管理</a><br>3、<a href="http://gee.cs.oswego.edu/dl/cpjslides/nio.pdf" target="_blank" rel="noopener">Scalable IO in Java</a><br>4、<a href="http://www.cs.wustl.edu/~schmidt/PDF/reactor-siemens.pdf" target="_blank" rel="noopener">Reactor - An Object Behavioral Pattern for Demultiplexing and Dispatching Handles for Synchronous Events </a><br>5、<a href="http://blog.jobbole.com/59676/" target="_blank" rel="noopener">两种高性能I/O设计模式(Reactor/Proactor)的比较</a><br>6、<a href="http://www.cnblogs.com/MikeZhang/archive/2012/08/16/ReactorPattern20120815.html" target="_blank" rel="noopener">Reactor模式及在DSS中的体现</a><br>7、<a href="http://blog.csdn.net/roger_77/article/details/1555170" target="_blank" rel="noopener">高性能 I/O 设计模式 Reactor 和 Proactor</a><br>8、<a href="http://www.artima.com/articles/io_design_patterns2.html" target="_blank" rel="noopener">Comparing Two High-Performance I/O Design Patterns</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Programming/">Programming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Programming/network-programming-reactor-proactor/" data-title="两种高效的服务器设计模型：Reactor 和 Proactor 模型 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Programming/go-go-sync-map/" title="A concurrency-safe implementation of map in Go">
+  <strong>Prev：</strong><br>
+  <span>
+  A concurrency-safe implementation of map in Go</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Programming/go-print-struct-map/" title="Print struct and map in a human readable format">
+ <strong>Next：</strong><br>
+ <span>Print struct and map in a human readable format
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

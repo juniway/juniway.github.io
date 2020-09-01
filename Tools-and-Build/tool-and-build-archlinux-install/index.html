@@ -1,0 +1,821 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>安装 Arch Linux | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="Arch Linux 介绍Arch Linux 是 Linux 的一种发行版，它遵循 Arch之道（The Arch Way），核心理念就是 KISS 原则（Keep It Simple, Stupid）。 基于这个原则，Arch Linux 系统在安装时只会安装最基础的软件包，用户可以根据自己的需要在系统安装完成之后自行安装其他软件包，这样就把系统做到尽可能的精简。 Arch Linux 提供了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安装 Arch Linux">
+<meta property="og:url" content="https://juniway.net/Tools-and-Build/tool-and-build-archlinux-install/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="Arch Linux 介绍Arch Linux 是 Linux 的一种发行版，它遵循 Arch之道（The Arch Way），核心理念就是 KISS 原则（Keep It Simple, Stupid）。 基于这个原则，Arch Linux 系统在安装时只会安装最基础的软件包，用户可以根据自己的需要在系统安装完成之后自行安装其他软件包，这样就把系统做到尽可能的精简。 Arch Linux 提供了">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/linux/lsblk.png">
+<meta property="og:image" content="https://juniway.net/image/linux/cfdisk.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3473262-76880869ae2db3d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.443Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="安装 Arch Linux">
+<meta name="twitter:description" content="Arch Linux 介绍Arch Linux 是 Linux 的一种发行版，它遵循 Arch之道（The Arch Way），核心理念就是 KISS 原则（Keep It Simple, Stupid）。 基于这个原则，Arch Linux 系统在安装时只会安装最基础的软件包，用户可以根据自己的需要在系统安装完成之后自行安装其他软件包，这样就把系统做到尽可能的精简。 Arch Linux 提供了">
+<meta name="twitter:image" content="https://juniway.net/image/linux/lsblk.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Tools-and-Build/tool-and-build-archlinux-install/" title="安装 Arch Linux" itemprop="url">安装 Arch Linux</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2017-06-15T12:09:26.000Z"> 2017-06-15</time>
+    <span class="post-count">字数 3.5k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h1 id="Arch-Linux-介绍"><a href="#Arch-Linux-介绍" class="headerlink" title="Arch Linux 介绍"></a>Arch Linux 介绍</h1><p>Arch Linux 是 Linux 的一种发行版，它遵循 Arch之道（The Arch Way），核心理念就是 KISS 原则（Keep It Simple, Stupid）。</p>
+<p>基于这个原则，Arch Linux 系统在安装时只会安装最基础的软件包，用户可以根据自己的需要在系统安装完成之后自行安装其他软件包，这样就把系统做到尽可能的精简。</p>
+<p>Arch Linux 提供了一个非常好用的软件管理工具 pacman，所有的软件都可以通过 pacman 来进行管理（下载，安装，升级，卸载等）。而且， Arch Linux 一个很大的特点就是软件包非常新，Arch Linux 总是第一时间尝试新的软件，比如最新的内核等。另外，Arch 的 AUR 仓库包含大量软件包，只需一个 makepkg 命令即可构建，非常方便。</p>
+<p>Arch 采用滚动更新的方式，不像其他系统那样有发行的版本（比如 Windows 7, Windows 10, Ubuntu 12.04, Ubuntu 16.04等等），系统一旦安装，就不再需要重装，因为一旦系统中的某个库或者核心包有了更新， Arch Linux 的软件厂库就会把它加入升级，通过 pacman 系统可以随时得到最新的升级，而无需重装一个新的系统。</p>
+<h4 id="下载安装-Arch-ISO"><a href="#下载安装-Arch-ISO" class="headerlink" title="下载安装 Arch ISO"></a>下载安装 Arch ISO</h4><p><a href="https://archlinux.org/download/" target="_blank" rel="noopener">https://archlinux.org/download/</a></p>
+<p>1、引导安装介质<br>进入 BIOS 进行修改引导顺序，将安装介质调至第一引导顺序，保存设置并重启。<br>进入BIOS的方式已知的有：开机时按下 [Delete]、[F1]、[F2]、[F11] 或 [F12] 键。<br>使用引导菜单引导安装介质。引导菜单调出方式已知的有：开机时按下[Esc]、[F8]、[F9] 键或 [F12] 键。</p>
+<p>2、出现引导界面，选择 Boot Arch Linux 并回车。</p>
+<p>3、进入系统之后，检查是否开启 UEFI 模式<br>主板是否支持UEFI以及UEFI模式是否开启会影响安装方式。</p>
+<pre><code># mount -t efivarfs efivarfs /sys/firmware/efi/efivars # 若已挂载则无视
+# efivar -l</code></pre><p>若 Arch Linux 是以 UEFI 模式启动的， 则 efivar 会正确地列出UEFI变量</p>
+<h1 id="分区"><a href="#分区" class="headerlink" title="分区"></a>分区</h1><p>1、查看硬盘，lsblk<br>这个命令可以列出机器上所有的硬盘和分区情况。</p>
+<p><img src="/image/linux/lsblk.png" alt=""></p>
+<p>如果本机只有一块硬盘，那么就是 /dev/sda， 如果有第二块、第三块硬盘，那么就是 /dev/sdb, /dev/sdc， 以此类推。<br>每块硬盘的不同分区用数字标示，比如 sda1, sda2, sda3 依次递增。</p>
+<p>2、确定使用何种分区格式（MBR 还是 GPT），还需要确定需要几个分区。<br>分区的要求是至少要有一个分区。通常，我们会划分3个，分别为 /boot, / , /home。<br>通常， /boot 通常只需要大概 100 MB 大小就足够了，/home 分区会存储所有用户的数据，需要足够大！然后把剩余的容量划分到 根目录 / 分区。<br>另外，若安装目标内存 ≤ 2GB，建议添加一个swap分区， swap分区的大小一般建议为内存的2倍。如果内存超过2G，则可以不必使用swap分区。如果内存大于8G的话，可以不设置 swap 分区。</p>
+<p>简单来说，如何安排分区，取决于每个人如何规划。现在假设硬盘120 G，可以大致参考下面的方案：</p>
+<pre><code>/dev/sda1  100 MB  /boot  物理分区
+/dev/sda2  40G     /      物理分区
+/dev/sda3  60G     /home  物理分区
+/dev/sda4  8G      swap   物理分区</code></pre><p>3、确定好分区方案之后，使用 cfdisk 或者 parted 进行分区（cfdisk 是可视化的，更加方便一些），下面是常用的几个分区工具的比较：<br><strong>(1). cfdisk</strong><br>cfdisk是一个漂亮的程序，它只接受最严谨的分区表， 而且它能生成高质量的分区表。如果可能，你最好使用这个程序。最大的亮点就是使用方便，字符界面下的交互界面很好。<br><strong>(2). fdisk</strong><br>这个是很多人一开始都会使用的工具，据说是一个有很多bug的分区工具软件（我用了很久，也没有发现过 bug，或许现在已经完善了）。 它所做的操作是模糊不清的，通常在碰巧的情况下它才会正常的运行（据说）。 它唯一值得使用的地方是它对 BSD 的磁盘标签和非 DOS 的分区表有所支持， 尽量少用这个程序（据说，我没有任何证据正名它是不行的）。<br><strong>(3). sfdisk</strong><br>是一个专为黑客提供的程序，它的用户界面很不友善，但它更精确，也比 fdisk 和 cfdisk更有效。另外，它只能以非交互的方式运行。我基本上只用在使用它看分区表。</p>
+<p>直接执行 cfdisk 或者 cfdisk /dev/sda 来进行硬盘分区，会出现如下所示界面，选择 dos， 然后根据提示操作即可。</p>
+<p><img src="/image/linux/cfdisk.png" alt=""></p>
+<p>按照上述规划， sda1 作为 /boot 分区， sda2 作为 / 分区， sda3 作为 /home 分区， sda4 作为 swap 分区</p>
+<p>4、分区完成之后，就需要对分区进行格式化来创建文件系统、同时，创建并激活 swap 分区(mkswap,swapon)<br>ArchLinux 支持许多文件系统，比如 FAT, ext4, btrfs 等等。如果对文件系统没有概念，那么推荐使用 ext4，这个是 archlinux 下最常见的文件系统。 btrfs 据说对 SSD 有优化。</p>
+<p>Arch Linux 自带了不同的格式化工具，他们均在 /usr/bin 目录下</p>
+<pre><code># ls -1 /usr/bin/ | grep -E &apos;mkfs|mkswap&apos;...
+mkfs.ext4*    # ext4 格式化工具...
+mkfs.fat*     # fat 格式化工具...
+mkswap*       # swap 格式化工具</code></pre><p>下面对所有分区进行格式化：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> mkfs.exr4 /dev/sda1</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> mkfs.ext4 /dev/sda2</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> mkfs.ext4 /dev/sda3</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> mkswap    /dev/sda4</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> swapon    /dev/sda4</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：对 swap 分区的创建是使用 mkswap 命令，而且创建完成之后还需要执行 swapon 命令进行激活。这样的目的是为了让 genfstab 能生成 fstab 时包含swap分区</p>
+<h3 id="四、进行系统安装-Installation"><a href="#四、进行系统安装-Installation" class="headerlink" title="四、进行系统安装 Installation"></a>四、进行系统安装 Installation</h3><p>1、挂载新分区<br>分区格式化完成之后，文件系统就已经建立完毕。这时候就需要把分区挂载到系统中。<br>执行 mount 命令进行挂载，命令格式是： mount &lt;设备名&gt; &lt;挂载点&gt;。需要注意挂载顺序，根目录 / 需要最先挂载。<br>根目录挂载完之后，需要创建其他挂载点（也即根目录下的子目录，比如 /home，/boot 等），然后依次挂载。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mount /dev/sda2 /mnt</span><br><span class="line">mkdir /mnt/&#123;boot,home&#125;</span><br><span class="line">mount /dev/sda1 /mnt/boot</span><br><span class="line">mount /dev/sda3 /mnt/home</span><br></pre></td></tr></table></figure>
+
+<p>swap 分区无需进行挂载， 其不属于文件系统。</p>
+<p>2、选择更新源</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sed -i "s/^\b/#/g" /etc/pacman.d/mirrorlist</span><br><span class="line">nano /etc/pacman.d/mirrorlist</span><br><span class="line">pacman -Syy</span><br></pre></td></tr></table></figure>
+
+<p>3、安装基础系统<br>选项 -i 是用来选择确认，也可以去掉，直接一步完成。</p>
+<pre><code># pacstrap -i /mnt base base-devel</code></pre><p>4、生成 fstab 并检查  fstab 是否正确<br>选项 -U 是用来指定 uuid 格式。</p>
+<pre><code># genfstab -U -p /mnt &gt;&gt; /mnt/etc/fstab
+# cat /mnt/etc/fstab</code></pre><p>参考检查项：<br>对于每一行的最后一部分 <pass> ，/ 分区应该为 1，其他分区为 2。<br>btrfs 分区（无论是否为 / 分区）及 swap 分区的应该为 0。<br>若发现错误，直接对 fstab 进行修正，勿再次执行 genfstab。</pass></p>
+<p>注意：这里使用的是UUID，如果不加-U，那么在 fstab中记录的就是 /dev/sdX 之类的地址了，UUID 的方式更加好，为什么呢？请自行wiki。</p>
+<p>fstab 大致内容如下：</p>
+<pre><code>[root@arch ~]# cat /etc/fstab
+# 
+# /etc/fstab: static file system information
+#
+# &lt;file system&gt; &lt;dir&gt;   &lt;type&gt;  &lt;options&gt;   &lt;dump&gt;  &lt;pass&gt;
+/dev/sda1   UUID=8084711b-2eab-4da8-aef2-0c9e8f4cbf70 /boot ext4 rw,relatime,data=ordered    0 2
+/dev/sda2   UUID=66456dcc-5f5f-49a6-96a6-536f736eccb6   /   ext4 rw,relatime,data=ordered    0 2
+/dev/sda3   UUID=d6fb3286-aeff-4c72-b91c-14ca22e1db08 /home ext4 rw,relatime,data=ordered    0 2
+/dev/sda4   UUID=06f7e8e8-6323-4eff-918f-2fb6c004322d  none swap defaults 0 0</code></pre><h3 id="五、配置基础系统"><a href="#五、配置基础系统" class="headerlink" title="五、配置基础系统"></a>五、配置基础系统</h3><p>1、进入新系统<br>首先使用 chroot 进入已经部署好的基本系统，关于 chroot 的知识，<a href="http://zh.wikipedia.org/wiki/Chroot" target="_blank" rel="noopener">点击进入</a>。</p>
+<pre><code># arch-chroot /mnt/bin/bash
+# alias ls=&apos;ls --color&apos;</code></pre><p>2、Locale<br>Locale 决定了软件使用的语言、书写习惯和字符集</p>
+<p>需要编辑两个文件：<code>locale.gen</code> 与 <code>locale.conf</code>。
+/etc/locale.gen 是一个仅包含注释文档的文本文件。指定您需要的本地化类型，只需移除对应行前面的注释符号（＃）即可，请选择帶 UTF-8的项，使用 vi 打开并编辑 /etc/locale.gen 文件，解开以下三项的注释：</p>
+<pre><code>en_US.UTF-8 UTF-8  
+zh_CN.UTF-8 UTF-8  
+zh_TW.UTF-8 UTF-8</code></pre><p>实际操作中，除了上面三行内容外，其它内容都可以删除。然后执行<code>locale-gen</code> 以生成 locale 信息：</p>
+<pre><code>$ locale-gen  </code></pre><p>创建 locale.conf 并提交我们的本地化选项：</p>
+<pre><code>$ echo LANG=en_US.UTF-8 &gt; /etc/locale.conf </code></pre><p>简体中文用户可执行：</p>
+<pre><code># sed -i &apos;/zh_CN.UTF-8/{s/#//}&apos; /etc/locale.gen
+# locale-gen
+# echo LANG=zh_CN.UTF-8  &gt; /etc/locale.conf</code></pre><p>如果不安装桌面环境，使用 en_US.UTF-8 即可。</p>
+<p>2.设置console</p>
+<p>编辑 <code>/etc/vconsole.conf</code>，然后输入如下内容：</p>
+<pre><code>KEYMAP=us
+FONT=</code></pre><p>3、设置时区<br>可用的时区全集中在 /usr/share/Zone/SubZone 目录中，所以要查看可用时区，直接浏览 /usr/share/zhoninfo 即可。<br>将 /etc/localtime 软链接到 /usr/share/zoneinfo/Zone/SubZone，这里采用上海的时区：<br>中国大陆用户可执行：</p>
+<pre><code># ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+# ln -s /usr/share/zoneinfo/&lt;时区&gt;/&lt;子时区&gt; /etc/localtime</code></pre><p>硬件时间<br>使用 utc 时间</p>
+<pre><code># hwclock --systohc --utc</code></pre><p>自动校对时间</p>
+<pre><code># pacman -S ntp
+# systemctl enable ntpd</code></pre><p>4、主机名<br>设置主机名</p>
+<pre><code># echo &lt;主机名&gt; &gt; /etc/hostname</code></pre><p>5、创建ramdisk环境</p>
+<pre><code># mkinitcpio -p linux</code></pre><p>6、为 root 设置密码</p>
+<pre><code># passwd</code></pre><p>7、添加用户<br>添加一个用户并把它添加进 wheel 组，通常 wheel 组具有 sudo 权限。</p>
+<pre><code># useradd -m -g users -G wheel -s /bin/bash alex
+# passwd alex</code></pre><p>8、配置 sudo</p>
+<pre><code># pacman -S sudo
+# visudo</code></pre><p> 删去 wheel 组前面的注释，把其权限开放出来。</p>
+<pre><code># %wheel ALL=(ALL) ALL</code></pre><p>9、配置网络 networkmanager</p>
+<pre><code># papcman -S networkmanager
+# systemctl enable NetworkManager</code></pre><p>网络工具，有线和无线</p>
+<pre><code>pacman -S dhcpcd wpa_supplicant dialog</code></pre><p>为了使开机就有网络，需设置dhcpcd开机自启动</p>
+<pre><code>systemctl enable dhcpcd</code></pre><h3 id="六、安装引导器-bootloader"><a href="#六、安装引导器-bootloader" class="headerlink" title="六、安装引导器 bootloader"></a>六、安装引导器 bootloader</h3><p>（1）对于BIOS用户，这里推荐使用GRUB<br>BIOS + MBR：</p>
+<pre><code># pacman -S grub (os-prober # 启动 win + linux 双系统)
+# grub-install --target=i386-pc --recheck /dev/sda</code></pre><p>生成默认配置文件</p>
+<pre><code># grub-mkconfig –o /boot/grub/grub.cfg</code></pre><p>注意：这里不需要指明 sda1、2之类的，直接指定硬盘即可。</p>
+<p>（2）使用UEFI的用户，现在的启动器是system-boot，是直接用systemd来启动系统。<br>UEFI：</p>
+<p>只需要运行如下命令：</p>
+<h1 id="bootctl-install"><a href="#bootctl-install" class="headerlink" title="bootctl install"></a>bootctl install</h1><p>虽然换成了system-boot，但是配置依旧少不了。<br>首先我们需要在/boot/loader/entries文件夹中创建名为arch.conf的配置文件，命令：</p>
+<p> nano /boot/loader/entries/arch.conf<br>然后添加如下内容：</p>
+<pre><code>title Arch Linux
+linux /vmlinuz-linux
+initrd /initramfs-linux.img
+options root=/dev/sda2 rw</code></pre><p>注意：root部分可以填写UUID，执行blkid可查看分区的UUID。但是为了图方面，我就直接用路径代替了，sda3即为root分区，各位需要根据自己的分区情况自行决定。</p>
+<p>接下来需要配置 /boot/loader/loader.conf，这个文件有默认的内容，只需要修改下即可。</p>
+<pre><code>timeout 3
+default arch</code></pre><p>注：timeout 3指的是系统开机后的等待时间，按以上设置会出现一个开机启动菜单，3指的是等待3秒让我们选择，不过本人希望更快一点，故本人直接设置为0</p>
+<pre><code># mount -t efivarfs efivarfs /sys/firmware/efi/efivars # 若已挂载则无视
+# pacman -S grub efibootmgr
+# grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=arch_grub --reche</code></pre><p>生成配置文件：</p>
+<pre><code># grub-mkconfig -o /boot/grub/grub.cfg</code></pre><h3 id="七、退出安装环境"><a href="#七、退出安装环境" class="headerlink" title="七、退出安装环境"></a>七、退出安装环境</h3><p>执行下列命令</p>
+<pre><code>#exit
+#umount -R /mnt
+#reboot</code></pre><p>至此，这样一个完全可用的 Arch Linux 就安装完成了，如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3473262-76880869ae2db3d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>当然安装好系统只是第一步，还有很多需要我们学习。</p>
+<h3 id="八-声音管理"><a href="#八-声音管理" class="headerlink" title="八 声音管理"></a>八 声音管理</h3><p>某些桌面环境亦提供了声音控制功能。若此时跳过本节，亦可稍后进行设置。<br>Arch Linux默认开启了声音支持，默认静音。用户可通过下列命令取消静音：<br>1、安装 alsa-utils</p>
+<pre><code># pacman -S alsa-utils</code></pre><p>2、配置</p>
+<pre><code>#alsamixer</code></pre><p>方向键 选中 Master 和 PCM<br>[M] 取消静音</p>
+<h3 id="九、配置图形用户界面"><a href="#九、配置图形用户界面" class="headerlink" title="九、配置图形用户界面"></a>九、配置图形用户界面</h3><p>1、安装显卡驱动<br>确定显卡型号：</p>
+<pre><code>$ lspci | grep VGA</code></pre><p>对应驱动包：<br>Intel 显卡：xf86-video-intel<br>nVidia 显卡：<br>GeForce 7 以上：xf86-video-nouveau；nvidia<br>GeForce 6/7：xf86-video-nouveau；nvidia-304xx<br>AMD/ATI 显卡：<br>开源驱动：xf86-video-ati</p>
+<p>2、安装驱动</p>
+<pre><code># pacman -S 驱动</code></pre><p>如果是在 virtualbox 中安装 archlinux，需要把 kernel 模块加上。</p>
+<pre><code># pacman -S linux-headers
+# pacman -S virtualbox-guest-utils</code></pre><p>添加进模块</p>
+<pre><code># modprobe -a vboxguest vboxsf vboxvideo</code></pre><p>创建一个模块配置文件，比如取名为 <code>vbox.conf</code>，然后编辑该文件，添加下列三行，</p>
+<pre><code>vboxguest
+vboxsf
+vboxvideo</code></pre><p>3、安装 X 窗口系统<br>3.1 安装 Xorg Server</p>
+<pre><code>#pacman -S xorg-server xorg-server-utils xorg-xinit</code></pre><p>3.2 安装3D支持</p>
+<pre><code>#pacman -S mesa</code></pre><p>3.3 添加触摸板支持</p>
+<pre><code># pacman -S xf86-input-synaptics</code></pre><p>3.4 安装字体<br>Dejavu 和文泉驿-微米黑</p>
+<pre><code># pacman -S ttf-dejavu wqy-microhei</code></pre><p>4、安装桌面环境<br>Arch Linux 有许多桌面环境可供选择：Cinnamon(gnome-terminal)、GNOME(gnome-extra)、KDE、LXDE、Xfce。<br><a href="https://wiki.archlinux.org/index.php/Desktop_environment" target="_blank" rel="noopener">https://wiki.archlinux.org/index.php/Desktop_environment</a></p>
+<pre><code># pacman -S cinnamon (gnome-terminal)</code></pre><p>或者</p>
+<pre><code># pacman -S xfce4</code></pre><p>安装附加功能：</p>
+<pre><code># pacman -S xfce4-goodies</code></pre><p>5、启动桌面环境（显示管理器）<br>安装 lightdm</p>
+<pre><code>#pacman -S lightdm lightdm-gtk3-greeter或lightdm-gtk2-greeter(#安装cinnamon时，使用gtk3)
+#systemctl enable lightdm</code></pre><p>6、安装输入法（fcitx）<br>安装</p>
+<pre><code>#pacman -S fcitx-im</code></pre><p>配置：</p>
+<pre><code>export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=&quot;@im=fcitx&quot;</code></pre><p>KDM、GDM、LightDM 等显示管理器的用户，向 ~/.xprofile添加以上内容。<br>使用 startx 或 slim 的用户，向 ~/.xinitrc 添加以上内容。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://wiki.archlinux.org/index.php/Installation_guide_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)" target="_blank" rel="noopener">https://wiki.archlinux.org/index.php/Installation_guide_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)</a></p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Tools-and-Build/">Tools and Build</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Tools-and-Build/tool-and-build-archlinux-install/" data-title="安装 Arch Linux | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Programming/go-go-commands/" title="Golang 命令">
+  <strong>Prev：</strong><br>
+  <span>
+  Golang 命令</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Tools-and-Build/tool-and-build-fish/" title="安装 Fish">
+ <strong>Next：</strong><br>
+ <span>安装 Fish
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

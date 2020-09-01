@@ -1,0 +1,846 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>第二部分：区块链核心技术：区块链项目核心知识 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="专业经验专业经验则是指对目前最主流的区块链项目的掌握程度，比如 Bitcoin，Ethereum 等，了解账户模型，智能合约等等，而且，不仅是它们的运行原理，而且能在它们的基础上持续改进、开拓以及创新，比如对侧链，轻节点、分布式存储，扩容方案等有一定的理解等等。 为此，我也做了一个列表，主要展示对区块链的专业经验的一些要求： 目前区块链主流共识算法之间的差异（比如 PBFT 与 POW 之间区别）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二部分：区块链核心技术：区块链项目核心知识">
+<meta property="og:url" content="https://juniway.net/Distributed-System/blockchain-part2-industry-exp/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="专业经验专业经验则是指对目前最主流的区块链项目的掌握程度，比如 Bitcoin，Ethereum 等，了解账户模型，智能合约等等，而且，不仅是它们的运行原理，而且能在它们的基础上持续改进、开拓以及创新，比如对侧链，轻节点、分布式存储，扩容方案等有一定的理解等等。 为此，我也做了一个列表，主要展示对区块链的专业经验的一些要求： 目前区块链主流共识算法之间的差异（比如 PBFT 与 POW 之间区别）">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/blockchain/bitcoin_asic.png">
+<meta property="og:image" content="https://juniway.net/image/blockchain/factory.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-ab3bab245c17269625d7ebc56c3848c3_hd.jpg">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/2625/201804/2625-20180415221647215-565887866.png">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-80ef4d4e2ac38e32015f9a0d8ed70906_hd.jpg">
+<meta property="og:image" content="https://juniway.net/image/blockchain/DAGstructure.jpg">
+<meta property="og:image" content="https://juniway.net/image/blockchain/Blockstructure.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.415Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第二部分：区块链核心技术：区块链项目核心知识">
+<meta name="twitter:description" content="专业经验专业经验则是指对目前最主流的区块链项目的掌握程度，比如 Bitcoin，Ethereum 等，了解账户模型，智能合约等等，而且，不仅是它们的运行原理，而且能在它们的基础上持续改进、开拓以及创新，比如对侧链，轻节点、分布式存储，扩容方案等有一定的理解等等。 为此，我也做了一个列表，主要展示对区块链的专业经验的一些要求： 目前区块链主流共识算法之间的差异（比如 PBFT 与 POW 之间区别）">
+<meta name="twitter:image" content="https://juniway.net/image/blockchain/bitcoin_asic.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Distributed-System/blockchain-part2-industry-exp/" title="第二部分：区块链核心技术：区块链项目核心知识" itemprop="url">第二部分：区块链核心技术：区块链项目核心知识</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2019-05-18T15:11:01.000Z"> 2019-05-18</time>
+    <span class="post-count">字数 11.5k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>专业经验<br>专业经验则是指对目前最主流的区块链项目的掌握程度，比如 Bitcoin，Ethereum 等，了解账户模型，智能合约等等，而且，不仅是它们的运行原理，而且能在它们的基础上持续改进、开拓以及创新，比如对侧链，轻节点、分布式存储，扩容方案等有一定的理解等等。</p>
+<p>为此，我也做了一个列表，主要展示对区块链的专业经验的一些要求：</p>
+<p>目前区块链主流共识算法之间的差异（比如 PBFT 与 POW 之间区别）<br>联盟链、公链及私链之间的区别，部署方式<br>针对区块链的攻击方式：51% 算力攻击，Sybil 攻击，Eclipse 攻击，DDos 攻击<br>P2P 网络通信模式（Gossip，Totem，DHT 等）<br>Merkle Tree 数据结构<br>Bitcoin UTXO 模型，以太坊账户模型，转账流程（GAS 计算，Nonce 值等等）<br>以太坊智能合约的编写，Solidity 相关知识<br>密码学（公钥/私钥，ECDSA，RSA，哈希算法），签名，多重签名，盲签名等等<br>以太坊协议 ERC20 ERC721 ERC223 ERC875<br>比特币（P2SH 地址，交易脚本等）<br>这部分内容可以详见我的系列文章之《区块链核心技术：专业经验》。</p>
+<h2 id="续篇"><a href="#续篇" class="headerlink" title="续篇"></a>续篇</h2><p>这篇文章是这个系列的第二篇：<strong>专业经验</strong></p>
+<h3 id="一、共识算法"><a href="#一、共识算法" class="headerlink" title="一、共识算法"></a>一、共识算法</h3><p>我在第一部分的分布式理论中介绍了共识机制的原理和典型的非拜占庭共识算法，比如 Raft，Paxos 等。它们虽然能保证共识，但是它们对环境有较多要求，比如不能有恶意节点，无法抵御女巫攻击等。只能应用于相对封闭的网络环境。</p>
+<p>这一篇，我们将要介绍在开放网络（公网）环境中依然能保证共识一致性的算法。比如 POW, PBFT 以及 POS 等一些耳熟能详的算法。这些算法由于能够容忍恶意节点，因此我们通常统称为 BFT 算法。</p>
+<h4 id="POW"><a href="#POW" class="headerlink" title="POW"></a>POW</h4><p>POW 全称是 Proof of Work，工作量证明。它是目前最主要的一种 BFT 算法，大名鼎鼎的比特币、以太坊以及其他项目的挖矿原理都是基于 POW 的。</p>
+<p>POW 的原理是利用一些数学难题的计算困难来实现不同节点（矿工）公平争夺记账权，获得记账权的节点就可以获得一定数量的比特币奖励。<br>所谓的数学难题的计算困难是指没有解法，每个参与的节点都只能依赖暴力试算。运气好的节点先试算出匹配的答案就可以获得奖励，这是一种相对公平的算法，因为即使运算能力很低的普通计算机也有机会试出答案。</p>
+<p>数学难题的类型有很多种，比如哈希的逆运算、卷积求导、大质数分解等，在主流的数字货币中（比特币、以太坊等），最典型的 POW 就是利用哈希的逆运算难题。那就是：任何一组数据要计算出它的哈希很简单，但是要根据哈希来得知原数据是什么，则没有算法，只能靠猜。在比特币中，每个矿工都可以打包一定数量的合法交易，要决定谁打包的交易可以被比特币网络确认，就需要计算它们打包后的交易数据的哈希，如果这个哈希符合要求（与答案吻合），那么这个矿工就获得记账权，并得到比特币奖励。其它矿工继续在此基础上打包下一次交易数据，并再次争夺记账权，依此类推。</p>
+<p>POW 的计算方式为：</p>
+<p>numberOfPrefixZero_proofhash &lt;= numberOfPrefixZero_targetHash</p>
+<p>可以看到，在 P0W 下，只能暴力试算，节点获得记账权的概率是随机的。而由于试算需要需要较长时间的耗时耗电运算，所以恶意节点需要推翻已经确认的结果需要花费双倍甚至多倍的算力和资源。比特币采用最长链的方式来维持一致性，只要多数节点（51%）在最长链上进行挖矿，就可以保证交易的正确性不可篡改。而且即使存在分叉也可以得到矫正。</p>
+<p>POW 使用简单试错暴力猜答案的方式来保证公平性，是一个相对比较公平的代币分发机制，它也是迄今为止最安全的公有链共识算法，任何想要恶意攻击系统的人都不得不付出比收益高得多的成本，从经济效益上确保了公链的安全性。比特币、以太坊以及其它主流的数字货币都采用 POW 算法。</p>
+<p>但是 POW 其也有固然的缺陷，那就是哈希算法只是简单的指令计算（SHA256 哈希算法），这个算法只消耗CPU资源，对内存要求不高，这就意味着性能更高的计算机可以在短时间内试算更多答案，从而大大提高命中的概率。而且，专业的矿机（ASIC）对指令集做了精简，使得其在运行指定的哈希算法时速度更快，导致算力迅速被集中到少部分人手中。这也就违背了 POW 算法的初衷。POW 还有一个被人诟病的重大缺陷就是对资源的浪费，大量的矿机在花费无数的电力执行一个毫无实际意义的运算，只为了争夺一次记账权，获得记账权的节点得到奖励，而其余所有付出同样时间进行计算的节点则无法获得任何回报。</p>
+<p>比特币挖矿芯片的更新换代图：<br><img src="/image/blockchain/bitcoin_asic.png" alt=""></p>
+<p>专业的比特币 ASIC 矿场：<br><img src="/image/blockchain/factory.jpg" alt=""></p>
+<p>这样算力就集中在大矿主手里，普通用户使用电脑根本不可能挖到矿，这与中本聪当年设想的人人都能公平记账的愿景相违背。<br>为此，人们设计了各种反 ASIC 化的方案。一个主要的思路就是将 POW 算法改的很复杂，需要大量的内存，这样 ASIC 芯片是不可能集成大量内存进去的，从而无法制造出专门的挖矿芯片。</p>
+<p>比较有代码的改进方案有：<br>莱特币：刚性内存哈希函数 Scrypt 取代 SHA256<br>达世币：X11，11 种哈希函数混合使用<br>以太坊：Ethash，大内存 DAG 搜索<br>但是实际上，只要利益足够大，人们总能够设计出专门 PoW 挖矿的矿机，莱特币矿机和达世币矿机先后被制造了出来，以太坊之前也顶多是使用显卡挖矿，后来也被研发出了专门进行以太坊挖矿的专业矿机。</p>
+<p>比特币 PoW 算法的资源浪费问题<br>中本聪为了解决拜占庭共识问题，在比特币系统中引入竞争挖矿的机制。同时，为了保证最大可能的公平性，采用了基于哈希运算的PoW共识机制。矿工如果想要得到一个合法的区块，则必须向区块头中填入不同的随机值，然后计算出区块头的哈希值，使得得到的哈希值小于目标值。这样，矿工在不断寻找合适随机值的过程中完成了一定的工作量。可以发现，矿工完成的这个工作量对于现实社会毫无意义。唯一的意义就是保障了比特币的安全性。</p>
+<p>对 PoW 算法进行改进的尝试<br>比特币的 PoW 算法是没有任何实际意义的 SHA256 运算，于是人们就试图把这些计算变成有意义的计算，比如科学计算等，而不是单纯的浪费。以下是几个比较有名的进行有效工作量证明的区块链：</p>
+<p>质数币：Primecoin（质数币）发布于2013年7月。其最大的特点是将虚拟货币中浪费的算法资源利用起来。它的PoW可以搜索质数，从而计算孪生素数表。所以有一定的科学价值。<br>治疗币：Curecoin（治疗币）发布于2013年5月。治疗币最大的特点是将蛋白质褶皱结构的研究SHA256工作量证明算法进行了结合。因为蛋白质褶皱研究需要对蛋白质进行生化反应的模拟过程需要大量的计算资源，所以在“挖矿”的同时，还用于发现治愈疾病的新药，一举两得。<br>比原链：比原链重新设计一种不同于比特币的哈希运算 PoW 共识机制，引入了矩阵运算与卷积运算，这样就能让人工智能运算充分利用比原链的挖矿设备。在这个过程中，人工智能加入了新的硬件，其算法运行速度得到明显提高。同时，这样也能减少一定的资源浪费。在这种情况下，矿机市场巨大的经济利益能够极大地加速人工智能 ASIC 芯片的发展，加快人工智能的研究。反过来，人工智能的快速发展也产生了更多的 ASIC 矿机需求。因此，这是一种正向反馈良性发展的过程。</p>
+<h4 id="POS"><a href="#POS" class="headerlink" title="POS"></a>POS</h4><p>POS，全称是 Proof of Stake，权益证明。我们可以把它理解为股份制，谁的股份越多，谁的话事权越大，这和我们现实世界中的股份制含义是一样的。<br>在 POS 中，我们可以选择把持币数量或者持币时间作为股份权益，持有的虚拟货币数量或时间越多，那么其所获得出块权的概率就越大。以币龄为例，一旦出块，就扣除币龄，并获得相应的奖励（利息）。</p>
+<p>由于 POS 不需要节点牺牲资源就可以进行出块获得奖励，作恶成本很低，所以就需要设计一套惩罚机制以确保 POS 网络的安全。通常把这种机制称为 “slashing”，最常见的就是扣除 miner/validator 的保证金。</p>
+<p>需要注意，在 Pos 的世界中不再有矿工，而是有 Validator，只有称为 Validator 才具有出块权，要成为 Validator，通常需要发送一个特定的指令（或交易），锁定部分权益（Stake），最后通过出块获得相应收益。</p>
+<p>PoS 的实现方式通常主要可以分为两种：chain-based PoS 和 BFT-style PoS。chain-based PoS 是在每轮出块是随机选择（根据权重）一个 Validator 来进行出块，这个 Validator 出的块就是最终被确认的块，比如 Peercoin，Nxt 等。而 BFT-Style 则是由所有 Validator 对某个提交的块进行投票，来决定是否最终确认这个区块。</p>
+<p>下面就介绍几个主流的采用 PoS 算法的虚拟货币：</p>
+<p>1）点点币 Peer Coin<br>点点币是 2012 年 8 月发布的，它的采矿方式混合了 POW 工作量证明及 POS 权益证明方式，其中 POW 主要用于发行货币，未来难度逐渐上升，产量降低。系统安全则主要由 POS 维护。目前区块链中存在两种类型的区块，POW区块和POS区块。</p>
+<p>Peercoin 中的 POS 是根据币龄来决定挖矿难度的，币龄越长，挖矿难度就越小，从而其获得出块权的概率就越大。<br>跟 POW 中挖矿结果的计算方式类似，先计算其欲提交的区块哈希，然后对比目标值，如果符合要求，那就获得出块。</p>
+<p>公式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proofHash &lt; coinAge x targetHash</span><br></pre></td></tr></table></figure>
+
+<p>考虑到一些安全性方面的要求，点点币还设置了币龄的上限为 3 个月，以及区块间隔等。</p>
+<p>采用币龄有两个最明显的漏洞：</p>
+<ol>
+<li><p>币龄攻击 save-up attack<br>由于币龄可以决定出块权，那些持有很少币（比如仅 1%）的用户，可以恶意憋个两个月不挖矿积攒币龄，然后来攻击网络。由于它们持币少，攻击成本低，可以很容易就对区块链进行分叉，形成双花。</p>
+</li>
+<li><p>离线 offline<br>即使是诚实节点，它们也可以利用离线的方式积攒币龄，然后在到期前再同步获得利息。这样会造成两个后果，一是在线节点减少导致网络活跃度低，从而同步速度和交易速度都受影响。此外在线节点少也更加容易发生攻击。</p>
+</li>
+</ol>
+<p>2）NextCoin<br>NextCoin 是第一个纯 POS 的虚拟货币，是在 2013 年由 Bitcointalk 论坛的一个叫 BCNext 的用户发起的。Nxt 不再通过消耗大量的资源“挖矿”产生新货币，而是通过现有账户的余额去“锻造”区块，并给与成功“锻造”区块的账户交易费用奖励。NXT 的 POS 实现方式与 PPC 完全不同，合格区块判定方法为：</p>
+<p>hit &lt; baseTarget * effectiveBalance * elapseTime</p>
+<p>hit 是根据最新区块和用户的私钥生成的值，用户在挖一个区块时只需要计算一次即可。而右边的值跟账户余额成正比，跟流逝的时间成正比。也就意味着，用户账户余额越多，挖到矿的几率越高，随着时间的流逝越久，越容易找到新的区块。</p>
+<p>transparent forging</p>
+<p>NXT 把上述挖矿机制称为“透明锻造”，它可以预测哪个账户将会锻造下一个区块。具体的方法就是，遍历所有具有锻造资格（余额大于1k）的活跃账户，看谁具有最高的 hit 值。由于每一个节点都可以计算出哪个账户是下一个区块的生成者，因此可以直接将交易发送给下一个区块的锻造者，而不用像通常的那样广播至整个网络。这极大的提高了区块交易的速度。而且，如果轮到那个该进行锻造的账户不锻造的话，还会受到惩罚（锻造力清零）。</p>
+<p>一天有 1440 分钟，NXT 每天出 1440 个块，也就是平均每分钟一个块。账户通过锻造区块来赚取交易费，它能够锻造的块取决于它拥有的 coin 数量相对于所有 active coin 的数量。当一笔 coin 转移到一个新的账户，它必须等待 1440 分钟才能成为 active coin 参与锻造。这样避免了被拥有大账户和账户多的人员垄断锻造机会。</p>
+<p>通常来说，每笔交易的费用最少是 1 个 fee coin，一个区块可以是空的，也可以最多包含 255 笔交易。也就是说，按最少交易费（1 fee coin）来算，锻造一个区块可以获得最多 255 个 “fee coin”。</p>
+<p><a href="https://images2018.cnblogs.com/blog/2625/201804/2625-20180415221701177-996771581.png" target="_blank" rel="noopener"></a></p>
+<p>3）黑币 Blackcoin<br>黑币 BLK 是在 2014 年发布的。起初它采用 POW 和 PoS 混合的方式，<br>发行前 7 天采用 Scrypt 算法进行 POW 挖矿，第 8 天开始（10001 块）进入纯 POS 阶段。</p>
+<p>在 POS 算法中，它的难度公式不再使用币龄，而是使用持币数量，公式如下：</p>
+<p>proofhash &lt; coinAmout * targetHash</p>
+<p>由于没有币龄，使得积攒币龄的方法不再有效，所有节点必须更多的保持在线，以进行权益累积。</p>
+<p>虽然如此，但是 PoS 依然有一个核心的缺陷难以解决，那就是分叉。<br>由于 Pos 不消耗算力，所以一旦出现分叉，理性节点会在所有链上同时 PoS 挖矿。以至于每次分叉都会形成新的山寨币，PoS 无法很好的应对分叉。<br>相反，PoW 中通常节点只能选择一个最长链进行挖矿，否则如果选择在多个链进行挖矿的话，算力分散，得不偿失。</p>
+<p>4）Ethereum Casper<br>由于 PoW 的高耗能缺陷，Ethereum 很早就计划迁移到 PoS 机制上，2017 年发布的 Casper Protocol 就是其 PoS 实现的一种规范。</p>
+<p>Casper 采用 Validator 来对区块进行有效性验证和最终确认，Validator 是网络的参与者，必须抵押一定的虚拟货币资产，以便在其违背诚信原则（slashing conditions）时作为处罚。Validator 通过确认区块来获得收益。</p>
+<p>我们来简单看一下 Casper 是如何工作的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">验证者押下一定比例的他们拥有的以太币作为保证金。</span><br><span class="line">然后，他们将开始验证区块。也就是说，当他们发现一个可以他们认为可以被加到链上的区块的时候，他们将以通过押下赌注来验证它。</span><br><span class="line">如果该区块被加到链上，然后验证者们将得到一个跟他们的赌注成比例的奖励。</span><br><span class="line">但是，如果一个验证者采用一种恶意的方式行动、试图做“无利害关系”的事，他们将立即遭到惩罚，他们所有的权益都会被砍掉。</span><br></pre></td></tr></table></figure>
+
+<p>Casper 不是一个单一的项目，它包含了两个研究项目，它们是</p>
+<ul>
+<li>（1）Casper the Friendly Finality Gadget (FFG)<br>FFG 是 Vitalik 提出的一种混合 POW/POS 共识算法，主要目的是为了方便 Ethereum 过度到纯 PoS 而设计。<br>具体来说，Casper FFG 被设计为运行在 PoW 之上的 Smart Contract，参与方需要发送至少 1500 ETH 作为抵押才能称为 Validator，然后对 PoW 产生的每 50 个区块（称为 “Checkpoint”）进行一个 Validity 投票验证，为了防止恶意攻击，Validator 必须接受 slashing conditions，也就是说，一旦被发现不诚实行为，它所有的 Deposits 都会被扣除。</li>
+</ul>
+<p>FFG 可以实现一定程度的 BFT 性质要求：</p>
+<p>（1）Accountable Safety<br>只要不到 1/3 的 Validators 不违反 slashing condition，那么就不会有两个冲突的 Checkpoints 同时被确认。</p>
+<p>（2）Plausible Liveness<br>只要 2/3 的 Validators 遵守协议，那么就一定能够产生（finalize）一个永久有效的 checkpoint。</p>
+<p>具体数学论证请查看 <a href="https://arxiv.org/pdf/1710.09437.pdf" target="_blank" rel="noopener">Casper FFG paper</a></p>
+<p>FFG 已经被废弃了，那么它有什么问题？<br>首先最大的问题就是它不够分布式 decentralized，一方面，由于依然受限于 PoW 出块的效率（ 15tx/s），导致需要把最低抵押金（MIN_DEPOSIT_SIZE）设置为 1500 ETH，这对于个人来说是一个很大的数值，而且 Validators 网络被限制为大概只有 900 到 1000 个左右的参与者以便该网络能更有效的运行。</p>
+<p>另一方面，智能合约层的签名验证有不可避免的瓶颈。假如我们把最低保证金降低到 32 ETH，整个网络有 1000 万 ETH 保证金，那么将会有 31.25 万个 Validators，每个投票周期需要收集 2/3 的票，也就是每个 PoW 矿工需要收集 20.8 万个票。这个将极大的降低系统的出块率，在极端情况下需要10几个小时才仅能提交一个块，非常不可行！</p>
+<p>那么怎么才能有效的收集超过 10 万数量的投票呢？答案是：off-chain</p>
+<p>使用一种称为 “BLS Signature Aggregation“ 增量签名的方法，不对公钥进行1对1验证，而是把它们看作一组，使用多重签名的方式对他们一次性验证，极大的提高验签效率。</p>
+<ul>
+<li>（2）Casper the Friendly GHOST: Correct-by-Construction (CBC)</li>
+</ul>
+<p>Casper CBC 也叫做 Vlad 版的 Casper，在 CBC 中，不再通过设计一个完整的协议来运作，而是仅指定部分协议（Partial Protocol），然后根据这些协议来推导最终的正确性，这就是 Correct by Construction 的本质含义。</p>
+<p>用大白话来说，我们是动态地推导出该协议的。获得完整协议的其中一种方式是运行一种被 Vald 称为“理想对手（ideal adversary）”的预估安全预言机（estimate safety oracle），它运行下列两者之一：</p>
+<ul>
+<li>提出一个合理估计的错误的例外情况。</li>
+<li>列出所有在未来可能发生的错误。</li>
+</ul>
+<p>关于 Casper CBC 更详细的分析可以参考下面几篇文章：<br><a href="https://medium.com/@barnabe/partially-explained-casper-cbc-specs-86d055fd0628" target="_blank" rel="noopener">(Partially) Explained Casper CBC specs</a><br><a href="https://medium.com/@aditya.asgaonkar/casper-cbc-simplified-2370922f9aa6" target="_blank" rel="noopener">Casper CBC, Simplified!</a><br><a href="https://medium.com/ethereums-transition-from-casper-ffg-to-beacon/from-casper-ffg-to-full-casper-chain-cbd522751a7e" target="_blank" rel="noopener">From Casper FFG to Full Casper Chain</a><br><a href="https://blockgeeks.com/guides/ethereum-casper/" target="_blank" rel="noopener">What is Ethereum Casper Protocol?</a></p>
+<p>Casper CBC 是纯 PoS 的算法，由于篇幅限制，这里就不展开。</p>
+<p>总结：</p>
+<p>PoS 算法的优势：</p>
+<p>（1）无过度的资源消耗<br>（2）出块速度更快，效率更高</p>
+<p>劣势<br>（1）Nothing-At-Stake 无利害关系<br>也叫权益粉碎攻击，在 PoS 中，钱多的人权利也更大，利益也更大，相比作恶，其更倾向于维护系统安全，也就是说 PoS 更能抵御 51% 攻击。而反过来，钱越少责任越小，所以权益越少的节点越倾向于制造分叉，因为制造分叉并不需要 PoW 中那样的算力成本。<br>这也就意味着，你在最长链上挖矿的同时，也去创造一个只在自己的区块上挖矿的分支。尽管他们知道这种尝试会造成整个币的价值降低，但是他们的钱很少，他们并不在乎，这就是所谓的平凡人悲剧（tragedy of the commons）。</p>
+<p>虽然不同的币会有对这种行为惩罚的机制，比如 Casper 中的 slasher 罚没。但由于作恶成本低，依然不能杜绝。</p>
+<p>（2）Long range attack 长程攻击<br>长程攻击就是攻击者创建了一条从创世区块开始的长区块链分支，并试图替换掉当前的合法主链。该分支上可能存有和主链不同的交易和区块，所以这种攻击又被称 替换历史攻击或历史覆写攻击。</p>
+<p>长程攻击之所以存在，由于权益证明协议有<strong>弱主观性</strong>并且能进行<strong>无代价模拟</strong>造链。这里的弱主观性是指新节点或长期离线节点加入网络并同步区块时所遇到的问题，<br>当一个新节点加入到网络中时，总需要人为地为它提供一个创世区块，这个区块是独一无二被大家共识为首区块的区块。设置好创世区块后，节点接着就会收到当前区块链上所有公开的分支。但是问题是，它无法分辨哪些分支是从属于主链的。长期离线（例如数月）的节点也会遭遇相同的问题。虽然之前节点已经同步了相当长的主链，但是在长时间的离线之后，它们也无法分辨究竟哪一个新的分支从属于主链。而保持在线状态的节点则总能及时地监控并同步主链，不存在弱主观性问题。</p>
+<p>无代价模拟的一个重大问题是，最长链并不能成为判断主链的依据，因为节点几乎不消耗算力资源来创建一条从创世区块开始的长分支链的能力。任何加入到权益证明区块链的新节点都会接收到多条分支链，其中很大一部分长度也相同。长程攻击恰恰利用了权益证明协议区块链的这两个特点。</p>
+<p>(3) 理性分叉<br>相比权益粉碎攻击和长程攻击这种主动制造分叉的行为，理性分叉则是被动的。按理来说诚实节点不会在非主链上挖矿，但是如果其是理性的话，那么它就会在所有分叉上进行挖矿，因为在 PoS 中，这种行为不像 PoW 那样需要消耗算力成本。如果整个网络足够理性，会出现的情况反而是每条分支都会永远存在，因为理性的矿工会同时在所有分支上挖矿。这是 POS 最大的缺陷，如果只用最长链共识的话，POS 本身是没法应对分叉的，必须通过惩罚。但是这种惩罚又是只对作恶有效，它是违反节点逐利本性的，所以非常难以实施。<br>而当多数矿工都在两条甚至多条链上一起挖矿的时候，就会很容易出现双重支付攻击。</p>
+<p>简单来说，PoS 难以解决节点在多个分叉上进行验证（“挖矿”）的行为。</p>
+<p>（4）冷启动问题 ( Initial Distribution Problem )<br>PoS 机制中，由于持币量会对挖矿难度产生影响。因此，当一个基于 PoS 体系代币系统启动时，就会面临早期获得代币的持有者，没有动力去花费或者转移代币给第三方。同时，持有越多的币，越容易挖到矿，这样就产生了代币初始流通性问题。</p>
+<p>对于冷启动问题，通常的解决办法是 PoW + PoS，也就是说先通过 PoW 机制来创建货币，然后逐步转移到 PoS。这是因为先采用 PoW 的话，矿工在挖矿过程中往往需要资金来升级硬件，从而让矿工手中的币流通起来。</p>
+<p>（5）富者愈富？<br>一种反复出现的对权益证明的批评是，它只会让富人变得更加富有。因为为了具备验证者的资格，你需要锁定一个你的（比如以太）资产中的可观的比例作为保证金；而且，除了这一点，你将获得的奖励是跟你押注的数额成比例的。钱越多越容易挖到区块，这将会造成富者越富，资源越来越集中，从而导致整个系统变得更加中心化。<br>虽然这是 PoS 现存的可能事实，不过也有很多力致力于解决这个困境，比如以太坊的 Jon Choi 在 《Ethereum Casper 101》 一文中声称不存在富者愈富问题。</p>
+<p>此外，PoS 还面临许多其它类型的攻击，比如：币龄加和攻击 （ Coin Age Accumulation Attack ），预计算攻击 ( Precomputing Attack) 等，这里就不多介绍。</p>
+<h4 id="dPoS"><a href="#dPoS" class="headerlink" title="dPoS"></a>dPoS</h4><p>dPoS，Delegated proof of stake，委托权益共识算法，在 2014 年 4 月由 Bitshares 的首席开发者 Dan Larimer（BM, Byte Master）提出。<br>它的原理是让每一个持有比特股的人进行投票，由此产生 101 位代表 , 我们可以将其理解为 101 个超级节点或者矿池，而这 101 个超级节点彼此的权利是完全相等的。</p>
+<p>从某种角度来看，DPoS 有点像是议会制度，由固定数量的议员或代表们来负责整个系统的决策，这些议员对某个议题（区块）进行投票，占多数投票的议题（区块）就成为最终的决策。如果代表不能履行他们的职责（当轮到他们时，没能生成区块），他们会被除名，网络会选出新的委员会来取代他们。</p>
+<p>我们来看一下这里的受托人需要履行的职责有哪些：</p>
+<ol>
+<li>提供一台服务器节点，保证节点的正常运行；</li>
+<li>节点服务器收集网络里的交易；</li>
+<li>节点验证交易，把交易打包到区块；</li>
+<li>节点广播区块，其他节点验证后把区块添加到自己的数据库；</li>
+<li>带领并促进区块链项目的发展；</li>
+</ol>
+<p>受托人的节点服务器相当于比特币网络里的矿机，在完成本职工作的同时可以领取区块奖励和交易的手续费。</p>
+<p>我们可以看一下 dPos 的伪代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> round i <span class="comment">// 分成很多个round，round无限持续</span></span><br><span class="line">   dlist_i = get N delegates sort by votes <span class="comment">// 根据投票结果选出得票率最高的N个受托人</span></span><br><span class="line">   dlist_i = shuffle(dlist_i) <span class="comment">// 随机改变顺序</span></span><br><span class="line">   loop <span class="comment">// round完了，退出循环</span></span><br><span class="line">       slot = global_time_offset / block_interval</span><br><span class="line">       pos = slot % N</span><br><span class="line">       <span class="keyword">if</span> dlist_i[pos] exists in <span class="keyword">this</span> node <span class="comment">// delegate 在这个节点</span></span><br><span class="line">           generateBlock(keypair of dlist_i[pos]) <span class="comment">// 生成 block</span></span><br><span class="line">       <span class="keyword">else</span></span><br><span class="line">           skip</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，在每一轮循环里，系统会重新统计得票排名。在选出最高的 N 个受托人里，系统采用先打乱顺序，然后受托人依此生产区块。一轮区块生产完毕后进入下一个周期。</p>
+<p>DPOS 中生产区块主要分为两个步骤：首先选择一群区块生产者，然后安排区块生产。区块生产者选举的过程中，想要成为见证者的节点需要到社区去拉票，获得用户的支持，用户根据自己手中的权益去投票，同时见证者创建区块时投票者也会获得收益，具体收益由他们选出的代表决定。见证者的数量不是固定的，是有权益持有者共同决定的。在投票过程中，大家用自己手中的权益支持信任的候选人，然后根据整体投票情况确定一定数量的见证者，第一步就结束了。</p>
+<p>选举出来的见证者的权利是完全相等的，他们共同生成新区块。以EOS为例来。在 EOS 中，每生产 126 个区块为一个周期：每次选举出 21 个出块的超级节点，每个节点生产6 个区块。每 0.5 秒产生一个区块，一次只分配一个节点进行区块生产。如果有生产者错过出块，就会跳过该块，该生产者也会被删除。每完成一个周期的生产，就会重新投票选举见证者。</p>
+<p><a href="https://bitshares.org/technology/delegated-proof-of-stake-consensus/" target="_blank" rel="noopener">Delegated Proof-of-Stake Consensus</a></p>
+<p>dPoS 是由 BM 设计的，因此很多开源的区块链项目也都来自于其主导，比如 BitShares、Steemit、EOS 等，此外还有 Nano（XRB），Aelf 等项目也都在用 dPoS 来设计实现。</p>
+<p>总结：</p>
+<p>（1）dPoS 的优势</p>
+<p>大量降低能耗：在 DPOS 中生产区块的节点数量极少，大致几十或几百个，每次只授权一个生产者在给定时间生产区块，区块生产是井然有序的，这些节点之间的关系是合作而不是竞争，因此不需要消耗大量的算力去竞争记账权，这样就极大地降低了能源消耗。<br>加快确认速度：比如 EOS 每生成一个区块只需要 0.5 秒，一笔交易大概经过 6-10 次确认，时间不超过一分钟。对比来看，采用 PoW 算法的比特币系统中，每生成一个区块需要 10 分钟，每笔交易的确认则需要一小时，同样，POS 共识机制的交易确认时间也很长。所以 dPoS 的速度优势非常明显。</p>
+<p>（2）劣势<br>中心化，dPoS 的代理委员会制度设计与区块链的去中心化特点是不完全契合的。毕竟，出块的权利只集中在几个节点了，一旦减小参与者规模，区块链的核心问题就从如何提高系统性能转变为如何防止委员会联合作恶或者操控网络。</p>
+<p>当然，是否中心化这个话题涉及到区块链的设计哲学，毕竟大多数或者 geek 一类的人最早都是从接触比特币开始了解整个生态的，点对点通信的设计是这个系统最核心的要素，如果像 dPoS 这样需要借助中介（代理委员会）去实现点对点的电子转账或交易的话，诚然系统运行的效率更高了，但是在我看来已经偏离了这个技术的初衷和发展的方向。</p>
+<h4 id="PBFT"><a href="#PBFT" class="headerlink" title="PBFT"></a>PBFT</h4><p>PBFT 全称是 Practical Byzantine Fault Tolerance，实用拜占庭容错。</p>
+<p>该算法最早是 Miguel Castro (卡斯特罗) 和 Barbara Liskov（利斯科夫）在 1999 年发表的论文《Practical Byzantine Fault Tolerance 》中提出来的，解决了原始拜占庭容错算法效率不高的问题，算法的时间复杂度是O(n^2)，使得在实际系统应用中可以解决 BFT 问题。</p>
+<p>这个算法在保证活性和安全性的前提下提供了(n-1)/3 的容错性，也就是说如果存在 f 个出错节点，节点数需要至少 3f+1 个。</p>
+<p>下面介绍一下 PBFT 算法的原理</p>
+<p>pbft 算法主要是三个核心阶段：pre-prepare, prepare 和 commit，如下图所示：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-ab3bab245c17269625d7ebc56c3848c3_hd.jpg" alt=""></p>
+<p>PBFT 是一种状态机副本复制算法，所有的副本在一个视图（view）轮换的过程中操作，主节点通过视图编号以及节点数集合来确定，即：主节点 p = v mod |R|。v：视图编号，|R|节点个数，p：主节点编号。</p>
+<p>首先，客户端向主节点发起请求，主节点 0 收到客户端请求，会向其它节点发送 pre-prepare 消息，其它节点就收到了pre-prepare 消息，就开始了这个核心三阶段共识过程了。</p>
+<ul>
+<li>Pre-prepare 阶段：节点收到 pre-prepare 消息后，会有两种选择，一种是接受，一种是不接受。什么时候才不接受主节点发来的 pre-prepare 消息呢？一种典型的情况就是如果一个节点接受到了一条 pre-pre 消息，消息里的 v 和 n 在之前收到里的消息是曾经出现过的，但是 d 和 m 却和之前的消息不一致，或者请求编号不在高低水位之间（高低水位的概念在下文会进行解释），这时候就会拒绝请求。拒绝的逻辑就是主节点不会发送两条具有相同的 v 和 n ，但 d 和 m 却不同的消息。</li>
+<li>Prepare 阶段：节点同意请求后会向其它节点发送 prepare 消息。这里要注意一点，同一时刻不是只有一个节点在进行这个过程，可能有 n 个节点也在进行这个过程。因此节点是有可能收到其它节点发送的 prepare 消息的。在一定时间范围内，如果收到超过 2f 个不同节点的 prepare 消息，就代表 prepare 阶段已经完成。</li>
+<li>Commit 阶段：于是进入 commit 阶段。向其它节点广播 commit 消息，同理，这个过程可能是有 n 个节点也在进行的。因此可能会收到其它节点发过来的 commit 消息，当收到 2f+1 个 commit 消息后（包括自己），代表大多数节点已经进入 commit 阶段，这一阶段已经达成共识，于是节点就会执行请求，写入数据。</li>
+</ul>
+<p><img src="https://images2018.cnblogs.com/blog/2625/201804/2625-20180415221647215-565887866.png" alt=""></p>
+<p>从上图我们可以看出，PBFT 算法下，网络通信的复杂度达到了 O(n²)。这也就意味着，使用 PBFT 算法的网络节点不能太多，否则很容易导致消息数量爆炸，从而造成网络风暴，使得整个网络堵塞。</p>
+<p>这一特性也使得采用 PBFT 算法的链通常用在联盟环境或者私有环境，比如 Hyperledger。<br>当然它也可以在更大的公网中作为辅助协议运行，比如 dPoS 中的代理委员会决策，或者 Cosmos/Tendermint 网络中的 bonded Validators。</p>
+<p>PBFT 在 Fabric0.6 的时候被采用，但是由于一些说不清的原因，在 Fabric1.0 中并没有采用PBFT，而是使用 Kafka 对交易进行排序，作为共识节点。在 Fabric 的提案中，打算会采用 SBFT（Simple BFT），这种 BFT 算法会对 PBFT 进行简化，具体什么时候实现现在还不确定。</p>
+<p>当然，采用 PBFT 算法的项目很多，包括早起版本的 Hyperledger Fabric，还有 Stellar、Ripple、Dispatch 等。</p>
+<p>总结：</p>
+<p>Practical BFT 算法本质上是 BFT 算法的一种实现，BFT 简单来说是一类系统的统称，这类系统可以容忍任何错误，而 PBFT 则通过设置一些条件限制，比如限制出错节点数，来达到 BFT 的效果，其他的类似协议还有 Delegated BFT (NEO 采用), Federated BFT（Stellar 采用）。<br>另外，前面介绍的 PoW, PoS 等算法其核心目的都是需要实现 BFT 容错，至于 PoW 是否是真正的 BFT 有部分争论，因为在比特币的 PoW 设计中，区块的最终状态是不确认的，依赖应用层对最长链的信任程度。</p>
+<p>主流区块链分别用的是什么共识算法<br><img src="https://pic3.zhimg.com/80/v2-80ef4d4e2ac38e32015f9a0d8ed70906_hd.jpg" alt=""></p>
+<p>自区块链技术运用以来，诞生了几十上百种共识算法，除了一些创新之外，多数是改进和优化。更多的共识算法还有比如 dBFT，PoA，PoSe，PoET，PoSV 等等，有兴趣的读者可以自行了解。</p>
+<p>参考：<br><a href="https://medium.com/coinmonks/pbft-understanding-the-algorithm-b7a7869650ae" target="_blank" rel="noopener">https://medium.com/coinmonks/pbft-understanding-the-algorithm-b7a7869650ae</a></p>
+<h4 id="DAG"><a href="#DAG" class="headerlink" title="DAG"></a>DAG</h4><p>DAG，Directed Acyclic Graph，有向无环图，这是一种数据结构。<br>最早是在 2013 年的 “Ghost 协议”中提出 旨在解决当时比特币的扩容问题。后来，在 NXT 社区，又有人提出了 DAG of block，将 DAG 的拓扑结构用来存储区块，解决效率问题。那时对于 DAG 的应用，还停留在类似于侧链的一个认识。</p>
+<p>与传统的 block-based 的单链表数据结构不同，每个后继节点可以引用两个或多个前序节点。<br>另外一个区别在与 DAG 是以交易为单位进行确认，而传统的区块链（比特币、以太坊等等主流虚拟币）都是以区块为单位进行确认。</p>
+<p><img src="/image/blockchain/DAGstructure.jpg" alt=""></p>
+<p><img src="/image/blockchain/Blockstructure.jpg" alt=""></p>
+<p>可以看到，传统区块链是由区块组成的一条单链，而 DAG 则是由交易组成的网络。它最大的特点就是交易是异步处理和确认的，不需要想传统区块链那样需要每隔一段时间汇集一定数量的交易到一个区块中进行同步确认。这样的好处就是无需挖矿，极大的提高确认速度，尤其对小额支付非常便捷快速，并且扩展性好。</p>
+<p>在其网络中，节点发出交易时，把将自己发起的交易指向网络中任意两笔已存在的交易，这里的指向其实就是背书，验证之意。每个节点即是交易者也是验证者，它的角色相当于传统区块链中的矿工。由于交易之间无需同步，只要交易不发生冲突，理论上速度和数量都没有限制，参与的节点越多，交易速度越多，能承载的交易量也越多。</p>
+<p>DAG 与链式结构的本质区别在于异步与同步通讯。链式结构的本质等同于数据库事务日志，而出块操作则为检查点操作，那么链式结构体系可以看做是定期同步检查点的数据库事务同步机制。</p>
+<p>总结分析</p>
+<p>DAG 的优点<br>快速确认（约 30 秒）<br>扩展性好（不像 bitcoin, ethereum 有区块大小限制）<br>没有孤块问题<br>没有交易推送延迟（没有 mempool，peer 收到就会立即 confirm）</p>
+<p>DAG 存在的问题</p>
+<p>1）交易时长不可控<br>DAG 通过将事务操作进行异步处理来增加网络吞吐量，通过后续交易对前继交易的引用来确认，验证时采用随机方式，而没有任何先后规则，这就导致有可能产生某些交易在极端情况下没有任何其他节点对其验证，从而永远不会被确认。这个问题在 IOTA 的实现中通过多次重试的方式来解决。但是是否存在更好的一次性确认机制能更有效地解决该问题值得探讨；</p>
+<p>2）交易顺序不可控<br>由于交易是异步进行的，网络中没有统一的时间戳和全局排序机制，无法有效预测交易被确认的时间与周期，并且操作之间的全局顺序无法最终在多个节点间确认保持一致。<br>在这种情况下，在非等阶操作时可能存在不一致的问题（例如对同一条记录，在两个不同的节点同时执行转账（加减法）和计息（乘法）操作，两个节点得到的操作顺序有区别，导致账户余额最终结果不一致）。这也导致系统支持的操作类型非常有限，目前只支持加减。</p>
+<p>3）检索与工程实现难度<br>为了追踪每一笔交易与之前交易的关系，整个 DAG 图谱需要被随时检索和访问。在一个较大规模的系统中其交易图谱溯源会非常复杂，同时几乎不可能被全部保存在内存中以进行实时更新。而如果将这些数据保存在磁盘上，那么实时刷新每个 Tangle 的权重会造成大量随机 I/O（也许可以通过大量部署 SSD 解决），因此从工程实现上来看优化难度较大；</p>
+<p>4) 安全性风险</p>
+<p>DAG 要比 PoW 脆弱得多。在 PoW 共识机制中，算力达到 51%，才能够发起攻击；而攻击 DAG，以 Tangle 为例，发起一笔交易验证两笔交易，理论上来说，只要达到 34% 的算力，就能够攻击整个 DAG 网络了。</p>
+<p>一方面，每个人都参与处理交易，如果一个拥有高算力的节点通过发起巨量的交易，从而获得更多验证权，就很容易降低 DAG 网络的效率，甚至发起攻击；另一方面，无交易费使得发起和验证的成本为零，同时海量的节点更增加了这种攻击风险。</p>
+<p>此外，具体的安全问题主要还包括下面两种：</p>
+<p>一、双花问题<br>DAG 异步通讯的特性为双花攻击创造了可能。例如，攻击者在网络的两个不同的位置添加了两笔冲突的交易（双花），交易在网络中不断向前验证，直到它们出现在同一笔交易的验证路径上，网络才会发现冲突，这时这两笔交易汇聚成的共同祖先节点才能判断哪一笔交易是双花攻击。</p>
+<p>而如果将交易路径控制的过短又会存在类似“Blowball”的问题：当极端情况下绝大多数交易都较为“懒惰”（Lazy Tip）、只参考早期交易时，交易网络会形成一个以少数早期交易为核心的中心拓扑。这对依赖于交易的不断增加而提高网络可靠性的 DAG 来说，也不是一件好事。</p>
+<p>目前，有越来越多的DAG项目正在发展，有乐观者认为DAG才是真正的区块链3.0，也有人认为区块链才是更加完善的去中心化账本。不可否认的是，DAG的确是区块链在去中心化和拓展问题上的强劲对手。</p>
+<p>二、影子链问题<br>由于存在双花的潜在问题，当攻击者可以构建出足够数量的交易后，就可能从真实的网络数据中分叉出一个欺诈性分支（影子链），其中包含着双花交易，然后将这个分支合并到DAG 网络中，特定情况下这个分支有可能取代原有交易数据。</p>
+<p>DAG 的改进方案<br>目前项目主要都是通过牺牲一部分 DAG 的原生特性来保证安全性。</p>
+<p>IOTA 项目中采用了马尔科夫链蒙特卡洛（Markov chain Monte Carlo，以下简称 MCMC）的方式来解决该问题。IOTA为交易引入了累积权重（Cumulative Weight）的概念用来记录该笔交易被引用的次数，目的是表示其交易的重要性。MCMC算法通过对累积权重进行加权随机游走，选择目前网络中已存在的交易作为新增交易的参考。即被参考越多的交易路径越容易被算法选中。游走策略在1.5.0版本中也进行了优化，可将交易拓扑的“宽度”控制在一个合理范围内，使得网络更加安全。</p>
+<p>但在平台启动初期，由于参与节点和交易数量均有限，所以很难避免一个恶意机构通过大量节点发送出海量的恶意交易使得整个网络受到影子链的攻击。因此就需要一个权威的仲裁机构来判定交易的有效性。在 IOTA 中，这一节点为 Coordinator，它会定期对目前交易数据网络（Tangle）进行快照；包含在快照中的交易即被确认为有效交易。但 Coordinator 并不会一直存在。随着整个网络的运行和成长，IOTA会在未来某一时间取消掉 Coordinator。</p>
+<p>Byteball 改进方案的特色在于其对于见证人（witness）和主链的设计。因为 DAG 的结构带来了很多偏序关系的交易，而要避免双花则需要对这些交易建立一个全序关系，形成一个交易主链。主链上较早的一笔交易作为有效交易。而由知名用户或机构担任的见证人通过不断的发送交易确认其他用户交易，从而形成主链。</p>
+<p>以上方案也可能会对基于 DAG 结构的平台带来不一样的改变。以 IOTA 为例，因为引入了 Coordinator，一定程度上降低了去中心化特性。</p>
+<p>采用 DAG 的知名项目主要有：IOTA, Byteball 和 NANO，他们被称为“DAG 三驾马车”，其他采用 DAG 并作出重大改进的项目还有 Hashgraph。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Distributed-System/">Distributed System</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Distributed-System/blockchain-part2-industry-exp/" data-title="第二部分：区块链核心技术：区块链项目核心知识 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/System-Programming/core-techs-database/" title="Database fundamentals">
+  <strong>Prev：</strong><br>
+  <span>
+  Database fundamentals</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/life/life/" title="Encrypted Article">
+ <strong>Next：</strong><br>
+ <span>Encrypted Article
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

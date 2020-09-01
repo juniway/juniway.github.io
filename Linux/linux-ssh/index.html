@@ -1,0 +1,759 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>ssh | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="SSH (Secure Shell) is a UNIX-based command interface and protocol for securely getting access to a remote computer. SSH is actually a suite of three utilities - slogin, ssh, and scp - that are secure">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssh">
+<meta property="og:url" content="https://juniway.net/Linux/linux-ssh/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="SSH (Secure Shell) is a UNIX-based command interface and protocol for securely getting access to a remote computer. SSH is actually a suite of three utilities - slogin, ssh, and scp - that are secure">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.438Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ssh">
+<meta name="twitter:description" content="SSH (Secure Shell) is a UNIX-based command interface and protocol for securely getting access to a remote computer. SSH is actually a suite of three utilities - slogin, ssh, and scp - that are secure">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Linux/linux-ssh/" title="ssh" itemprop="url">ssh</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-06-25T10:49:48.000Z"> 2016-06-25</time>
+    <span class="post-count">字数 1.5k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p><strong>SSH</strong> (Secure Shell) is a UNIX-based command interface and protocol for securely getting access to a remote computer. SSH is actually a suite of three utilities - slogin, ssh, and scp - that are secure versions of the earlier UNIX utilities, rlogin, rsh, and rcp. SSH commands are encrypted and secure in several ways. Both ends of the client/server connection are authenticated using a digital certificate, and passwords are protected by being encrypted.</p>
+<p>SSH is the most common way to access remote Linux and Unix-like servers. A very common use of SSH is for Github account service.</p>
+<h3 id="Basic-Syntax"><a href="#Basic-Syntax" class="headerlink" title="Basic Syntax"></a>Basic Syntax</h3><pre><code>$ ssh remote_username@remote_host</code></pre><p>SSH is a secure communication protocol, it works by connecting a ssh client to a ssh server, the most popular implementation of SSH in Linux is OpenSSH,<br>it provides a <strong>ssh</strong> command as the <code>ssh client</code> and <strong>sshd</strong> as the <code>ssh server</code>. In windows, an open source ssh client <code>PuTTy</code> can be used.<br>Make sure the <strong>sshd server</strong> is already running on the remote_host before we connect to it.</p>
+<p>On Ubuntu 16.04, use <code>sudo systemctl start ssh</code> to start the sshd server if it is not started.</p>
+<h3 id="SSH-server-Configuration"><a href="#SSH-server-Configuration" class="headerlink" title="SSH server Configuration"></a>SSH server Configuration</h3><pre><code>$ sudo vim /etc/ssh/sshd_config</code></pre><p>Below are some most common settings</p>
+<pre><code>HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_dsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key</code></pre><p>The host keys declarations specify where to look for global host keys. </p>
+<pre><code>LoginGraceTime 120
+PermitRootLogin yes
+StrictModes yes</code></pre><p><strong>LoginGraceTime</strong> specifies how many seconds to keep the connection alive without successfully logging in.</p>
+<p>It may be a good idea to set this time just a little bit higher than the amount of time it takes you to log in normally.</p>
+<p><strong>PermitRootLogin</strong> selects whether root is allowed to log in.</p>
+<p>In most cases, this should be changed to “no” when you have created user account that has access to elevated privileges (through su or sudo) and can log in through ssh.</p>
+<p><strong>strictModes</strong> is a safety guard that will refuse a login attempt if the authentication files are readable by everyone.</p>
+<p>This prevents login attempts when the configuration files are not secure.</p>
+<pre><code>X11Forwarding yes
+X11DisplayOffset 10</code></pre><p>These parameters configure an ability called X11 Forwarding. This allows you to view a remote system’s graphical user interface (GUI) on the local system.</p>
+<p>This option <strong>must be enabled</strong> on the server and given with the SSH client during connection with the -X option.</p>
+<h3 id="Login-using-SSH-with-Keys"><a href="#Login-using-SSH-with-Keys" class="headerlink" title="Login using SSH with Keys"></a>Login using SSH with Keys</h3><p>By default username/passwords are required to login to a remote system, but it could be tedious every time when we need to login to the remote server, we can set up key-based authentication to enable passwordless login.</p>
+<h4 id="How-Does-Key-based-Authentication-Work"><a href="#How-Does-Key-based-Authentication-Work" class="headerlink" title="How Does Key-based Authentication Work?"></a>How Does Key-based Authentication Work?</h4><p>Key-based authentication works by creating a pair of keys: a private key and a public key.</p>
+<p>The <strong>private key</strong> is located on the client machine and is secured and kept secret.</p>
+<p>The <strong>public key</strong> can be given to anyone or placed on any server you wish to access.</p>
+<p>When you attempt to connect using a key-pair, the server will use the public key to create a message for the client computer that can only be read with the private key.</p>
+<p>The client computer then sends the appropriate response back to the server and the server will know that the client is legitimate.</p>
+<p>This entire process is done in the background automatically after you set up keys.</p>
+<h3 id="Create-SSH-Keys"><a href="#Create-SSH-Keys" class="headerlink" title="Create SSH Keys"></a>Create SSH Keys</h3><pre><code>$ ssh-keygen -t rsa</code></pre><p>By default, this command will generate a key pairs <code>id_rsa.pub</code> and <code>id_rsa</code> in <code>~/.ssh</code> directory.</p>
+<p>RSA key and ED25519 key are considered strong enough, we can have more options when we generate them:</p>
+<pre><code>$ ssh-keygen -t rsa -b 4096 -o -a 100
+$ ssh-keygen -t ed25519 -o -a 100</code></pre><p>We can specify another name using <code>-f</code> option</p>
+<pre><code>$ ssh-keygen -f test -C &quot;test key&quot;
+
+
+$ cd ~/.ssh
+$ ls
+-rw-r--r-- 1 alex alex  807 Nov  9 20:55 authorized_keys
+-rw------- 1 alex alex 1679 Nov  9 22:01 id_rsa
+-rw-r--r-- 1 alex alex  396 Nov  9 22:01 id_rsa.pub</code></pre><p>As shown, the id_rsa file is <strong>readable and writable only (600)</strong> to the owner. This is how it should be to keep it secret.</p>
+<h3 id="How-To-Transfer-the-Public-Key-to-the-Server"><a href="#How-To-Transfer-the-Public-Key-to-the-Server" class="headerlink" title="How To Transfer the Public Key to the Server"></a>How To Transfer the Public Key to the Server</h3><p><strong>(1) Manually copy to remote server</strong> </p>
+<pre><code>$ cat ~/.ssh/id_rsa.pub | ssh hostname &quot;cat &gt;&gt; ~/.ssh/authorized_keys&quot;</code></pre><p>Now when ssh to the remote machine, it should ask you for your key passphrase instead of your password. If it doesn’t, it could be that the permissions and mode of the authorized_keys file and .ssh directory on the remote server need to be set more restrictively. You can do that with these commands on the remote server:</p>
+<pre><code>$ chmod 700 ~/.ssh
+$ chmod 600 ~/.ssh/authorized_keys</code></pre><p><strong>(2) Automatically copy  to remote server</strong></p>
+<pre><code>$ ssh-copy-id remote_host</code></pre><p>This will start an SSH session, which you will need to <strong>authenticate with your password</strong>.</p>
+<p>After you enter your password, it will copy your public key to the server’s <code>~/.ssh/authorized_keys</code> file, which will allow you to log in without the password next time.</p>
+<h3 id="Client-Side-Options"><a href="#Client-Side-Options" class="headerlink" title="Client-Side Options"></a>Client-Side Options</h3><p>See debug info of login, very helpful when we failed to login.</p>
+<pre><code>$ ssh -v remote_host
+debug1: identity file /home/chris/.ssh/id_rsa type 2
+...
+debug1: Authentications that can continue: publickey,keyboard-interactive
+debug1: Next authentication method: publickey
+debug1: Offering public key: /home/chris/.ssh/id_rsa
+...
+debug1: Authentication succeeded (publickey)</code></pre><p>Some optional flags may need to match the settings in the remote host’s sshd configuration.</p>
+<p>For instance, you if you changed the port number in your sshd configuration, you will need to match that port on the client-side by typing:</p>
+<pre><code>$ ssh -p port_number remote_host</code></pre><p>If you only wish to execute a single command on a remote system, you can specify it after the host like so:</p>
+<pre><code>$ ssh remote_host command_to_run</code></pre><h3 id="Using-the-ssh-agent-program"><a href="#Using-the-ssh-agent-program" class="headerlink" title="Using the ssh-agent program"></a>Using the ssh-agent program</h3><p>The true usefulness of using key based authentication comes in the use of the ssh-agent program. Usually, the ssh-agent program is a program that starts up before starting X windows and in turn starts X windows for you. All X windows programs inherit a connection back to the ssh-agent, including your terminal windows like Gnome Terminal, Konsole, xfce4-terminal, aterm, xterm and so on. What this means is that after you’ve started up X windows through ssh-agent, you can use the ssh-add program to add your passphrase one time to the agent and the agent will in turn pass this authentication information automatically every time you need to use your passphrase. </p>
+<p>Most recent distributions will automatically start ssh-agent when you login to X windows through a session manager like gdm (graphical login).</p>
+<p>We can check if it is already running by </p>
+<pre><code>$ ps ef | grep ssh-agent</code></pre><p>If it is not running, we can start it by</p>
+<pre><code>$ eval `ssh-agent -s`</code></pre><p>or</p>
+<pre><code>$ exec ssh-agent bash</code></pre><p>Once it is running, add ssh key to it by running the ssh-add command:</p>
+<pre><code>$ ssh-add</code></pre><p>this will add default generated private key <em>id_rsa</em> into <code>ssh-agent</code>, to add a different named ssh key, we can do this:</p>
+<pre><code>$ ssh-add ~/.ssh/my_pk</code></pre><p>To list all ssh-keys that have been added into ssh-agent</p>
+<pre><code>$ ssh-add -l</code></pre><h4 id="How-to-start-ssh-agent-automatically-on-system-start-up"><a href="#How-to-start-ssh-agent-automatically-on-system-start-up" class="headerlink" title="How to start ssh-agent automatically on system start up"></a>How to start ssh-agent automatically on system start up</h4><p>Adding the following to <code>~/.bash_profile</code> will automatically start <code>ssh-agent</code> and load the ssh-key(s) on login:</p>
+<pre><code>if [ -z &quot;$SSH_AUTH_SOCK&quot; ] ; then
+  eval `ssh-agent -s`
+  ssh-add
+fi</code></pre><p><strong>Why do we need to use eval instead of just ssh-agent?</strong><br>Because when we execute <code>ssh-agent -s</code>, it will output below infomation. These information simply means that by starting ssh-agent,<br>it will set some environment variables as shown and exports them to the current shell. Using <code>eval</code> command will simply evaluate the scripts in enbraced by ``, so that its result will take effects on current shell.</p>
+<pre><code>SSH_AUTH_SOCK=/tmp/ssh-XH65nCfLn4Hj/agent.8612; export SSH_AUTH_SOCK;
+SSH_AGENT_PID=9456; export SSH_AGENT_PID;
+echo Agent pid 9456;</code></pre><p>check <a href="http://stackoverflow.com/a/4086756/456814" target="_blank" rel="noopener">here</a> for more explanations.</p>
+<p><span class="purpleOnRice">A summary note on permission settings in SSH&gt;</span></p>
+<p>There are cases when we ‘correctly’ set up key-pairs following the above procedure, and still encounter error messages <span class="red">“Authentication refused: Bad owner or permissions on”</span> when we login through SSH. This is essentially because of the inappropriate permission mode of the directory <strong>~/.ssh</strong> and files in it.</p>
+<p>File Permission in local machine and remote machine</p>
+<p><strong>Local Machine</strong>  </p>
+<ul>
+<li><strong>~/.ssh</strong>          Write permission should be restricted only to the owner. e.g. 755 drwxr-xr-x</li>
+<li><strong>~/.ssh/id_rsa</strong>   Write, Read and Execute permission should be restricted only to the owner. e.g. 600</li>
+<li><strong>~/.ssh/config</strong>   Write permission should be restricted only to the owner. e.g. 700 or 600</li>
+</ul>
+<p><strong>Remote Machine</strong></p>
+<ul>
+<li><strong>~/.ssh</strong>                 Write permission should restricted be only to the owner. e.g. 700 drwx—–</li>
+<li><strong>~/.ssh/authorized_key</strong>  Write permission should be restricted only to the owner. e.g. 600</li>
+</ul>
+<p>In short, if any of the file </p>
+<p>Also, if we are not sure what the errors come from, we can always check <code>/var/log/secure</code> for more details.</p>
+<p>A sample client side configuration: <a href="/materials/sshconfig">~/.ssh/config</a></p>
+<p><strong>Reference</strong><br><a href="https://support.suso.com/supki/SSH_Tutorial_for_Linux" target="_blank" rel="noopener">https://support.suso.com/supki/SSH_Tutorial_for_Linux</a><br><a href="http://rabexc.org/posts/pitfalls-of-ssh-agents" target="_blank" rel="noopener">http://rabexc.org/posts/pitfalls-of-ssh-agents</a><br><a href="http://unix.stackexchange.com/questions/90853/how-can-i-run-ssh-add-automatically-without-password-prompt" target="_blank" rel="noopener">http://unix.stackexchange.com/questions/90853/how-can-i-run-ssh-add-automatically-without-password-prompt</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Linux/linux-ssh/" data-title="ssh | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/BigData/hadoop-hadoop-ha/" title="HDFS High Availability">
+  <strong>Prev：</strong><br>
+  <span>
+  HDFS High Availability</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Linux/linux-ssh-remote-cmds/" title="Executing commands on remote machine using SSH">
+ <strong>Next：</strong><br>
+ <span>Executing commands on remote machine using SSH
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

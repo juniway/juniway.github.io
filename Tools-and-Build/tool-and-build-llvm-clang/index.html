@@ -1,0 +1,744 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>安装 LLVM + Clang | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="LLVM 简介LLVM 全称是 Low Level Virtual Machine，它是源自 the University of Illinois 的一个研究项目，该项目旨在提供一个现代化的编译机制，使得对任何编程语言既可以做到静态编译也可以动态编译，而且非常高效。后来 LLVM 项目逐渐发展，并孵化了许多子项目，比如 Clang，LLDB， OpenMP 等。 LLVM 核心库（core lib">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安装 LLVM + Clang">
+<meta property="og:url" content="https://juniway.net/Tools-and-Build/tool-and-build-llvm-clang/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="LLVM 简介LLVM 全称是 Low Level Virtual Machine，它是源自 the University of Illinois 的一个研究项目，该项目旨在提供一个现代化的编译机制，使得对任何编程语言既可以做到静态编译也可以动态编译，而且非常高效。后来 LLVM 项目逐渐发展，并孵化了许多子项目，比如 Clang，LLDB， OpenMP 等。 LLVM 核心库（core lib">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.445Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="安装 LLVM + Clang">
+<meta name="twitter:description" content="LLVM 简介LLVM 全称是 Low Level Virtual Machine，它是源自 the University of Illinois 的一个研究项目，该项目旨在提供一个现代化的编译机制，使得对任何编程语言既可以做到静态编译也可以动态编译，而且非常高效。后来 LLVM 项目逐渐发展，并孵化了许多子项目，比如 Clang，LLDB， OpenMP 等。 LLVM 核心库（core lib">
+<meta name="twitter:image" content="https://juniway.net/image/qrcode_258.jpg">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Tools-and-Build/tool-and-build-llvm-clang/" title="安装 LLVM + Clang" itemprop="url">安装 LLVM + Clang</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2017-01-15T10:55:26.000Z"> 2017-01-15</time>
+    <span class="post-count">字数 2.5k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h3 id="LLVM-简介"><a href="#LLVM-简介" class="headerlink" title="LLVM 简介"></a>LLVM 简介</h3><p>LLVM 全称是 Low Level Virtual Machine，它是源自 the University of Illinois 的一个研究项目，该项目旨在提供一个现代化的编译机制，使得对任何编程语言既可以做到静态编译也可以动态编译，而且非常高效。后来 LLVM 项目逐渐发展，并孵化了许多子项目，比如 Clang，LLDB， OpenMP 等。</p>
+<p>LLVM 核心库（core libraries）提供了一个源和目标相互独立的优化器，也即一个通用的编译优化和代码生成平台，还为对许多主流 CPU 提供了代码生成的支持。LLVM 定义了一个中间语言 LLVM IR，只要前端把代码编译成 LLVM IR，就可以使用 LLVM 丰富的优化模块和代码生成模块。换句话说，LLVM 让“创造一种计算机语言”变成了一个相对容易的事情，这件事情会有深远的影响。</p>
+<p>Clang 作为 LLVM 原生的 “ C/C++/Objective-C 编译器前端，是作为编译 C/C++ 代码的除 GCC 工具链之外的另一种选择。其有许多优点（比如像 <a href="http://llvm.org/" target="_blank" rel="noopener">LLVM 主页</a> 所介绍的 Debug 模式下编译 Object C 速度比 GCC 快3倍，并且提供更加可读的编译过程中的出错信息等等），更多关于 Clang 的介绍可以去官网查看。</p>
+<p>从代码上说，Clang 结构更简单。因为 Clang 只需要完成词法和语法分析，代码优化和机器代码的生成工作由 LLVM 完成。所以和全部由自己包下的 GCC 比起来，Clang 可以更专注地做好一件事。</p>
+<p>而且，这种结构也使 Clang 可以被单独拿出来用在其他的程序里。比如 Vim 的 clang_complete 插件就是利用 Clang 进行语法分析后给出精确的自动补全和语法错误提示的。而 GCC 就没法很方便地做到这一点。</p>
+<p>在实用性方面，除了有更快的编译速度更快和更友好的出错提示外，Clang 还内置有静态分析工具，可以对代码进行静态分析（clang –analyze）。这也是 GCC 做不到的。</p>
+<p>另外，有关 Clang 和 GCC 的更多比较，还可以看<a href="https://www.zhihu.com/question/20235742" target="_blank" rel="noopener">知乎上这个帖子</a>。</p>
+<p>简单来说，Clang 和 CompileRT 这两个子项目为 LLVM 提供了 C, C++, Objective C 和 Objective C++ 的前端及动态库支持，使得我们可以使用 Clang 来编译和构建项目。</p>
+<p>由于 LLVM + Clang 项目得到了大财主 Apple 公司的大力赞助，最近这些年发展非常快，</p>
+<p>本文介绍如何从源码编译安装 LLVM + Clang，截止本文所写日期最新版本是 Clang 3.9.1。</p>
+<h4 id="源码获取"><a href="#源码获取" class="headerlink" title="源码获取"></a>源码获取</h4><p>要编译构建 Clang，必须先构建 LLVM 核心库。LLVM 核心库可以<a href="http://llvm.org/releases/3.9.1/llvm-3.9.1.src.tar.xz" target="_blank" rel="noopener">下载最新的发行包</a>。也可以从远程库拉取代码。<br>Clang 源码 ：<a href="http://llvm.org/releases/3.9.1/cfe-3.9.1.src.tar.xz" target="_blank" rel="noopener">http://llvm.org/releases/3.9.1/cfe-3.9.1.src.tar.xz</a><br>Compiler 源码 ：<a href="http://llvm.org/releases/3.9.1/compiler-rt-3.9.1.src.tar.xz" target="_blank" rel="noopener">http://llvm.org/releases/3.9.1/compiler-rt-3.9.1.src.tar.xz</a></p>
+<p>最新的 LLVM 依赖 cmake 3.7.1，同时 还需要确保 libffi-3.2.1 和 Python-2.7.13 已经安装。</p>
+<h6 id="获取远程库代码"><a href="#获取远程库代码" class="headerlink" title="获取远程库代码"></a>获取远程库代码</h6><p>LLVM core， Clang 和 Compiler-RT 3个项目的源码是在独立的远程库中的，因此我们需要分别把这3个项目都拉取下来，同时还需要按照一定的组织结构放置。我们在本地创建一个 tmp 文件夹作为顶层目录来放置这3个项目的源码，llvm core 放在 tmp 目录下，而 clang 则放在 llvm 目录的 tools/下， complier-rt 放在 llvm 目录的 projects/ 下。</p>
+<p>三个项目的源码拉取完成之后，组织结构应该如下所示：</p>
+<pre><code>llvm/
+    /tools/clang
+    /projects/compiler-rt</code></pre><p><strong>1.Checkout LLVM:</strong></p>
+<pre><code>$ cd tmp
+$ svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm</code></pre><p><strong>2. Checkout Clang</strong></p>
+<pre><code>$ cd llvm/tools
+$ svn co http://llvm.org/svn/llvm-project/cfe/trunk clang</code></pre><p><strong>3. Checkout Compiler-RT(Optional)</strong></p>
+<pre><code>$ cd llvm/projects
+$ svn co http://llvm.org/svn/llvm-project/compiler-rt/trunk compiler-rt</code></pre><h4 id="编译及安装"><a href="#编译及安装" class="headerlink" title="编译及安装"></a>编译及安装</h4><p>LLVM 禁止源码内编译（in-tree build is not supported），因此我们需要在源码目录外新建一个单独的目录来存放编译后的文件，比如，在与 llvm 的同级的目录中新建一个 build 目录。然后进入该 build 目录进行编译。</p>
+<p>需要先执行 cmake 命令生成 Makefile 或者 build.ninja 文件，这一步会检查编译所需的各项依赖（也即编译所需的环境要求），这里，我使用 Ninja 作为编译器并生成对应的 build.ninja，并指定 llvm 的安装目录为 <code>/opt/llvm</code>。</p>
+<pre><code>$ cd build
+$ cmake -G Ninja ../ \
+  -DCMAKE_INSTALL_PREFIX=/opt/llvm  \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DLLVM_ENABLE_FFI=ON \
+  -DLLVM_BUILD_LLVM_DYLIB=ON \
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+  -DLLVM_TARGETS_TO_BUILD=&quot;host;AMDGPU&quot; 
+  -Wno-dev</code></pre><p>如果本地已经安装 libffi 库，但依然提示找不到 libffi  库，<br>可以通过 <code>-DFFI_INCLUDE_DIR=/usr/include</code> 和 <code>-DFFI_LIBRARY_DIR=/usr/lib64</code> 来手动指定。</p>
+<p><strong>NOTE:</strong> 编译时最好指定下面两个选项:</p>
+<ul>
+<li><strong>–enable-optimized</strong>  打开优化，默认情况下是关闭的。这样会生成大量 debug 信息，以致于产生的文件可能高达 9.4 G 之多，这可能很快耗尽磁盘空间导致编译失败。</li>
+<li><strong>–enable-targets=host-only</strong> 选择目标平台，默认情况下会生成所有平台的。这里设置成 host-only 只选择本机即可。</li>
+</ul>
+<p>成功检测并生成 <code>build.ninja</code> 文件之后，直接执行 <code>ninja</code> 命令进行编译构建。<br>由于 LLVM + Clang 比较庞大，编译这一步会比较漫长，ninja 会默认使用系统所有 CPU 进行并发编译，这样的好处是编译速度非常快，但是会导致链接过程占用非常庞大的内存空间，因此如果系统的内存不够的话，最好不要使用所有的核来编译你，最好手动指定并发核数（比如执行 <code>ninja -j4</code> 来指定并发数为 4）。这样可以避免由于内存不够而导致的编译出错。</p>
+<p>编译成功之后执行 <code>ninja install</code> 来完成安装。</p>
+<p>所有安装的二进制程序包括：</p>
+<p>bugpoint, c-index-test, clang, clang++ (symlinks to clang-<version>), clang-<version>, clang-check, clang-cl, clang-format, git-clang-format, llc, lli, llvm-ar, llvm-as, llvm-bcanalyzer, llvm-config, llvm-cov, llvm-c-test, llvm-cxxdump, llvm-diff, llvm-dis, llvm-dsymutil, llvm-dwarfdump, llvm-dwp, llvm-extract, llvm-lib (symlink to llvm-ar), llvm-link, llvm-lto, llvm-mc, llvm-mcmarkup, llvm-nm, llvm-objdump, llvm-pdbdump, llvm-profdata, llvm-ranlib (symlink to llvm-ar), llvm-readobj, llvm-rtdyld, llvm-size, llvm-split, llvm-stress, llvm-symbolizer, llvm-tblgen, obj2yaml, opt, sancov, sanstats, scan-build, scan-view, verify-uselistorder, and yaml2obj</version></version></p>
+<p>安装的库文件包括：<br>BugpointPasses.so, LLVMHello.so, libLLVM.so, libLLVM<em>.a (57 libraries), libLTO.so, libclang.so and libclang</em>.a (24 libraries)</p>
+<h4 id="libc-介绍"><a href="#libc-介绍" class="headerlink" title="libc++ 介绍"></a>libc++ 介绍</h4><p><strong>libc++</strong> 是由 Apple 公司为其 Mac OS X 平台专门开发的一个 C++ 标准库，其是针对 Clang 而开发完成的，包含了对 C++11 的完整支持，可以作为 Clang 的“御用” C++ 库。libc++ 作为另一个 C++ 标准的实现（传统的是 <strong>libstdc++</strong>），其与 Clang 的关系就像 libstdc++ 和 GCC 之间的关系一样。但是由于 Apple 公司向来喜欢走不兼容的路线，它在最新版的 Max OS X 中没有提供最新版的 libstdc++ 库（支持 C++11），如果需要使用 libstdc++ 库的话我们必须手动编译安装。</p>
+<p>需要注意的是，按照上述流程安装完 LLVM + Clang 之后，<strong>默认是没有安装 libc++ 的</strong>，但 Clang 也可以用 libstdc++，所以执行 <code>clang++ --std=c++11 main.cpp</code> 就可以编译 C++11 的源码。</p>
+<h5 id="编译安装-libc"><a href="#编译安装-libc" class="headerlink" title="编译安装 libc++"></a>编译安装 libc++</h5><p><strong>1. Checkout libc++:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> llvm/projects</span><br><span class="line">svn co http://llvm.org/svn/llvm-project/libcxx/trunk libcxx</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. Checkout libc++abi:</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> llvm/projects</span><br><span class="line">svn co http://llvm.org/svn/llvm-project/libcxxabi/trunk libcxxabi</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. Configure and build libc++ with libc++abi:</strong><br>注意:  LLVM 只支持使用 CMake 来构建编译配置<br>推荐使用 Clang 来编译构建 libc++。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake -G  Makefile -DLLVM_PATH=path/to/llvm \</span><br><span class="line">        -DLIBCXX_CXX_ABI=libcxxabi \</span><br><span class="line">        -DLIBCXX_CXX_ABI_INCLUDE_PATHS=path/to/libcxxabi/include \</span><br><span class="line">        path/to/libcxx</span><br></pre></td></tr></table></figure>
+
+<p>注意：如果本机已经有一个 libc++ 了，那么不要随意覆盖它，可能会导致由其编译而生成的库不再工作。可以使用 Cmake 的 <code>CMAKE_INSTALL_PREFIX</code> 选项去指定一个安全的安装位置。</p>
+<p>配置完成之后，执行下列命令进行构建：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make cxx                                   — will build libc++ and libc++abi.</span><br><span class="line">make check-cxx check-cxxabi                — will run the <span class="built_in">test</span> suites.</span><br></pre></td></tr></table></figure>
+
+<p>编译完成之后执行下列命令安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<h5 id="下面是-LLVM-Clang-所安装的程序简介："><a href="#下面是-LLVM-Clang-所安装的程序简介：" class="headerlink" title="下面是 LLVM + Clang 所安装的程序简介："></a>下面是 LLVM + Clang 所安装的程序简介：</h5><p><strong>bugpoint</strong> 　　　　　the automatic test case reduction tool.<br><strong>clang</strong>　　　　　　　the Clang C, C++, and Objective-C compiler.<br><strong>clang-format</strong>　　　a tool to format C/C++/Java/JavaScript/Objective-C/Protobuf code.<br><strong>llc</strong>　　　　　　　　the LLVM static compiler.<br><strong>lli</strong>　　　　　　　　used to directly execute programs from LLVM bitcode.<br><strong>llvm-ar</strong>　　　　　　the LLVM archiver.<br><strong>llvm-as</strong>　　　　　　the LLVM assembler.<br><strong>llvm-bcanalyzer</strong>　　the LLVM bitcode analyzer.<br><strong>llvm-config</strong>　　　　Prints LLVM compilation options.<br><strong>llvm-cov</strong>　　　　　used to emit coverage information.<br><strong>llvm-c-test</strong>　　　　bytecode disassembler.<br><strong>llvm-cxxdump</strong>　　　used as a C++ ABI Data Dumper.<br><strong>llvm-diff</strong>　　　　　the LLVM structural ‘diff’.<br><strong>llvm-dis</strong>　　　　　the LLVM disassembler.<br><strong>llvm-dsymutil</strong>　　　a tool used to manipulate archived DWARF debug symbol files,<br>　　　　　　　　　　compatible with the Darwin command dsymutil.<br><strong>llvm-dwarfdump</strong> 　　prints the content of DWARF sections in object files.<br><strong>llvm-dwp</strong>　　　　　 merges split DWARF files.<br><strong>llvm-extract</strong>　　　　used to extract a function from an LLVM module.<br><strong>llvm-link</strong>　　　　　　the LLVM linker.<br><strong>llvm-lto</strong>　　　　　　the LLVM LTO (link time optimization) linker.<br><strong>llvm-mc</strong>　　　　　　a standalone machine code assembler/disassembler.<br><strong>llvm-nm</strong>　　　　　　used to list LLVM bitcode and object file’s symbol table.<br><strong>llvm-objdump</strong>　　　an LLVM object file dumper.<br><strong>llvm-pdbdump</strong>　　　used as PDB Dumper.<br><strong>llvm-profdata</strong>　　　a small tool to manipulate and print profile data files.<br><strong>llvm-ranlib</strong>　　　　used to generate an index for a LLVM archive.<br><strong>llvm-readobj</strong>　　　displays low-level format-specific information about object files.<br><strong>llvm-rtdyld</strong>　　　　the LLVM MC-JIT tool.<br><strong>llvm-size</strong>　　　　　the LLVM object size dumper.<br><strong>llvm-split</strong>　　　　　the LLVM module splitter.<br><strong>llvm-stress</strong>　　　　used to generate random .ll files.<br><strong>llvm-symbolizer</strong>　　converts adresses into source code locations.<br><strong>llvm-tblgen</strong>　　　　the LLVM Target Description To C++ Code Generator.<br><strong>obj2yaml</strong>　　　　　takes an object file,and produces a YAML representation of it.<br><strong>opt</strong>　　　　　　　　the LLVM optimizer.<br><strong>sancov</strong>　　　　　　the sanitizer coverage processing tool.<br><strong>sanstats</strong>　　　　　the sanitizer statistics processing tool.<br><strong>scan-build</strong>　　　　a Perl script that invokes the Clang static analyzer.<br><strong>scan-view</strong>　　　　　a viewer for Clang static analyzer results.<br><strong>verify-uselistorder</strong>　the LLVM tool to verify use-list order.<br><strong>yaml2obj</strong>　　　　　takes a YAML representation of an object file and converts it to an binary file.</p>
+<h6 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h6><p><a href="http://clang.llvm.org/get_started.html" target="_blank" rel="noopener">http://clang.llvm.org/get_started.html</a><br><a href="https://libcxx.llvm.org/" target="_blank" rel="noopener">https://libcxx.llvm.org/</a><br><a href="http://libcxx.llvm.org/docs/BuildingLibcxx.html" target="_blank" rel="noopener">http://libcxx.llvm.org/docs/BuildingLibcxx.html</a><br><a href="https://github.com/maidsafe-archive/MaidSafe/wiki/Hacking-with-Clang-llvm-abi-and-llvm-libc" target="_blank" rel="noopener">https://github.com/maidsafe-archive/MaidSafe/wiki/Hacking-with-Clang-llvm-abi-and-llvm-libc</a></p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Tools-and-Build/">Tools and Build</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Tools-and-Build/tool-and-build-llvm-clang/" data-title="安装 LLVM + Clang | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Programming/go-type-embed/" title="Type embedding in Go">
+  <strong>Prev：</strong><br>
+  <span>
+  Type embedding in Go</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Programming/go-http-hijacker/" title="Use http.Hijacker to take over the http connection">
+ <strong>Next：</strong><br>
+ <span>Use http.Hijacker to take over the http connection
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

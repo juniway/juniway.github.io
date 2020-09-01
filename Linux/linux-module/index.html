@@ -1,0 +1,767 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Module in Linux | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="和 linux 中加载模块有关的几个程序分别如下：  lsmod modprobe depmod  lsmod显示当前加载的所有模块，相当于cat /proc/modules,假设你没有设定开机加载某个模块，比如ntfs，那么开机后执行lsmod，列表里不会有ntfs这个模块的，这时你再执行mount -t ntfs xxx后，执行lsmod后列表里就会有ntfs这个模块了。还要注意的是lsmod">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Module in Linux">
+<meta property="og:url" content="https://juniway.net/Linux/linux-module/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="和 linux 中加载模块有关的几个程序分别如下：  lsmod modprobe depmod  lsmod显示当前加载的所有模块，相当于cat /proc/modules,假设你没有设定开机加载某个模块，比如ntfs，那么开机后执行lsmod，列表里不会有ntfs这个模块的，这时你再执行mount -t ntfs xxx后，执行lsmod后列表里就会有ntfs这个模块了。还要注意的是lsmod">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.436Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Module in Linux">
+<meta name="twitter:description" content="和 linux 中加载模块有关的几个程序分别如下：  lsmod modprobe depmod  lsmod显示当前加载的所有模块，相当于cat /proc/modules,假设你没有设定开机加载某个模块，比如ntfs，那么开机后执行lsmod，列表里不会有ntfs这个模块的，这时你再执行mount -t ntfs xxx后，执行lsmod后列表里就会有ntfs这个模块了。还要注意的是lsmod">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Linux/linux-module/" title="Module in Linux" itemprop="url">Module in Linux</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2015-09-19T13:03:48.000Z"> 2015-09-19</time>
+    <span class="post-count">字数 9.8k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>和 linux 中加载模块有关的几个程序分别如下：</p>
+<ul>
+<li>lsmod</li>
+<li>modprobe</li>
+<li>depmod</li>
+</ul>
+<p>lsmod显示当前加载的所有模块，相当于cat /proc/modules,假设你没有设定开机加载某个模块，比如ntfs，那么开机后执行lsmod，列表里不会有ntfs这个模块的，这时你再执行mount -t ntfs xxx后，执行lsmod后列表里就会有ntfs这个模块了。<br>还要注意的是lsmod显示的是模块名，而不是别名(alias)。<br>这里最重要的是modprobe.<br>man modprobe<br>节选如下：</p>
+<p>modprobe – program to add and remove modules from the Linux Kernel<br>从linux核心中添加或删除模块。</p>
+<p>modprobe intelligently adds or removes a module from the Linux kernel:  note  that  for  convenience,there  is  no  difference  between  _  and - in module names.  modprobe looks in the module directory /lib/modules/<code>uname -r</code> for all the modules and  other  files,  except  for  the  optional  /etc/modprobe.conf configuration file and /etc/modprobe.d directory (see modprobe.conf(5)).  All files in the /etc/modprobe.d/arch/ directory are ignored.</p>
+<p>为了一致性，模块名字中包含的_和-是没有任何区别的。modprobe会检查/lib/modules/<code>uname -r</code>下的所有模块，除了/etc/modprobe.conf配置文件和/etc/modprobe.d目录以外。所有/etc/modprobe.d/arch/目录下的文件将被忽略。</p>
+<p>Note that this version of modprobe does not do anything to the module itself: the work  of  resolving symbols  and  understanding  parameters  is  done  inside the kernel.  So module failure is sometimes accompanied by a kernel message: see dmesg(8).</p>
+<p>值得注意的是现在modprobe不会对模块本身进行操作，解析symbols和理解参数的工作都交由kernel来作，所以模块加载等错误有时将会包含在内核信息中，利用dmesg可以查看到。</p>
+<p>modprobe expects an up-to-date modules.dep file, as generated by depmod (see depmod(8)).   This  file<br>lists  what  other  modules each module needs (if any), and modprobe uses this to add or remove these<br>dependencies automatically.  See modules.dep(5)).</p>
+<p>modprobe会根据modules.dep来添加或者删除模块。</p>
+<p>If any arguments are given after the modulename, they are passed to the kernel (in  addition  to  any<br>options listed in the configuration file).<br>如果指定模块名称的话，这些模块将会被传到核心中，当然还有它们对应的参数（记录在配置文件中）.</p>
+<p>OPTIONS<br>-l –list List all modules matching the given wildcard (or “*” if no wildcard is given).  This option<br>                 is provided for backwards compatibility: see find(1) and basename(1) for  a  more  flexible<br>                 alternative.<br>用来列出所有模块或者符合指定条件的所有模块，可以使用wildcard。</p>
+<p>-r –remove<br>删除模块。</p>
+<p>BACKWARDS COMPATIBILITY(向下兼容性)<br>This  version  of  modprobe is for kernels 2.5.48 and above.  If it detects a kernel with support for old-style modules (for which much of the work was done in userspace), it will  attempt  to  run  modprobe.modutils in its place, so it is completely transparent to the user.</p>
+<p>现在版本的modprobe只支持2.5.48及以上的内核，如果它发现内核支持老的模块或者内核本身就低于2.5.48，它将尝试运行modprobe.modutils来代替自己。</p>
+<p>通过了解modprobe的manpage我们知道，我可以通过modprobe -l来显示可以当前可以加载的模块，所谓<br>当前可以加载的模块，实际上就是modules.dep文件中包含的那些模块，而不是manpage里说的modprobe会加载/lib/modules/<code>uname -r</code>下的所有模块(也许是我理解错误)，下面我们将会证明这一点.<br>modprobe xxx.ko        #加载某个模块<br>modprobe -r xxx.ko     #卸载某个模块<br>上面提到modprobe加载某个模块是根据/lib/modules/<code>uname -r</code>目录下的modules.dep文件中的模块列表，这个文件中有的模块modprobe会正确加载，否则就会出错。<br>我们还拿ntfs这个模块来举例:<br>vi /lib/modules/<code>uname -r</code>/modules.dep<br>注释掉/lib/modules/2.6.18-4-k7/kernel/fs/ntfs/ntfs.ko这一行,就是加个#号.<br>这个修改是即使生效的。<br>modinfo ntfs<br>modinfo: could not find module ntfs<br>modprobe ntfs<br>FATAL: Module ntfs not found.<br>重启机器，执行同样的命令会得到同样的结果，说明开机不会自动执行depmod的，而<br>locate ntfs.ko<br>/lib/modules/2.6.18-4-k7/kernel/fs/ntfs/ntfs.ko<br>证明我们并没有转移ntfs模块。<br>注意如果重启机器之前进行mount还是可以的，重启之后就会报错了，而上边的都是即时生效的。<br>还有如果modules.dep里注释掉了ntfs，那么在/etc/modules里写上也是不起作用的，说明这个和mount一样都是依赖modprobe来完成加载模块命令的。而insmod是可以的，因为insmod后面跟的是绝对路径，它和modules.dep没什么关系。insmod比较重要的用途是用来测试模块的正确性，加载一般都是依靠modprobe。(这个可能也不起作用了，都用modprobe吧)<br>这一切只是因为我们注释掉了modules.dep中关于ntfs.ko的那一行，而模块并没有删除或转移。既然modules.dep文件如此重要，那么它是怎么生成的呢？这就和下一个命令有关了，depmod。</p>
+<p>man depmod<br>depmod – program to generate modules.dep and map files. Blank lines, and lines starting with a ‘#’ (ignoring spaces) are ignored in modules.dep.<br>depmod是一个用来产生modules.dep和map文件的程序。在modules.dep文件中空白行和以’#’开头的行将被忽略.</p>
+<p>Linux kernel modules can provide services (called “symbols”) for  other<br>modules  to  use (using EXPORT_SYMBOL in the code).<br>linux核心模块可以提供服务给其他模块，称之为”symbols”</p>
+<p>depmod  creates  a  list of module dependencies, by reading each module<br>under /lib/modules/version and determining what symbols it exports, and<br>what  symbols it needs.<br>depmod通过读取/lib/modules/version目录下的每一个模块来创建一个记录模块相依性<br>的列表。这个列表就是/lib/modules/version目录下的modules.dep。</p>
+<p>If a version is provided, then that kernel version’s  module  directory<br>is  used, rather than the current kernel version (as returned by “uname<br>-r”).<br>如果给定version的话，那么depmod会检查这个version对应的modules目录而不是<br>当前运行的kernel对应的modules目录。</p>
+<p>depmod will also generate various map files in this directory, for  use<br>by the hotplug infrastructure.<br>depmod也会在/lib/modules/version目录下创建许多map文件,这些文件将会被hotplug用到。</p>
+<p>OPTIONS:<br>-a –all  Probe  all  modules.  This option is enabled by default if no<br>            file names are given in the command-line.<br>检查所有的模块，这个命令是默认的如果你没有指定模块名字的话。</p>
+<p>-A –quick  This option scans to see if any modules are  newer  than  the<br>                 modules.dep file before any work is done: if not, it silently<br>                 exits rather than regenerating the files.<br>只检查那些比modules.dep文件里记录新的模块的相依性，如果没有则退出，并不重建modules.dep.</p>
+<p>-e –errsyms<br>                 When  combined  with  the -F option, this reports any symbols<br>                 which a module needs which are not supplied by other  modules<br>                 or the kernel.  Normally, any symbols not provided by modules<br>                 are assumed to be provided by the  kernel  (which  should  be<br>                 true in a perfect world).<br>如果和下面的-F选项合用的话，将会报告模块需要却又不存在的symbols。通常，模块不提供的symbols<br>会由kernel来提供。</p>
+<p>-F –filesyms System.map<br>                 Supplied  with  the  System.map  produced when the kernel was<br>                 built, this allows the -e option to  report  unresolved  sym-<br>                 bols.<br>System.map是在kernel被创建的时候建立的，-F选项可以利用System.map文件，这时-e选项才可以使用。</p>
+<p>-n –dry-run<br>                 This  sends  the  resulting modules.dep, then the various map<br>                 files, to standard output, rather than writing them into  the<br>                 module directory.<br>只把结果显示在屏幕上而不是写到modules.dep中。</p>
+<p>BACKWARDS COMPATIBILITY(向下兼容性)</p>
+<p>This version of depmod is for kernels 2.5.48 and above.  If it detects a kernel with support for old style modules, or the version specified is before 2.5.48, it will attempt to run  depmod.modutils  in its place, so it is completely transparent to the user.</p>
+<p>现在版本的depmod只支持2.5.48及以上的内核，如果它发现内核支持老的模块或者内核本身就低于2.5.48，<br>它将尝试运行depmod.modutils来代替自己。</p>
+<p>通常我们安装一个新的模块,先是编译出相应的ko文件，然后移动/lib/modules/<code>uname -r</code>/目录或者某个子<br>目录下，locate xxx.ko确定该模块确实在上面提到的目录下面，执行depmod -aeF，depmod将会检查<br>/lib/modules/<code>uname -r</code>/目录及其子目录中的所有模块文件，并根据相依性生成新的modules.dep文件，这时我们执行modprobe xxx.ko，该模块就会被正常加载了。<br>所以这时我们重新执行depmod -aeF会生成新的modules.dep，刚才注释掉了的那个#也消失了。<br>这里我们还要提两个文件：<br>1./etc/modules<br>vi /etc/modules</p>
+<h1 id="etc-modules-kernel-modules-to-load-at-boot-time"><a href="#etc-modules-kernel-modules-to-load-at-boot-time" class="headerlink" title="/etc/modules: kernel modules to load at boot time."></a>/etc/modules: kernel modules to load at boot time.</h1><p>#</p>
+<h1 id="This-file-contains-the-names-of-kernel-modules-that-should-be-loaded"><a href="#This-file-contains-the-names-of-kernel-modules-that-should-be-loaded" class="headerlink" title="This file contains the names of kernel modules that should be loaded"></a>This file contains the names of kernel modules that should be loaded</h1><h1 id="at-boot-time-one-per-line-Lines-beginning-with-“-”-are-ignored"><a href="#at-boot-time-one-per-line-Lines-beginning-with-“-”-are-ignored" class="headerlink" title="at boot time, one per line. Lines beginning with “#” are ignored."></a>at boot time, one per line. Lines beginning with “#” are ignored.</h1><p>loop</p>
+<p>说明我们如果在这里写上模块名字，比如ntfs(注意不要写ntfs或者ntfs对应的alias)，开机时就会自动加载，<br>即开机后lsmod后就会看到ntfs而不用等mount或者modprobe ntfs等命令。<br>man modprobe.conf<br>modprobe.conf – Configuration file/directory for modprobe<br>modprobe.conf 传递给modprobe的配置文件或目录。</p>
+<p>Because  the  modprobe  command can add or remove extra more than one module, due to module dependen-<br>cies, we need a method of specifying what options are to  be  used  with  those  modules.   /etc/mod-<br>probe.conf  (or,  if  that  does  not exist, all files under the /etc/modprobe.d directory) specifies<br>those options, as required.  It can also be used to create convenient aliases: alternate names for  a<br>module.   Finally,  it can override the normal modprobe behavior altogether, for those with very spe-<br>cial requirements (such as inserting more than one module).<br>modprobe可以根据相依性来添加或删除模块，所以我们需要一种方法来指定特殊的选项给特定的某些模块。<br>/etc/modprobe.conf(如果不存在就是在/etc/modprobe.d目录下的所有文件)将会指定这些需要的选项。也可以<br>指定别名给一个模块。</p>
+<p>The  format  of  modprobe.conf and files under modprobe.d is simple: one command per line, with blank<br>lines and lines starting with # ignored (useful for adding comments).  A  at the end of a line causes<br>it to continue on the next line, which makes the file a bit neater.<br>格式：每行一个命令，空白行和行首有‘#’的将被忽略。行尾有A代表下一行是这行的继续。</p>
+<p>The syntax is a simplification of modules.conf, used in 2.4 kernels and earlier.<br>modules.conf只被2.4或更早的内核使用。</p>
+<p>alias wildcard modulename<br>                 This  allows  you  to  give  alternate  names  for  a  module.   For example: “alias my-mod<br>                 really_long_modulename”  means  you  can  use  “modprobe  my-mod”  instead   of   “modprobe<br>                 really_long_modulename”.   You  can  also  use  shell-style  wildcards,  so  “alias my-mod*
+                 really_long_modulename” means that “modprobe my-mod-something” has the  same  effect.   You<br>                 can’t  have aliases to other aliases (that way lies madness), but aliases can have options,<br>                 which will be added to any other options.<br>指定别名，也可以利用shell中的wildcard来指定。例子：<br>alias my-mod really_long_modulename<br>这意味着你可以用modprobe  my-mod”来代替”modprobe really_long_modulename.<br>不可以给别名指定别名。但是别名可以有选项。</p>
+<p>Note that modules can also contain their own aliases, which  you  can  see  using  modinfo.<br>These  aliases  are used as a last resort (ie. if there is no real module, install, remove,<br>or alias       command in the configuration).</p>
+<p>模块可以有它们自带的别名，你可以利用modinfo看到。这些别名将被作为最后一着。配置文件里的别名优先，如果<br>没有指定的话，这些自带的别名将被用到。</p>
+<p>options modulename option…<br>                 This command allows you to add options to the module modulename (which might be  an  alias)<br>                 every  time it is inserted into the kernel: whether directly (using modprobe modulename, or<br>                 because the module being inserted depends on this module.</p>
+<pre><code>All options are added together: they can come from an option for the module itself, for  an
+alias, and on the command line.</code></pre><p>这个命令允许你加一些条件给模块（模块名或者是别名），当模块被加载到内核中时。所有的条件选项可以被叠加。</p>
+<p>install modulename command…<br>                 This is the most powerful primitive in modprobe.conf: it tells modprobe to run your command<br>                 instead of inserting the module in the kernel as normal.  The command can be any shell com-<br>                 mand: this allows you to do any kind of complex processing you might wish.  For example, if<br>                 the module “fred” worked better with the module “barney” already installed (but  it  didn’t<br>                 depend  on  it,  so  modprobe  won’t  automatically  load  it), you could say “install fred<br>                 /sbin/modprobe barney; /sbin/modprobe –ignore-install  fred”,  which  would  do  what  you<br>                 wanted.   Note  the  –ignore-install,  which stops the second modprobe from re-running the<br>                 same install command.  See also remove below.<br>这是modprobe.conf中最原始最有效的命令：它告诉modprobe运行你的命令来取代modprobe通常的行为（加载一个模块到内核中)。<br>这个命令可以是shell命令，这将允许你做任何你西王做的复杂的事情。例子：<br>假定fred模块和barney模块一起工作时效果比较好，但是由于fred并不依赖于barney模块，所以加载fred时并不会加载barney。<br>这是我们可以加如下的命令到配置文件中去。<br>install fred /sbin/modprobe barney; /sbin/modprobe –ignore-install  fred.<br>install fred 是指定modprobe在加载fred这个模块之前要运行后面的这个命令来替代本来的动作（modprobe fred）。也就是:<br>/sbin/modprobe barney; /sbin/modprobe –ignore-install  fred 代替了modprobe fred<br>这里–ignore-install表示加载时不要考虑配置文件中install选项，这是为了避免又运行一遍同样的shell命令。</p>
+<pre><code>You can also use install to make up modules which  don&apos;t  otherwise  exist.   For  example:
+&quot;install  probe-ethernet  /sbin/modprobe  e100  || /sbin/modprobe eepro100&quot;, which will try
+first the e100 driver, then the eepro100 driver, when you do &quot;modprobe probe-ethernet&quot;.</code></pre><p>你可以组合模块。例子：<br>install  probe-ethernet  /sbin/modprobe  e100  || /sbin/modprobe eepro100<br>当你下达modprobe probe-ethernet的命令时，将会先尝试加载e100driver，如果不行再加载eepro100driver。</p>
+<pre><code>If you use the string &quot;$CMDLINE_OPTS&quot; in the command, it will be replaced  by  any  options
+specified  on the modprobe command line.  This can be useful because users expect &quot;modprobe
+fred opt=1&quot; to pass the &quot;opt=1&quot; arg to the module, even if there&apos;s an  install  command  in
+the  configuration file.  So our above example becomes &quot;install fred /sbin/modprobe barney;
+/sbin/modprobe --ignore-install fred $CMDLINE_OPTS&quot;</code></pre><p>如果你在配置文件中的命令行里使用了$CMDLINE_OPTS这个字符串，那么你可以从shell命令行里直接下达你希望传递给模块<br>的条件，这个条件将取代配置文件中的这个$CMDLINE_OPTS.例子：<br>如果上边的例子改为：<br>install fred /sbin/modprobe barney;/sbin/modprobe –ignore-install fred $CMDLINE_OPTS<br>那么当你下达modprobe fred opt=1时，这个opt=1参数将被传递给模块，它将取代$CMDLINE_OPTS.</p>
+<p>remove modulename command…<br>                 This is similar to the install command above, except it is invoked when  “modprobe  -r”  is<br>                 run.   The removal counterparts to the two examples above would be: “remove fred /sbin/mod-<br>                 probe -r –ignore-remove fred &amp;&amp; /sbin/modprobe  -r  barney”,  and  “remove  probe-ethernet<br>                 /sbin/modprobe -r eepro100 || /sbin/modprobe -r e100”.<br>这个命令和install类似，只不过它只在modprobe -r时才起作用。上边的例子对应：<br>“remove fred /sbin/modprobe -r –ignore-remove fred &amp;&amp; /sbin/modprobe  -r  barney”,  and<br>“remove  probe-ethernet/sbin/modprobe -r eepro100 || /sbin/modprobe -r e100”.</p>
+<p>blacklist modulename<br>                 Modules  can  contain  their  own aliases: usually these are aliases describing the devices<br>                 they support, such as “pci:123…”.  These “internal” aliases can be overridden  by  normal<br>                 “alias”  keywords,  but  there  are  cases  where two or more modules both support the same<br>                 devices, or a module invalidly claims to support a device: the blacklist keyword  indicates<br>                 that all of that particular module’s internal aliases are to be ignored.</p>
+<p>模块可以有自己的别名。通常这些别名描述了它们支持的设备，比如：pci:123…<br>这些内部别名会被通常我们指定的别名推翻。但是有些情况下，两个或更多的模块同时支持同一个设备，或者模块实际不能支持它宣称支持的设备:这时黑名单上的模块意味着这些特殊模块的内部别名将会被忽略。</p>
+<p>Backwards Compatibility<br>       Although the syntax is similar to the older  /etc/modules.conf,  there  are  many  features  missing.<br>       There  are two reasons for this: firstly, install and remove commands can do just about anything, and secondly, the module-init-tools modprobe is designed to be  simple  enough  that  it  can  be  easily replaced.<br>虽然和老的/etc/modules.conf很像，但是老的/etc/modules.conf还是缺少很多的特性.</p>
+<p>modprobe.conf就是modprobe某个模块时用到的配置文件，这个我不是很懂，转贴鸟哥私房菜上的一段说明：<br><a href="http://linux.vbird.org/linux_basic/0510osloader.php#kernel" target="_blank" rel="noopener">http://linux.vbird.org/linux_basic/0510osloader.php#kernel</a><br>核心與核心模組：<br>談完了整個開機的流程，您應該會知道，在整個開機的過程當中，是否能夠成功的驅動我們主機的硬體配備，是核心 (kernel) 的工作！而核心一般都是壓縮檔，因此在使用核心之前，就得要將他解壓縮後，才能載入主記憶體當中。</p>
+<p>另外，為了應付日新月異的硬體，目前的核心都是具有『可讀取模組化驅動程式』的功能，亦即是所謂的『 modules (模組化)』的功能啦！所謂的模組化可以將他想成是一個『外掛程式』，該外掛程式可能由硬體開發廠商提供，也有可能我們的核心本來就支援～不過，較新的硬體，通常都需要硬體開發商提供驅動程式模組啦！</p>
+<p>那麼核心與核心模組放在哪？<br>核心： /boot/vmlinuz 或 /boot/vmlinuz-version；<br>核心解壓縮所需 RAM Disk： /boot/initrd (/boot/initrd-version)；<br>核心模組： /lib/modules/version/kernel 或 /lib/modules/<code>uname -r</code>/kernel；<br>核心原始碼： /usr/src/linux (要安裝才會有！否則預設不安裝的！)<br>如果該核心被順利的載入系統當中了，那麼就會有幾個資訊紀錄下來：<br>核心版本： /proc/version<br>系統核心功能： /proc/sys/kernel<br>問題來啦，如果我有個新的硬體，偏偏我的作業系統不支援，該怎麼辦？很簡單啊！<br>重新編譯核心，並加入最新的硬體驅動程式原始碼；<br>將該硬體的驅動程式編譯成為模組，在開機時載入該模組<br>上面第一點還很好理解，反正就是重新編譯核心就是了。不過，核心編譯很不容易啊！我們會在後續章節約略介紹核心編譯的整個程序。比較有趣的則是將該硬體的驅動程式編譯成為模組啦！關於編譯的方法，可以參考後續的 原始碼與 tarball 那一章的介紹。我們這個章節僅是說明一下，如果想要載入一個已經存在的模組時，該如何是好？</p>
+<p>小標題的圖示核心模組與相依性：<br>既然要處理核心模組，自然就得要瞭解瞭解我們核心提供的模組之間的相關性啦！基本上，核心的放置處是在 /lib/modules/<code>uname -r</code>/kernel 當中，裡面主要還分成幾個目錄：<br>arch    ：與硬體平台有關的項目，例如 CPU 的等級等等；<br>crypto  ：核心所支援的加密的技術，例如 md5 或者是 des 等等；<br>drivers ：一些硬體的驅動程式，例如顯示卡、網路卡、PCI 相關硬體等等；<br>fs  ：核心所支援的 filesystems ，例如 vfat, reiserfs, nfs 等等；<br>lib ：一些函式庫；<br>net ：與網路有關的各項協定資料，還有防火牆模組 (net/ipv4/netfilter/*) 等等；<br>sound   ：與音效有關的各項模組；<br>如果要我們一個一個的去檢查這些模組的主要資訊，然後定義出他們的相依性，我們可能會瘋掉吧！所以說，我們的 Linux 當然會提供一些模組相依性的解決方案囉～對啦！那就是檢查 /lib/modules/<code>uname -r</code>/modules.dep這個檔案啦！他記錄了在核心支援的模組的各項相依性。</p>
+<p>那麼這個檔案如何建立呢？挺簡單！利用 depmod 這個指令就可以達到建立該檔案的需求了！<br>[root@linux ~]# depmod [-Ane]<br>參數：<br>-A  ：不加任何參數時， depmod 會主動的去分析目前核心的模組，並且重新寫入<br>      /lib/modules/<code>uname -r</code>/modules.dep 當中。若加入 -A 參數時，則 depmod<br>      會去搜尋比 modules.dep 還要新的模組，如果真找到新模組，才會更新。<br>-n  ：不寫入 modules.dep ，而是將結果輸出到螢幕上(standard out)；<br>-e  ：顯示出目前已載入的不可執行的模組名稱<br>範例：</p>
+<p>範例一：若我已經做好一個網路卡驅動程式，假設檔名為 a.ko，該如何更新核心相依性？<br>[root@linux ~]# cp /full/path/a.ko /lib/modules/<code>uname -r</code>/kernel/drivers/net<br>[root@linux ~]# depmod<br>難就難在將那個新的驅動程式模組編譯出來，如果編譯出來之後，依據核心模組放置的目錄去放置好，然後輸入 depmod 後，去更新好 modules.dep ，如此一來，核心就能夠認識該模組囉！夠簡單吧！ ^_^ (關於核心模組的編譯，請參考核心編譯 一文！)</p>
+<p>小標題的圖示核心模組的觀察： lsmod, modinfo<br>那你到底曉不曉得目前核心載入了多少的模組呢？粉簡單啦！利用 lsmod 即可！<br>[root@linux ~]# lsmod<br>Module                  Size  Used by<br>loop                   18121  0<br>ipt_state               1857  2<br>ipt_MASQUERADE          3265  2<br>iptable_filter          2881  1<br>ip_nat_irc              2753  0<br>ip_conntrack_irc       72401  1 ip_nat_irc<br>ip_nat_ftp              3393  0<br>ip_conntrack_ftp       73297  1 ip_nat_ftp<br>….中間省略…..<br>8139too                30017  0<br>mii                     5441  1 8139too<br>floppy                 65141  0<br>ext3                  132681  4<br>jbd                    86233  1 ext3<br>使用 lsmod 之後，系統會顯示出目前已經存在於核心當中的模組，顯示的內容包括有：<br>模組名稱(Module)；<br>模組的大小(size)；<br>此模組是否被其他模組所使用 (Used by)。<br>舉例來說，上面的表格當中，我的 ip_conntrack_ftp 模組其實還被 ip_nat_ftp 模組所使用呢！也就是說，這兩個模組之間應該是有相關性的！所以囉，如果我載入 ip_nat_ftp 勢必還得要載入ip_conntrack_ftp 才行～而這個相依性就是被紀錄在上個小節提到的 modules.dep 檔案內囉！ ^_^</p>
+<p>那麼除了顯示出目前的模組外，我還可以查閱每個模組的資訊嗎？當然可以啦！就用 modinfo 即可：<br>[root@linux ~]# modinfo [-adln] [module_name|filename]<br>參數：<br>-a  ：僅列出作者名稱；<br>-d  ：僅列出該 modules 的說明 (description)；<br>-l  ：僅列出授權 (license)；<br>-n  ：僅列出該模組的詳細路徑。<br>範例：</p>
+<p>範例一：由上個表格當中，請列出 8139too 這個模組的相關資訊：<br>[root@linux ~]# modinfo 8139too<br>filename:       /lib/modules/2.6.12-1.1398_FC4/kernel/drivers/net/8139too.ko<br>author:         Jeff Garzik<br>description:    RealTek RTL-8139 Fast Ethernet driver<br>license:        GPL<br>version:        0.9.27<br>parmtype:       multicast_filter_limit:int<br>parmtype:       media:array of int<br>parmtype:       full_duplex:array of int<br>parmtype:       debug:int<br>parm:           debug:8139too bitmapped message enable number<br>parm:           media:8139too: Bits 4+9: force full duplex, bit 5: 100Mbps<br>parm:           full_duplex:8139too: Force full duplex for board(s) (1)<br>vermagic:       2.6.12-1.1398_FC4 686 REGPARM 4KSTACKS gcc-4.0<br>depends:        mii<br>alias:          pci:v000010ECd00008139sv<em>sd</em>bc<em>sc</em>i*</p>
+<p>範例二：我有一個模組名稱為 a.ko ，請問該模組的資訊為？<br>[root@linux ~]# modinfo a.ko<br>…….省略……<br>事實上，這個 modinfo 除了可以『查閱在核心內的模組』之外，還可以檢查『某個模組檔案』，因此，如果你想要知道某個檔案代表的意義為何，利用 modinfo 加上完整檔名吧！看看就曉得是啥玩意兒囉！ ^_^</p>
+<p>小標題的圖示核心模組的載入與移除：insmod, modprobe, rmmod<br>好了，如果我想要自行手動載入模組，又該如何是好？有很多方法啦，最簡單而且建議的，是使用 modprobe 這個指令來載入模組，這是因為 modprobe 會主動的去搜尋 modules.dep 的內容，先克服了模組的相依性後，才決定需要載入的模組有哪些，很方便。至於 insmod 則完全由使用者自行載入一個完整檔名的模組，並不會主動的分析模組相依性啊！<br>[root@linux ~]# insmod [/full/path/module_name] [parameters]</p>
+<p>範例一：請嘗試載入 /lib/modules/<code>uname -r</code>/kernel/fs/smbfs/smbfs.ko<br>[root@linux ~]# insmod /lib/modules/<code>uname -r</code>/kernel/fs/smbfs/smbfs.ko<br>[root@linux ~]# lsmod | grep smbfs<br>smbfs                  67897  0<br>對吧！他立刻就將該模組載入囉～這個需要加入完整檔名啦！那如何移除這個模組呢？<br>[root@linux ~]# rmmod [-fw] module_name<br>參數：<br>-f  ：強制將該模組移除掉，不論是否正被使用；<br>-w  ：若該模組正被使用，則 rmmod 會等待該模組被使用完畢後，才移除他！<br>範例：</p>
+<p>範例一：將剛剛載入的 smbfs 模組移除！<br>[root@linux ~]# rmmod smbfs<br>帥吧！移除掉了。不過，如前所述的， insmod 實在不怎麼人性化，近年來，我們都建議直接使用 modprobe 來處理模組載入的問題，這個指令的用法是：<br>[root@linux ~]# modprobe [-lcf] module_name<br>參數：<br>-c  ：列出目前系統所有的模組！(更詳細的代號對應表)<br>-l  ：列出目前在 /lib/modules/<code>uname -r</code>/kernel 當中的所有模組完整檔名；<br>-f  ：強制載入該模組；<br>-r  ：類似 rmmod ，就是移除某個模組囉～<br>範例：</p>
+<p>範例一：載入 smbfs 模組<br>[root@linux ~]# modprobe smbfs</p>
+<h1 id="很方便吧！不需要知道完整的模組檔名，這是因為該完整檔名已經記錄到"><a href="#很方便吧！不需要知道完整的模組檔名，這是因為該完整檔名已經記錄到" class="headerlink" title="很方便吧！不需要知道完整的模組檔名，這是因為該完整檔名已經記錄到"></a>很方便吧！不需要知道完整的模組檔名，這是因為該完整檔名已經記錄到</h1><h1 id="lib-modules-uname-r-modules-dep-當中的緣故啊！如果要移除的話："><a href="#lib-modules-uname-r-modules-dep-當中的緣故啊！如果要移除的話：" class="headerlink" title="/lib/modules/uname -r/modules.dep 當中的緣故啊！如果要移除的話："></a>/lib/modules/<code>uname -r</code>/modules.dep 當中的緣故啊！如果要移除的話：</h1><p>[root@linux ~]# modprobe -r smbfs<br>使用 modprobe 真的是要比 insmod 方便很多！因為他是直接去搜尋 modules.dep 的紀錄，所以囉，當然可以克服模組的相依性問題，而且還不需要知道該模組的詳細路徑呢！好方便！ ^_^</p>
+<p>小標題的圖示核心模組的額外參數設定：/etc/modprobe.conf<br>這個檔案我們之前已經談過了，這裡只是再強調一下而已，如果您想要修改某些模組的額外參數設定，就在這個檔案內設定吧！我們假設一個案例好了，假設我的網路卡 eth0 是使用 ne ，但是 eth1 同樣也使用 ne ，為了避免同一個模組會導致網路卡的錯亂，因此，我可以先找到 eth0 與 eth1 的 I/O 與 IRQ ，假設：<br>eth0 ： I/O (0x300) 且 IRQ=5<br>eth1 ： I/O (0x320) 且 IRQ=7<br>則：<br>[root@linux ~]# vi /etc/modprobe.conf<br>alias eth0 ne<br>alias eth1 ne<br>options eth0 io=0x300 irq=5<br>options eth1 io=0x320 irq=7<br>嘿嘿！如此一來，我的 Linux 就不會捉錯網路卡的對應囉！因為被我強制指定某個 I/O 咯嘛！ ^_^<br>再来一个例子：<br>vi /etc/modprobe.conf<br>alias eth0 8139too<br>alias snd-card-0 snd-via82xx<br>options snd-card-0 index=0<br>options snd-via82xx index=0<br>alias usb-controller uhci-hcd<br>意思是說：『我的 eth0 這個玩意兒，代表的是使用 8139too 這個核心模組， 至於 sndcard-<br>0 則使用 snd-via82xx 那個模組。此外， snd-card-0 這個模組在使用時， 還使用<br>index=0 這個參數。』這玩意真的是挺常用的～不過，這個檔案通常在安裝的時候， 安裝<br>程式就會主動的建立這個檔案囉～除非您對系統提供的驅動程式模組不滿意～～ 才會主動<br>的修改這個模組載入的相關檔案啦～(早期 2.4.xx 核心版本時，使用的是<br>/etc/modules.conf 喔！) 更多的相關說明，請 man modprobe.conf 喔！</p>
+<p>我們現在知道核心所支援的功能當中，有直接編譯到核心內部的，也有使用外掛模組的，<br>外掛模組可以簡單的想成 就是驅動程式 啦！那麼也知道這些核心模組依據不同的版本， 被<br>分別放置到 /lib/modules/<code>uname -r</code>/ 目錄中，各個硬體的驅動程式則是放置到<br>/lib/modules/<code>uname -r</code>/kernel/drivers/ 當中！而這些模組與裝置代號的對應， 就必須<br>要被寫入 /etc/modprobe.conf 檔案當中了。<br>事實上，我們的 Linux 核心真的是越來越聰明了， 一般來說，當我們的軟體有使用到核心<br>的某項功能時，其實核心是會『主動的』去載入該功能的！ 根本不需要使用什麼<br>modprobe 還是 insmod 之類的指令去載入呢！不過，有時候某些程式寫的不好時， 確實<br>可能需要我們手動來載入模組就是了。<br>那麼在 Linux kernel 2.6 版裡面的模組檔名是怎樣呢？這個得要特別說明一下囉。在<br>kernel 2.4 版以前，模組的檔名都是 <em>.o 的，例如 vfat.o 這個檔案系統模組就放在：<br>· /lib/modules/<code>uname -r</code>/kernel/fs/vfat/vfat.o<br>但是在 kernel 2.6 版以後，所有的核心模組都被改名字成為 *.ko 了！所以，如果你有<br>vfat 的模組， 他就會被放置到：<br>· /lib/modules/<code>uname -r</code>/kernel/fs/vfat/vfat.ko<br>請特別留意這個差異喔！ ^<em>^。此外，由於我們的核心原本就有提供很多的核心工具給硬<br>體開發商來使用， 而硬體開發商也需要針對核心所提供的功能來設計他們的驅動程式模組，<br>因此， 我們如果想要自行使用硬體開發商所提供的模組來進行編譯時，就需要使用到核心<br>所提供的原始檔當中， 所謂的標頭檔案 (header include file) 來取得驅動模組所需要的一<br>些函式庫或標頭的定義啦！ 也因此我們常常會發現到，如果想要自行編譯核心模組時，就<br>得要擁有核心原始碼嘛！<br>那核心原始碼我們知道他是可能放置在 /usr/src/ 底下，早期的核心原始碼被要求一定要放<br>置到 /usr/src/linux/ 目錄下，不過，如果您有多個核心在一個 Linux 系統當中，而且使用<br>的原始碼並不相同時， 呵呵～問題可就大了！所以，在 2.6 版以後，核心使用比較有趣的<br>方法來設計他的原始碼放置目錄， 那就是以 /lib/modules/<code>uname -r</code>/build 及<br>/lib/modules/<code>uname -r</code>/source 這兩個連結檔來指向正確的核心原始碼放置目錄。如果<br>以我們剛剛由 kernel 2.6.14.2 建立的核心模組來說， 那麼他的核心模組目錄底下有什麼<br>咚咚？<br>其中比較有趣的除了那兩個連結檔之外，還有那個 modules.dep 檔案也挺有趣的， 那個<br>檔案是記錄了核心模組的相依屬性的地方，依據該檔案，我們可以簡單的使用 modprobe<br>這個指令來載入模組呢！至於核心原始碼提供的標頭檔，在上面的案例當中， 則是放置到<br>/usr/src/linux-2.6.14.2/include/ 目錄中，當然就是藉由 build/source 這兩個連結檔案來<br>取得目錄所在的啦！^</em>^
+5.單一模組編譯<br>想像兩個情況：<br>· 如果我的預設核心忘記加入某個功能，而且該功能可以編譯成為模組，不過， 預設<br>核心卻也沒有將該項功能編譯成為模組，害我不能使用時，該如何是好？<br>· 如果 Linux 核心原始碼並沒有某個硬體的驅動程式 (module) ，但是開發該硬體的<br>廠商有提供給 Linux 使用的驅動程式原始碼，那麼我又該如何將該項功能編進核心<br>模組呢？<br>很有趣對吧！不過，在這樣的情況下其實沒有什麼好說的，反正就是 『去取得原始碼後，<br>重新編譯成為系統可以載入的模組』啊！很簡單，對吧！^_^ 但是，上面那兩種情況的模<br>組編譯行為是不太一樣的，不過，都是需要 make, gcc 以及核心所提供的 include 標頭檔<br>與函式庫等等。<br>· 硬體開發商提供的額外模組：<br>很多時候，可能由於核心預設的核心驅動模組所提供的功能您不滿意， 或者是硬體開發商<br>所提供的核心模組具有更強大的功能， 又或者該硬體是新的，所以預設的核心並沒有該硬<br>體的驅動模組時，那您只好自行由硬體開發商處取得驅動模組， 然後自行編譯囉！<br>如果您的硬體開發商有提供驅動程式的話，那麼真的很好解決，直接下載該原始碼，重新編<br>譯， 將他放置到核心模組該放置的地方後，呵呵！就能夠使用了！舉例來說，如果您不想<br>使用核心原本提供的 Intel 網路卡模組，而想使用 Intel 官方釋出的最新模組，例如下面這<br>個例子：<br>· 模組說明與下載：<a href="http://downloadfinder.intel.com/scripts-dfexternal/" target="_blank" rel="noopener">http://downloadfinder.intel.com/scripts-dfexternal/</a><br>Detail_Desc.aspx?agr=Y&amp;Inst=Yes&amp;ProductID=993&amp;DwnldID=2896&amp;strOSs=39&amp;OSFullName<br>=Linux</em>〈=eng<br>您可以利用各種方法將他下載後，假設這個檔案放置到 /root ，那麼直接將他解壓縮吧！<br>之後就可以讀一讀 INSTALL/README ，然後找一下 Makefile ，就能夠編譯了。整體流程<br>有點像這樣：</p>
+<ol>
+<li>將檔案解壓縮：<br>[root@linux ~]# cd /usr/local/src<br>[root@linux src]# tar -zxvf /root/e100-3.4.14.tar.gz<br>[root@linux src]# cd e100-3.4.14</li>
+<li>開始進行編譯與安裝：<br>[root@linux e100-3.4.14]# vi README &lt;==注意查一下該檔案內容<br>[root@linux e100-3.4.14]# cd src<br>[root@linux src]# make<h1 id="此時您會看到出現如下這一行："><a href="#此時您會看到出現如下這一行：" class="headerlink" title="此時您會看到出現如下這一行："></a>此時您會看到出現如下這一行：</h1><h1 id="make-1-Entering-directory-usr-src-kernels-2-6-13-1-1532-FC4-i686’"><a href="#make-1-Entering-directory-usr-src-kernels-2-6-13-1-1532-FC4-i686’" class="headerlink" title="make[1]: Entering directory `/usr/src/kernels/2.6.13-1.1532_FC4-i686’"></a>make[1]: Entering directory `/usr/src/kernels/2.6.13-1.1532_FC4-i686’</h1><h1 id="這代表這個驅動程式在編譯時，會去讀取的核心原始碼-include-file"><a href="#這代表這個驅動程式在編譯時，會去讀取的核心原始碼-include-file" class="headerlink" title="這代表這個驅動程式在編譯時，會去讀取的核心原始碼 include file"></a>這代表這個驅動程式在編譯時，會去讀取的核心原始碼 include file</h1><h1 id="的目錄所在！有興趣的朋友，務必查閱一下-Makefile-啦！"><a href="#的目錄所在！有興趣的朋友，務必查閱一下-Makefile-啦！" class="headerlink" title="的目錄所在！有興趣的朋友，務必查閱一下 Makefile 啦！"></a>的目錄所在！有興趣的朋友，務必查閱一下 Makefile 啦！</h1>[root@linux src]# ls -l</li>
+</ol>
+<p>-rw-r–r– 1 root root 77908 Jul 2 08:24 e100.c<br>-rw-r–r– 1 root root 351351 Dec 5 00:48 e100.ko<br>-rw-r–r– 1 root root 4775 Dec 5 00:48 e100.mod.c<br>-rw-r–r– 1 root root 39684 Dec 5 00:48 e100.mod.o<br>-rw-r–r– 1 root root 312564 Dec 5 00:48 e100.o<br>-rw-r–r– 1 root root 21092 Jul 2 08:24 ethtool.c<br>-rw-r–r– 1 root root 43258 Jul 2 08:24 kcompat.h<br>-rw-r–r– 1 root root 9610 Jul 2 08:24 Makefile</p>
+<ol start="3">
+<li>開始將該模組移動到核心目錄，並且更新模組相依屬性！<br>[root@linux src]# cp e100.ko \<blockquote>
+<p>/lib/modules/<code>uname -r</code>/kernel/drivers/net<br>[root@linux src]# cd /lib/modules/<code>uname -r</code><br>[root@linux 2.6.13-1.1532_FC4]# depmod -a<br>有趣吧！透過這樣的動作，我們就可以輕易的將模組編譯起來，並且還可以將他直接<br>放置到核心模組目錄中， 同時以 depmod 將模組建立相關性，未來就能夠利用<br>modprobe 來直接取用啦！^<em>^ 但是需要提醒您的是，當自行編譯模組時， 若您的<br>核心有更新 (例如利用自動更新機制進行線上更新) 時，則您必須要重新編譯該模組<br>一次， 重複上面的步驟！才行！因為這個模組僅針對目前的核心來編譯的啊！對吧！<br>利用舊有的核心原始碼進行編譯：<br>舉個例子來說，鳥哥目前 FC4 的核心就是 2.6 版，而且也有 NTFS 的原始碼，只不過，<br>FC4 就是沒有將這個模組給他編譯起來！那我能否使用目前的核心原始碼進行 NTFS 檔案<br>系統的模組編譯呢？當然可以啊！不過，我是否需要整個核心編譯的過程從頭來一次呢？<br>呵呵！當然不需要啊！否則～多麻煩～那該怎麼作？<br>很簡單啦～我們首先到目前的核心原始碼所在目錄下達 make menuconfig ， 然後將<br>NTFS 的選項設定成為模組，之後直接下達：<br>make fs/ntfs/<br>那麼 ntfs 的模組就會自動的被編譯出來了！可惜的是，預設的 FC4 核心原始碼並沒有附上<br>所有的程式碼， 僅有提供相關的 Makefile 檔案而已，傷腦筋～ 因此，您僅能以我們剛剛<br>才建立的 /usr/src/linux-2.6.14.2 這個目錄， 直接下達 make fs/ntfs 來建立起 ntfs.ko<br>這個模組～ 然後將該模組複製到 /lib/modules/2.6.14.2/kernel/fs/ntsf/ 目錄下， 再去到<br>/lib/modules/2.6.14.2 底下執行 depmod -a ，呵呵～ 就可以在原來的核心底下新增某個<br>想要加入的模組功能囉～ ^</em>^
+核心模組管理： lsmod, modinfo, modprobe, insmod, rmmod…<br>核心與核心模組是分不開的，至於驅動程式模組在編譯的時候，更與核心的原始碼功能分不<br>開～ 因此，您必須要先瞭解到：核心、核心模組、驅動程式模組、核心原始碼與標頭檔案<br>的相關性， 然後才有辦法瞭解到為何編譯驅動程式的時候老是需要找到核心的原始碼才能<br>夠順利編譯！ 然後也才會知道，為何當核心更新之後，自己之前所編譯的核心模組會失效～</p>
+</blockquote>
+</li>
+</ol>
+<p>转载完</p>
+<p>这里要说明的是在debian中modprobe.conf已经被modprobe.d目录替代了(debian的一贯做法^_^)<br>再探讨一下核心模块的问题，如果我们自己编译了内核，却又忘记编译某个模块的时候，怎么办呢，总不会<br>再重新编译一遍kernel吧,鸟哥已经提过这个事了，这里我们再转载一篇，可以比较看看，再验证一下我们<br>学到的一些知识。</p>
+<p>传统编译内核模块的方法繁琐而费时，本文将告诉我们一种快速编译所需要内核模块的<br>新方法。<br>当你安装完linux系统，并且已经启动，恭喜你！如果你的硬盘上还安装了WinNT/2000<br>系
+统，你试图去访问另一个NTFS分区时却遇到了麻烦。因为你所用的linux系统没有已编译<br>的支持NTFS文件系统的模块。怎么办？也许你会运行make menuconfig，重新定制你需<br>要
+的所有模块，接着运行make modeules;make modeules_install来安装。这样不仅繁琐、<br>费时，还可能会出现问题。或者因为编译内核对你有些棘手，太多的选择让你手足无措<br>，你根本没有太好的方法。本文给你提供一个简单的方法，你可以轻松地去编译你所需<br>要的支持NTFS系统的模块（ntfs.o）。以此为例，但愿对你编译其他模块有所帮助。<br>写此文时我用的系统是Red Hat linux release 7.0 (Guinness) Kernel 2.2.16-22 on<br>an i686。从一个新安装的系统开始，我们一起去编译一个自己想要的支持NTFS文件系<br>统模块。<br>一、找到编译内核所需要的.config文件。<br>在/usr/src/linux/configs目录下有若干编译内核所用的配置。选择我们想要的配置，<br>将它复制到/usr/src/linux目录下，改名为.config。<br>cp /usr/src/linux/configs/kernel-2.2.16-i686.config /usr/src/linux/.config<br>二、修改.config文件，去掉不用的模块，加上自己想要的模块。<br>打开.config，有许多XXXX=m的项，这些都是要被编译为模块的项，因为我们不希望编<br>译
+这些模块，所以要把XXXX=m的项统统去掉。然后再加上我们想要的模块，将#<br>CONFIG_N<br>TFS_FS is not set 改为CONFIG_NTFS_FS=m 当然，可以用你熟悉各种工具来做这件事。<br>三、编译NTFS模块。<br>在/usr/src/linux目录下运行命令make modules来编译我们想要的NTFS模块。<br>四、安装NTFS模块。<br>编译后得到的ntfs.o在/usr/src/linux/fs/ntfs目录下，手动将它复制到正确的目录下。<br>cp /usr/src/linux/fs/ntfs/ntfs.o /lib/modules/2.2.16-22/fs/<br>注意：千万不能运行命令make modules_install，否则将带来严重的后果，它会删除你<br>系统中的所有模块，只安装刚刚编译的模块（ntfs.o）。<br>五、载入NTFS模块.<br>运行命令depmod;modprobe ntfs 试着访问你的NTFS文件系统吧，祝你成功！<br>有些模块依赖于你的系统内核，所以不适用本文所提供的方法。还有些模块和其他模块<br>有依赖关系。如果你不熟悉这些依赖关系的话，建议你在第二步去掉不用的模块选项后<br>，通过make menuconfig来加上自己想要的模块。<br>我用此方法用了三分钟编译了支持NTFS文件系统的模块，你呢？</p>
+<p>作者简介<br>刘军民，海辰天泽公司的工程师（<a href="http://www.hisen.com),源码开放运动的追随者，业余时间喜" target="_blank" rel="noopener">www.hisen.com),源码开放运动的追随者，业余时间喜</a><br>欢用写程序打发时光。您可以通过电子邮件 <a href="mailto:fancao0515@0451.com" target="_blank" rel="noopener">fancao0515@0451.com</a>与他联系。<br>转载完</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Linux/linux-module/" data-title="Module in Linux | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Linux/linux-lsof/" title="Use lsof in Linux">
+  <strong>Prev：</strong><br>
+  <span>
+  Use lsof in Linux</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Linux/linux-crontab/" title="crontab">
+ <strong>Next：</strong><br>
+ <span>crontab
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

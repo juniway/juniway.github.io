@@ -1,0 +1,787 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>grpc 的安装和使用 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="介绍grpc 是 Google 在 2015 年 2 月底时发布的一款开源 RPC 框架，其源码是由 C 语言编写的。按照 Google 的说法，grpc 是：A high performance, open source, general RPC framework that puts mobile and HTTP/2 first.简单来说，它是一个高性能，开源，将移动和 HTTP/2 放在首">
+<meta property="og:type" content="article">
+<meta property="og:title" content="grpc 的安装和使用">
+<meta property="og:url" content="https://juniway.net/Tools-and-Build/tool-and-build-grpc-installation/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="介绍grpc 是 Google 在 2015 年 2 月底时发布的一款开源 RPC 框架，其源码是由 C 语言编写的。按照 Google 的说法，grpc 是：A high performance, open source, general RPC framework that puts mobile and HTTP/2 first.简单来说，它是一个高性能，开源，将移动和 HTTP/2 放在首">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.444Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="grpc 的安装和使用">
+<meta name="twitter:description" content="介绍grpc 是 Google 在 2015 年 2 月底时发布的一款开源 RPC 框架，其源码是由 C 语言编写的。按照 Google 的说法，grpc 是：A high performance, open source, general RPC framework that puts mobile and HTTP/2 first.简单来说，它是一个高性能，开源，将移动和 HTTP/2 放在首">
+<meta name="twitter:image" content="https://juniway.net/image/qrcode_258.jpg">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Tools-and-Build/tool-and-build-grpc-installation/" title="grpc 的安装和使用" itemprop="url">grpc 的安装和使用</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2017-12-16T10:41:13.000Z"> 2017-12-16</time>
+    <span class="post-count">字数 2.2k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>grpc 是 Google 在 2015 年 2 月底时发布的一款开源 RPC 框架，其源码是由 C 语言编写的。<br>按照 Google 的说法，grpc 是：<strong>A high performance, open source, general RPC framework that puts mobile and HTTP/2 first.</strong><br>简单来说，它是一个高性能，开源，将移动和 HTTP/2 放在首位的通用的 RPC 框架.</p>
+<p>由于它构建于 HTTP/2 标准，因此它有很多优秀的特点，主要如下：</p>
+<ul>
+<li>bidirectional streaming</li>
+<li>flow control</li>
+<li>header compression</li>
+<li>multiplexing requests over a single TCP connection</li>
+</ul>
+<p>这些特性在移动设备上节约电池使用时间和数据使用，加速服务和运行在云上的web应用。</p>
+<h4 id="源码编译及安装"><a href="#源码编译及安装" class="headerlink" title="源码编译及安装"></a>源码编译及安装</h4><p>源码地址：<a href="https://github.com/grpc/grpc" target="_blank" rel="noopener">https://github.com/grpc/grpc</a></p>
+<ol>
+<li>安装依赖</li>
+</ol>
+<ul>
+<li>配置工具：build-essential, autoconf, libtool</li>
+<li>测试支持：libgflags-dev</li>
+<li>编译工具：clang, libc++-dev</li>
+</ul>
+<p>Tip: when building, you may want to explicitly set the LIBTOOL and LIBTOOLIZE environment variables when running make to ensure the version installed by brew is being used:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ LIBTOOL=glibtool LIBTOOLIZE=glibtoolize make</span><br></pre></td></tr></table></figure>
+
+<p><strong>protoc</strong><br>GRPC 默认使用 protobuf 作为消息格式，为 protoc 是 protobuf 协议的编译器，因此，在构建 GRPC 之前确保 protoc 已经安装。</p>
+<p><strong>注：</strong>gRpc 源码中的 Makefile 文件中会自动检测当前系统是否已经安装了 protoc，如果没有安装，那么就会自动从其项目中的第三方库源码目录中进行安装。</p>
+<ol start="2">
+<li>编译</li>
+</ol>
+<p>执行下列命令进行编译构建和安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> -b $(curl -L https://grpc.io/release) https://github.com/grpc/grpc</span><br><span class="line"><span class="built_in">cd</span> grpc</span><br><span class="line">git submodule update --init</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+
+<p>注意到第一行命令是安装 release 分支中的版本，如果想安装最新的 master HEAD 上的版本，那么直接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/grpc/grpc</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong><br>编译过程中可能会遇到 <code>openssl1.1.0</code> 与 老版本 <code>openssl1.0.1</code>不兼容的问题（grpc 使用的老版本 openssl1.0.1），也就是说，如果本机环境使用的是 openssl1.1.0，那么编译 grpc 时会出现报错，可以去 Google 中搜索解决方案。</p>
+<ol start="3">
+<li>编译完成后生成的文件</li>
+</ol>
+<p>构建完成之后，想要知道生成了哪些文件，我们可以通过查看 <code>.gitignore</code> 文件来获知。</p>
+<p>打开 <code>.gitignore</code> 文件，可以看到如下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> C/C++ build outputs</span></span><br><span class="line">.build/</span><br><span class="line">bins</span><br><span class="line">gens</span><br><span class="line">libs</span><br><span class="line">objs</span><br></pre></td></tr></table></figure>
+
+<p>根据注释含义可知，编译成功后会在根目录下新建上述目录，不同的目录包含了不同的文件，这里主要来看 libs， bins 这两个目录，<br>bins 目录中包含了所有编译构建后生成二进制程序文件。<br>查看 <code>bins/opt/</code> 会发现，生成了下列二进制程序，它们都是 grpc 对各个语言默认插件的实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">grpc_cpp_plugin</span><br><span class="line">grpc_csharp_plugin</span><br><span class="line">grpc_node_plugin</span><br><span class="line">grpc_objective_c_plugin</span><br><span class="line">grpc_php_plugin</span><br><span class="line">grpc_python_plugin</span><br><span class="line">grpc_ruby_plugin</span><br></pre></td></tr></table></figure>
+
+<p>libs 目录中则包含了动态库，静态库等文件。查看 `libs/opt/`` 可以看到以 libgrpc, libgrpc++ 等为前缀的许多静态和动态库文件，这里不一一列举：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">libgpr.a</span><br><span class="line">libgpr.so.4.0.0-dev</span><br><span class="line">libgrpc.a</span><br><span class="line">libgrpc++.a</span><br><span class="line">libgrpc++.so.1.5.0-dev</span><br><span class="line">libgrpc.so.4 -&gt; libgrpc.so.4.0.0-dev</span><br><span class="line">libgrpc.so.4.0.0-dev</span><br><span class="line">pkgconfig/</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>安装</li>
+</ol>
+<p>执行 <code>make install</code> 就会自动安装上述编译所生成的库及二进制程序。这一步非常简单，其实质只是把相应的文件拷贝的系统目录而已。<br>想要知道具体会安装哪些文件，查看 Makefile 即可。<br>安装内容相当的复杂，实际上，我们没有必要去了解每个细节，只要知道哪些主要文件会被安装，以及他们会被安装在哪个目录就可以了。</p>
+<p>我在这里对整个安装过程做了一个总结，如下：</p>
+<p>（1）要安装的文件<br>按照文件类型，我把要安装或者说拷贝到系统目录的文件主要有以下几个部分：</p>
+<ul>
+<li><ol>
+<li>grcp 的相关头文件</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>静态库，动态库</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>可执行文件 （也即以 _plugin 结尾的各语言的 grpc 插件）</li>
+</ol>
+</li>
+</ul>
+<p>（2） 安装至的目录 （默认 <code>/usr/local</code>）</p>
+<p>如果没有指定安装目录的 prefix，那么默认的 prefix 是 /usr/local。如果想使用其他 prefix 比如 /usr，那么可以编辑 Makefile 文件修改 prefix 变量。<br>或者 make install DISTDIR=/usr/local 。</p>
+<p>It depends on the package. If the Makefile is generated by GNU autotools (./configure) you can usually set the target location like so:<br>./configure –prefix=/usr/local<br>If the Makefile is not generated by autotools, but distributed along with the software, simply open it up in an editor and change it. The install target directory is probably defined in a variable somewhere.</p>
+<p>从上文可知，如果源码包没有提供 configure 配文件，最可靠的办法就是编辑 Makefile 文件来指定 prefix。</p>
+<p>按照不同的类型区别，它们分别将安装在如下目录</p>
+<p>（1）头文件<br>$prefix/include<br>注：源码文件通常会在 $prefix/src 中，但通常没有必要安装源码。</p>
+<p>（2）静态库及动态库 （.a 文件，.so，.so.x.x 文件）<br>对不同语言的支持，会有不同的静态库及动态库文件。<br>$prefix/lib</p>
+<p>（3） plugins，也就是二进制文件<br>$prefix/bin</p>
+<p>（4） pkg-config 文件<br>$prefix/lib/pkg-config</p>
+<p>（5）证书文件 certs<br>$prefix/share/grpc</p>
+<p>比如，根证书文件为：<br>$prefix/share/grpc/roots.pem</p>
+<h4 id="GRPC-实例"><a href="#GRPC-实例" class="headerlink" title="GRPC 实例"></a>GRPC 实例</h4><p>这里编写一个 C++ 使用 GRPC 的实例来试验 GRPC 的使用。</p>
+<p>官方的 grpc 源码中提供了示例，进入 <code>examples/cpp/helloworld</code> 目录，执行 make 来编译所提供的 cpp 例子（<code>greeter_server.cc</code>, <code>greeter_client.cc</code>, etc）：</p>
+<p>可能会出现如下错误提示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ g++ helloworld.pb.o helloworld.grpc.pb.o greeter_client.o -L/usr/<span class="built_in">local</span>/lib `pkg-config --libs protobuf grpc++ grpc` -Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed -ldl -o greeter_client</span><br><span class="line">Package grpc++ was not found <span class="keyword">in</span> the pkg-config search path.</span><br><span class="line">Perhaps you should add the directory containing `grpc++.pc<span class="string">'</span></span><br><span class="line"><span class="string">to the PKG_CONFIG_PATH environment variable</span></span><br><span class="line"><span class="string">No package '</span>grpc++<span class="string">' found</span></span><br><span class="line"><span class="string">Package grpc was not found in the pkg-config search path.</span></span><br><span class="line"><span class="string">Perhaps you should add the directory containing `grpc.pc'</span></span><br><span class="line">to the PKG_CONFIG_PATH environment variable</span><br><span class="line">No package <span class="string">'grpc'</span> found</span><br><span class="line">/usr/bin/ld: helloworld.pb.o: undefined reference to symbol <span class="string">'_ZN6google8protobuf8internal16RegisterAllTypesEPKNS0_8MetadataEi'</span></span><br><span class="line">/usr/lib/libprotobuf.so.13: error adding symbols: DSO missing from <span class="built_in">command</span> line</span><br><span class="line">collect2: error: ld returned 1 <span class="built_in">exit</span> status</span><br><span class="line">make: *** [Makefile:42: greeter_client] Error 1</span><br></pre></td></tr></table></figure>
+
+<p>根据提示可知，执行 <strong><code>pkg-config --libs protobuf grpc++ grpc</code></strong> 出错了，因为 <code>PKG_CONFIG_PATH</code> 没有设置。</p>
+<p>解决办法很简单，只需按如下设置该变量即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">export</span> PKG_CONFIG_PATH=<span class="variable">$PKG_CONFIG_PATH</span>:/usr/<span class="built_in">local</span>/lib/pkgconfig</span><br></pre></td></tr></table></figure>
+
+<p>设置完成之后，执行 <strong><code>pkg-config --libs protobuf grpc++ grpc</code></strong> 就会显示如下结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-L/usr/local/lib -lprotobuf -pthread -lpthread -lgrpc++ -lgrpc</span><br></pre></td></tr></table></figure>
+
+<p>现在，在 <code>examples/cpp/helloworld</code> 目录执行 make 就成功了，执行结果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ protoc -I ../../protos --cpp_out=. ../../protos/helloworld.proto</span><br><span class="line">$ g++ -std=c++11 `pkg-config --cflags protobuf grpc`  -c -o helloworld.pb.o helloworld.pb.cc</span><br><span class="line">$ protoc -I ../../protos --grpc_out=. --plugin=protoc-gen-grpc=`<span class="built_in">which</span> grpc_cpp_plugin` ../../protos/helloworld.proto</span><br><span class="line">$ g++ -std=c++11 `pkg-config --cflags protobuf grpc`  -c -o helloworld.grpc.pb.o helloworld.grpc.pb.cc</span><br><span class="line">$ g++ -std=c++11 `pkg-config --cflags protobuf grpc`  -c -o greeter_client.o greeter_client.cc</span><br><span class="line">$ g++ helloworld.pb.o helloworld.grpc.pb.o greeter_client.o -L/usr/<span class="built_in">local</span>/lib `pkg-config --libs protobuf grpc++ grpc` -Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed -ldl -o greeter_client</span><br><span class="line">$ g++ -std=c++11 `pkg-config --cflags protobuf grpc`  -c -o greeter_server.o greeter_server.cc</span><br><span class="line">$ g++ helloworld.pb.o helloworld.grpc.pb.o greeter_server.o -L/usr/<span class="built_in">local</span>/lib `pkg-config --libs protobuf grpc++ grpc` -Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed -ldl -o greeter_server</span><br></pre></td></tr></table></figure>
+
+<p>Makefile 中指定了，先执行 protoc 生成 <code>--cpp_out</code> 和 <code>--grpc_out</code> 两类文件，均是 cpp 头文件，它们是：<code>helloworld.pb.h</code> 和 <code>helloworld.grpc.pb.h</code><br>实际上，helloworld.pb.h 是定义 protobuf Message 类型相关的代码，而 <code>helloworld.grpc.pb.h</code> 头文件是定义 grpc Service 相关的代码</p>
+<p><strong>需要注意的是：</strong>在 cpp 中，这两部分内容是分开放在两个头文件中的，而用 grpc-go 生成的 Message 和 Service 代码则是在同一个 go 文件中。</p>
+<p>编译好 <code>greeter_client</code>, <code>greeter_server</code> 等可执行程序之后，执行 <code>./greeter_client</code>，会出现如下结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ./greeter_client</span><br><span class="line">./greeter_client: error <span class="keyword">while</span> loading shared libraries: libgrpc++.so.1: cannot open shared object file: No such file or directory</span><br><span class="line">./greeter_client: error <span class="keyword">while</span> loading shared libraries: libgrpc++_reflection.so.1: cannot open shared object file: No such file or directory</span><br></pre></td></tr></table></figure>
+
+<p><code>libgrpc++.so</code> 是一个运行时库，上述错误显示，<code>greeter_client</code> 动态连接该库时没找到这个库，这个库的搜索目录是在 <code>LD_LIBRARY_PATH</code>环境变量中定义里的，因此如果没在这个目录中，那么就会找不到，如果已经在这个目录中，可以执行 <code>sudo ldconfig -v</code> 来更新 /<code>etc/ld.so.conf</code> 的 cache（也即 <code>/etc/ld.so.cache</code> 文件）。</p>
+<p>由于安装时，所有的 libgrpc 相关的静态库和动态库都会安装在 <code>/usr/local/lib</code> 目录中，而这个目录已经加入 <code>LD_LIBRARY_PATH</code> 环境变量，经过查看发现，<code>/usr/local/lib</code> 目录中确实没有 <code>libgrpc++.so.1</code>，原因是什么呢？</p>
+<p>原来，在 grpc 源码目录的构建生成的 <code>libs/opt</code> 目录下， <code>libgrpc++.so.1</code> 这个文件确实是存在的（它是一个 symlink 文件，真正指向的是 <code>libgrpc++.so.1.5.0-dev</code>）。<br>但是执行 <code>make install</code> 安装的时候，却变成了 <code>libgrpc++.so.4</code>，那就扯淡了。那么，最简单的解决办法就是把构建目录中的 <code>libgrpc++.so.1</code> 拷贝到 <code>/usr/local/lib</code> 中去。或者把 <code>libgrpc++.so.4</code> 改成 <code>libgrpc++.so.1</code>。</p>
+<p>最后执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">g++ -std=c++11 `pkg-config --cflags protobuf grpc`  -c -o route_guide.grpc.pb.o route_guide.grpc.pb.cc</span><br><span class="line">g++ -std=c++11 `pkg-config --cflags protobuf grpc`  -c -o route_guide_client.o route_guide_client.cc</span><br></pre></td></tr></table></figure>
+
+<p>全文完!</p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Tools-and-Build/">Tools and Build</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Tools-and-Build/tool-and-build-grpc-installation/" data-title="grpc 的安装和使用 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Programming/go-go-cpp-protobuf/" title="Go 和 C++ 程序通过 protobuf 来进行数据交互">
+  <strong>Prev：</strong><br>
+  <span>
+  Go 和 C++ 程序通过 protobuf 来进行数据交互</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Programming/go-go-use-protobuf/" title="在 Go 语言中使用 Protobuf">
+ <strong>Next：</strong><br>
+ <span>在 Go 语言中使用 Protobuf
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

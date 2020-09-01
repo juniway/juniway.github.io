@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://juniway.net/System-Programming/core-techs-03-linux-process/</loc>
+    <lastmod>2020-09-01</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/System-Programming/core-techs-database/</loc>
+    <lastmod>2020-09-01</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/System-Programming/core-techs-02-algorithms/</loc>
+    <lastmod>2020-09-01</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/System-Programming/core-techs-01-data-structures/</loc>
+    <lastmod>2020-09-01</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/cpp-crtp/</loc>
+    <lastmod>2020-09-01</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/System-Programming/core-techs-linux-io-zero-copy/</loc>
+    <lastmod>2020-09-01</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/System-Programming/core-techs-linux-cache/</loc>
+    <lastmod>2020-09-01</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/C/core-techs-concurrency/</loc>
+    <lastmod>2020-09-01</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-multi-raft/</loc>
+    <lastmod>2020-07-15</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-multi-paxos/</loc>
+    <lastmod>2020-07-15</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-honey-badger/</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Go/core-techs-lang-go-basics/</loc>
+    <lastmod>2020-05-11</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/C/core-techs-lang-cpp-split/</loc>
+    <lastmod>2020-05-11</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/C/core-techs-lang-cpp-basics/</loc>
+    <lastmod>2020-05-11</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/C/cpp-cpp20/</loc>
+    <lastmod>2020-05-11</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/cpp-rapidjson/</loc>
+    <lastmod>2020-05-11</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Web/web-npm-in-simple/</loc>
+    <lastmod>2020-05-11</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Network-Technology/vps-pac-rules/</loc>
+    <lastmod>2020-05-11</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-storage-pcie/</loc>
+    <lastmod>2020-05-11</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/C/cpp-cpp17/</loc>
+    <lastmod>2020-05-09</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/C/cpp-cpp11/</loc>
+    <lastmod>2020-05-09</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/C/cpp-cpp14/</loc>
+    <lastmod>2020-05-09</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Vim/vim-vim-move-fast/</loc>
+    <lastmod>2020-04-30</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Git/git-git-untrack/</loc>
+    <lastmod>2020-04-09</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/C/core-techs-lang-cpp-vector/</loc>
+    <lastmod>2020-04-06</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Git/git-git-key-management/</loc>
+    <lastmod>2020-03-29</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-shell-variables/</loc>
+    <lastmod>2020-03-25</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-shellstring/</loc>
+    <lastmod>2020-03-25</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/%E5%8D%97%E6%98%8C/nanchang-nanchang-vocab/</loc>
+    <lastmod>2020-03-25</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Network-Technology/vps-certbot/</loc>
+    <lastmod>2020-03-25</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Network-Technology/vps-shadowsocks-auto/</loc>
+    <lastmod>2020-03-25</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Network-Technology/vps-linux-shadowsocks/</loc>
+    <lastmod>2020-03-25</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-commandline-shortkeys/</loc>
+    <lastmod>2020-03-17</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-server-mode4/</loc>
+    <lastmod>2019-12-30</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Vim/vim-vim-edit-fast/</loc>
+    <lastmod>2019-12-21</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/posts_cn/algo/quick_sort.html</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Web/web-nodejs-install/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Web/web-npm-in-deep/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Vim/vim-vimrc-setting/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-guestaddition-shared-folder/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-headless/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-nat-engine/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-network-dialog/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-network-mode/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-portforwarding/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-resize-hd/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Vim/vim-file-and-window/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vboxmanage/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-gateway-dns/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Macbook/vbox-hostonly-access-network/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-access-server-in-guestos/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-create-vms-using-vboxmanage/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-dhcp/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/VirtualBox/vbox-vbox-config-files/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-protoc-go/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-protoc-install/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-json-rpc/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-llvm-clang/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-makefile-notes/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-ningja/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-protobuf-go-cpp/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-protobuf-usage/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-protoc23diff/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-cmake-module/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-etcd-usage/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-cmake-makefile/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-fish/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-gcc-6-3-0/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-gdb-7-12/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-grpc-go-installation/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-grpc-installation/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Sublime-Text/sublime-emmet-settings/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Sublime-Text/sublime-auto-completion/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/test-stress-test/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-abs-arch-build/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-archlinux-install/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Tools-and-Build/tool-and-build-cmake-advanced/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Operating-System/os-cpu-atomic-contention-2/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Operating-System/os-cpu-cache/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Operating-System/os-cpu-cache-consistency-1/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Operating-System/os-memory-allocation-contention/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Operating-System/os-share-data-threads/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/python-coding-standards/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-server-mode1/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-select/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-server-mode2/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-server-mode3/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-server-mode6/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-server-mode5/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-encryption-basics/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-listen-accept/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-listen-connect-accept/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-epoll/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-poll/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-reactive-programming/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-reactor-proactor/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/%E5%8D%97%E6%98%8C/nanchang-custom-and-rites/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/%E5%8D%97%E6%98%8C/nanchang-nanchangdialect/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/network-programming-diff-select-poll-epoll/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Database/mongodb-shard-cluster/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-ss/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-ssh/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-zip-unzip/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Music/music-uk-chord/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-ssh-remote-cmds/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Music/music-uk-cmajor-scale/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-netstat/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-scp/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-others/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-service-script/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-sed/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-fish-programming/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-job-cmd/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-grep/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-msys2/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-nc/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-lsof/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-module/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-awk/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-crontab/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-curl/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Life/life-texas-holdem/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-cut-paste/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-env-files/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Linux/linux-find-xargs/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/life/life/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/ipfs-ipfs-bitswap/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Life/life-criminal-age/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Life/life-edge-of-life/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/ipfs-what-ipfs-can-do/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Life/life-get-gv/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Life/life-survive-in-us/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/BigData/hadoop-hadoop-ha/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/BigData/hadoop-hadoop-install/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/BigData/hadoop-hadoop-runtime/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/BigData/hadoop-native-hadoop-lib/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/BigData/hadoop-reduce-tasks/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/ipfs-how-ipfs-work/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/web-multipart-formdata/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/BigData/hadoop-hadoop-configurations/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-slice-array/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-redirect-http-to-https/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-tls-mutual-auth/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-type-embed/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-slice/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-var-scope/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-interface-principle/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-mgo-source-structure/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-json-encoder/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-print-struct-map/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-mgo-source-analysis/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-redigo-analysis/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-use-protobuf/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-upload/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-vendor/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-zk-server/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-grpc-go-for-cs/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-http-hijacker/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-interface-notes/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-iowriter/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-json/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-multipart/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-performance-tips/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-sizeof/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-type-alias/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-sync-map/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-bigint/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-combination-design/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-cpp-protobuf/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-hook/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-commands/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-future-promise/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-go-ioreader/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Git/git-git-squash-commits/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Git/git-multiple-remotes/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Git/git-git-undo/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-convert-to-byte/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-convertion-int-string/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/go-gen-ca-key/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/English/english-see-vocab/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Git/git-git-diff-local-repo/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Git/git-git-init/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Git/git-git-log/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Git/git-git-mergetool/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Git/git-git-rebase-branch/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-raft/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/English/english-intro-corpus/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-understand-hashgraph/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/English/english-process-coca-list/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/English/english-see-coca/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-mvcc/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-p2p-gossip/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-paxos/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-p2p-upnp/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-p2p-kademlia/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-percolator/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-1-dist-two-general/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-2-dist-byzantine-problem/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-bigtable/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-consensus/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/distributed-system-candidate-like-friend/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/cpp-extern-c/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Database/database-ddl-dml-dcl/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Database/core-techs-storage-ssd/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Programming/cpp-cpp-high-performance/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-linux-overview/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-network-overview/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-network-tcp/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Database/core-techs-storage-raid/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-filesystem-lfs/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-filesystem-ufs/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-filesystem-vsfs/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-lang-go-goroutine/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-filesystem-crash-consistency/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-filesystem-ffs/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-filesystem-journal-filesystem/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-database-rocksdb/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-database-index/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-database-leveldb/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-database-memcached/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-database-redis/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-database-redis-memcached/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-database-mysql/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-tendermint-intro/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/SystemProgramming/core-techs-database-bigtable/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-part1-theory-foundamentals/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-part2-industry-exp/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-tendermint-abci/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-tendermint-consensus/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-blockchain-treasure/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-filecoin-introduction/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-avalanche/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-ethereum-geth-usage/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-ethereum-ether/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Distributed-System/blockchain-overview-blockchain-expert/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-08-bitcoin-explained/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-09-smart-contract/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-11-cross-chain-and-token-economy/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-10-ethereum-explained/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-12-anonymous-coin/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-13-alt-coins/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-15-DApps/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-16-statistic/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-14-blockchain-philosophy/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-02-consensus-algorithms/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-01-basic-concepts/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-03-security-issues/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-05-p2p-communication/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-06-data-structure/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-07-cryptography/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Blockchain/blockchain-04-tech-obstacles/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Macbook/Macbook-resolution-vs-picture-dimension/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Macbook/Macbook-apps-for-macos/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>  <url>
+    <loc>https://juniway.net/Macbook/Macbook-macbook-cmd-proxy/</loc>
+    <lastmod>2019-12-10</lastmod>
+  </url>
+</urlset>

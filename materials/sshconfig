@@ -1,0 +1,90 @@
+# Generate keys:
+#ssh-keygen -t ed25519 -o -a 100
+#ssh-keygen -t rsa -b 4096 -o -a 100
+
+
+### Global ###
+
+HashKnownHosts yes
+
+
+### Local Servers ###
+
+Host vm-docker
+    Hostname 192.168.56.150
+
+Host vm-dev
+    Hostname 192.168.56.151
+
+
+### Personal Computers ###
+
+Host juiz
+    Hostname example.com
+    Port 2222
+
+Host router
+    Hostname 127.0.0.1
+    User root
+    Port 7102
+
+Host tenshi
+    Hostname example.com
+
+
+### Personal VPS Servers ###
+
+# https://manager.linode.com/
+# Dallas, Texas
+# $25/month - Xen, 2 shared cores, 2GB RAM, 48GB SSD, 3TB/month@250mbps, 1 IPv4, 1 IPv6, includes automated backups
+Host linode
+    Hostname example.com
+
+# https://my.vultr.com/
+# Dallas, Texas
+# $5/month - KVM, 1 shared core, 768MB RAM, 15GB SSD, 1TB/month@1gbps, 1 IPv4, 1 IPv6
+Host vultr
+    Hostname example.com
+    Port 5167
+
+
+### Office Servers ###
+
+Host dominix
+    Hostname example.com
+
+Host incursus
+    KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1
+    Hostname example.com
+    User user1
+
+Host tristan
+    Hostname 127.0.0.1
+    User root
+
+Host navitas
+    Hostname 127.0.0.1
+
+Host velator
+    Hostname 127.0.0.1
+    User user1
+    Port 4785
+
+
+### Global Host Config ###
+
+Host *
+    AddressFamily inet
+    Compression yes
+    ServerAliveInterval 10
+    ControlMaster auto
+    ControlPersist 3600
+    ControlPath ~/.ssh/socket-%r@%h:%p
+
+    # https://cipherli.st/
+    KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+    MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-ripemd160-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,hmac-ripemd160,umac-128@openssh.com
+    Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+
+    # http://www.openssh.com/txt/release-7.1p2
+    UseRoaming no

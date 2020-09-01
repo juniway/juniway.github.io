@@ -1,0 +1,826 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>slice in Go | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="本文详细介绍 Go 语言中 slice 的用法。 对于可以随机访问的顺序存储数据结构来说，Go 提供了 array 和 slice。array 作为固定长度的数组，在 Go 语言中使用场景极少，而 slice 作为动态数组切片则相反，由于其灵活的特性，在 Go 程序中大量而广泛的使用。因此，要想更熟练的使用 Go 语言进行编程，掌握 slice 的用法非常重要。 slice 本质是对底层数组的引用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="slice in Go">
+<meta property="og:url" content="https://juniway.net/Programming/go-slice/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="本文详细介绍 Go 语言中 slice 的用法。 对于可以随机访问的顺序存储数据结构来说，Go 提供了 array 和 slice。array 作为固定长度的数组，在 Go 语言中使用场景极少，而 slice 作为动态数组切片则相反，由于其灵活的特性，在 Go 程序中大量而广泛的使用。因此，要想更熟练的使用 Go 语言进行编程，掌握 slice 的用法非常重要。 slice 本质是对底层数组的引用">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.432Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="slice in Go">
+<meta name="twitter:description" content="本文详细介绍 Go 语言中 slice 的用法。 对于可以随机访问的顺序存储数据结构来说，Go 提供了 array 和 slice。array 作为固定长度的数组，在 Go 语言中使用场景极少，而 slice 作为动态数组切片则相反，由于其灵活的特性，在 Go 程序中大量而广泛的使用。因此，要想更熟练的使用 Go 语言进行编程，掌握 slice 的用法非常重要。 slice 本质是对底层数组的引用">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Programming/go-slice/" title="slice in Go" itemprop="url">slice in Go</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-07-16T03:30:33.000Z"> 2016-07-16</time>
+    <span class="post-count">字数 2.1k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>本文详细介绍 Go 语言中 slice 的用法。</p>
+<p>对于可以随机访问的顺序存储数据结构来说，Go 提供了 array 和 slice。<br>array 作为固定长度的数组，在 Go 语言中使用场景极少，而 slice 作为动态数组切片则相反，由于其灵活的特性，在 Go 程序中大量而广泛的使用。<br>因此，要想更熟练的使用 Go 语言进行编程，掌握 slice 的用法非常重要。</p>
+<p>slice 本质是对底层数组的引用，在申明一个 slice 时，Go 实际上会在底层先分配一个数组，然后通过引用的方式来访问这个底层数组。</p>
+<br>
+##### 如何遍历 slice?
+---
+使用 range 关键字进行遍历。遍历时，既可以返回单值，也可以返回双值。返回单值时就是 index，返回双值时会是 index 和 value。
+e.g.
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">myslice := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>, <span class="number">5</span>)</span><br><span class="line"><span class="keyword">for</span> i := <span class="keyword">range</span> myslice &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i, v := <span class="keyword">range</span> myslice&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+##### Go 可否同时遍历多个 length 相同的 slice ？**
+---
+答案是 不可以！
+
+<p>Golang 不支持类似如下 python 的语法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> x, y <span class="keyword">in</span> range([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]):</span><br><span class="line">    <span class="keyword">print</span> x, y</span><br></pre></td></tr></table></figure>
+
+<p>要想实现同时遍历两个或多个 slice，可以通过共享 index 的方式。也就是如果两个 slice 长度相同，那么遍历其中一个 slice 的同时，使用其 index 来访问另一个 slice 的元素，如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i := <span class="keyword">range</span> x &#123;</span><br><span class="line">    fmt.Println(x[i], y[i])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+##### 如何 Copy Slice ? （深拷贝）
+---
+
+<br>
+###### 两种方式：
+**1. 使用 Go 语言内置函数 copy**
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="built_in">make</span>([]T, <span class="built_in">len</span>(a))</span><br><span class="line"><span class="built_in">copy</span>(b, a)</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 使用 append 函数</strong><br>把要 copy 的 slice append 到一个 empty slice 中去。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="built_in">append</span>([]T(<span class="literal">nil</span>), a...)</span><br></pre></td></tr></table></figure>
+
+<br>
+##### 如何对一个 Slice 进行排序？
+---
+Go provides a `sort` package to do all things about sort, binary search, etc.
+
+<p>使用前需要 <code>import &quot;sort&quot;</code>，sort 包提供了对 float64, int, string 这 3 个基本数据类型的排序操作（不支持 int64，int32等其他类型的排序，需要用户自己转换）<br>同时，还提供了 IsSorted, Search 等函数用于支持对 slice 的相关操作。</p>
+<p>函数原型<br>e.g.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Ints</span><span class="params">(a []<span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">Search</span><span class="params">(n <span class="keyword">int</span>, f <span class="keyword">func</span>(<span class="keyword">int</span>)</span> <span class="title">bool</span>) <span class="title">int</span></span></span><br></pre></td></tr></table></figure>
+
+<br>
+##### 如何只对 slice 的某一部分进行排序？
+---
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sort.Ints(slice[<span class="number">5</span>:<span class="number">11</span>])</span><br></pre></td></tr></table></figure>
+
+<br>
+##### 如何排序一个自定义的数据类型？
+---
+Sort a user-defined data structure
+Sorting user-defined data in Go requires you to implement the sort.Interface. This interface requires three simple methods: Len, Less, and Swap.
+
+<p>函数原型:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Len() <span class="keyword">int</span></span><br><span class="line">Less(i, j <span class="keyword">int</span>) <span class="keyword">bool</span></span><br><span class="line">Swap(i, j <span class="keyword">int</span>)</span><br></pre></td></tr></table></figure>
+
+<p>In simple, as long as the user-defined slice of data implement these three methods, we can call sort.Sort(data) to sort it.</p>
+<p>e.g.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> intervals []Interval</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(slice intervals)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">len</span>(slice)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+##### 如何删除 slice 中的元素？
+---
+
+<p>没有提供 build-in 的函数来实现 remove 功能。需要我们手动操作。<br>主要的方法就是<span class="redBold">拼接</span></p>
+<p>(1) 删除尾部元素</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*sol = (*sol)[<span class="number">0</span> : <span class="built_in">len</span>(*sol)<span class="number">-1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>(2) 删除中间元素</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="built_in">append</span>(a[:i], a[i+<span class="number">1</span>:]...)</span><br></pre></td></tr></table></figure>
+
+<p>总结：<br>从 slice 这种数据结构本质来看，其并不适合做删除操作。实际上，无论什么语言，数组（连续空间，随机访问）这种数据结构，做删除操作的话，都是需要移动元素的，而移动元素会导致大量的 copy，效率很低。</p>
+<p>如果实在需要使用 slice 又不可避免需要删除元素，那么可以使用下述方法提高效率。<br>前提是不关心删除之后元素的原有顺序，那么可以用最后一个元素替换要删除的元素，然后去掉最后一个元素，<br>e.g</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a[i] = a[<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br><span class="line">a = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>当然，如果需要频繁删除中间或开头的元素，更好的是选择链表这样的数据结构。<br>Go中可以使用 map 或 container/list 包。</p>
+<br>
+##### 如何清空一个 slice
+---
+清空 slice， 也即把这个 slice 置 nil
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slice = <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+
+<p>要弄清楚一个 slice 置为 nil 具体是怎么回事，我们可以借助下述这个 slice 结构体定义来理解：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sliceHeader&#123;</span><br><span class="line">    Length:        <span class="number">0</span>,</span><br><span class="line">    Capacity:      <span class="number">0</span>,</span><br><span class="line">    ZerothElement: <span class="literal">nil</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上述结构中我们可以看到，一个 置为 nil 的 slice 是指它的 length 和 capacity 成员都是 0，并且它的底层数组指向 nil。从功能表现上来看，nil slice 可以被 append，并且自动分配内存。</p>
+<p>比如，下述例子把一个 slice 中的所有元素拷贝到一个 nil slice 中去，从而实现复制功能。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slice1 := <span class="built_in">append</span>([]<span class="keyword">int</span>(<span class="literal">nil</span>), slice...)</span><br></pre></td></tr></table></figure>
+
+<p>可见，通过简单的 <code>slice = nil</code> 是最好的清空 slice 的方式，通过这样的方式，其底层的数组原占的内存也会被 gc 自动回收。<br>注意：不要通过 <code>slice = slice[:0]</code> 这样的方式去清空一个 slice，因为这会导致潜在的内存泄露。也就是说，内存已经不再使用了，但是却有可能通过 re-slice的方式访问到。</p>
+<br>
+#### 如何插入一个元素到  slice 中？
+---
+use copy to shift items around in a single slice
+
+<p>给一个 slice 插入元素的时候需要注意 len 和 cap 属性，如果当前 slice 的 len 小于 cap，那么无需重新分配内存。<br>否则，插入一个元素必然需要重新分配内存。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Insert</span><span class="params">(slice []<span class="keyword">int</span>, index, value <span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">    slice = slice[<span class="number">0</span> : <span class="built_in">len</span>(slice)+<span class="number">1</span>]       <span class="comment">// Grow the slice by one element, make sure cap &gt;= len(slice) + 1</span></span><br><span class="line">    <span class="built_in">copy</span>(slice[index+<span class="number">1</span>:], slice[index:])  <span class="comment">// Use copy to move the upper part of the slice out of the way and open a hole.</span></span><br><span class="line">    slice[index] = value</span><br><span class="line">    <span class="keyword">return</span> slice</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+##### slice 作为函数参数
+---
+
+<br>
+###### 1. 如果只是改变原有 slice 中的值，那么不需要传指针：
+虽然本质上，slice 做函数参数时，本身是做为值传递的，但是由于 slice 这个数据结构包含了一个指向底层数组的指针，
+在修改 slice 原有内容的时候的，是修改了底层数组的内容，因此修改效果可以体现。
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">modifySlice</span><span class="params">(a []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    a[<span class="number">0</span>] = <span class="number">1000</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### 2. 如果有 append 操作，必须取该 slice 变量的指针再传递：
+这是由于 append 会导致 slice 底层结构体中的引用的数组地址改变，length 成员变量的值也会改变, append 之后，slice 引用的还是原来的数组地址，因此修改无效！
+必须传递该 slice 的指针，以便获得修改后的效果。
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testSlice</span><span class="params">(a *[]<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testAppend</span><span class="params">(slice0 []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">" %p \n"</span>, &amp;slice0)</span><br><span class="line">    slice0 = <span class="built_in">append</span>(slice0, <span class="number">4</span>)</span><br><span class="line">    fmt.Printf(<span class="string">" %p \n"</span>, &amp;slice0)</span><br><span class="line">    slice0 = <span class="built_in">append</span>(slice0, <span class="number">5</span>)</span><br><span class="line">    fmt.Printf(<span class="string">" %p \n"</span>, &amp;slice0)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    slice0 := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">    fmt.Printf(<span class="string">" %p \n"</span>, &amp;slice0)</span><br><span class="line">    testAppend(slice0)</span><br><span class="line">    fmt.Printf(<span class="string">" %p \n"</span>, &amp;slice0)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<blockquote>
+<p>0xc0820403c0<br>0xc082040420           // 可见， 做参数传递时， slice 复制了一份，因此地址变了。<br>0xc082040420<br>0xc082040420<br>0xc0820403c0</p>
+</blockquote>
+<p>如果不想通过参数中传指针的方式，那么利用返回值的方式来获得改变后的 slice。具体做法是在函数拷贝一个原 slice（使用copy(src, dest)），然后在函数末尾返回一个 slice， 如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testSlice</span><span class="params">(a []<span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">    dest := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="built_in">len</span>(a))</span><br><span class="line">    <span class="built_in">copy</span>(dest, a)</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> dest</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+##### 二维 slice 的 append 操作
+---
+当使用二维 slice 时，需要把一个一维的 slice append 到 这个 二维 slice中， 如果这个 一维 slice 会频繁变动，
+比如作为临时 slice 使用（在算法题 SubSet， Combination Sum 等中经常见到）， 一定要记得拷贝一份再 append 给 那个 二维 slice。
+
+<p>使用这个：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*all = <span class="built_in">append</span>(*all, <span class="built_in">append</span>([]<span class="keyword">int</span>(<span class="literal">nil</span>), *sol...))</span><br></pre></td></tr></table></figure>
+
+<p>e.g.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test2d</span><span class="params">(all *[][]<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    r1 := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">    r2 := []<span class="keyword">int</span>&#123;<span class="number">9</span>, <span class="number">8</span>, <span class="number">7</span>&#125;</span><br><span class="line">    *all = <span class="built_in">append</span>(*all, r1)</span><br><span class="line">    *all = <span class="built_in">append</span>(*all, r2)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test1d</span><span class="params">(d1 *[]<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    *d1 = <span class="built_in">append</span>(*d1, <span class="number">88</span>)</span><br><span class="line">    *d1 = <span class="built_in">append</span>(*d1, <span class="number">99</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    all := [][]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">    test2d(&amp;all)</span><br><span class="line">    fmt.Println(all)</span><br><span class="line"></span><br><span class="line">    d1 := []<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">    test1d(&amp;d1)</span><br><span class="line">    fmt.Println(d1)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### 总结：
+---
+在什么情况下需要用到指针形式的 slice 呢？
+
+<ul>
+<li>(1). 做函数参数， 需要对 slice 结构做 append 操作修改原数据。</li>
+<li>(2). 为 slice 提供 pointer receiver 形式的成员函数修改本 slice。<br>  比如，<a href="https://blog.golang.org/slices" target="_blank" rel="noopener">https://blog.golang.org/slices</a> 提供的一个例子：</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> path []<span class="keyword">byte</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *path)</span> <span class="title">TruncateAtFinalSlash</span><span class="params">()</span></span> &#123;</span><br><span class="line">    i := bytes.LastIndex(*p, []<span class="keyword">byte</span>(<span class="string">"/"</span>))</span><br><span class="line">    <span class="keyword">if</span> i &gt;= <span class="number">0</span> &#123;</span><br><span class="line">        *p = (*p)[<span class="number">0</span>:i]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    pathName := path(<span class="string">"/usr/bin/tso"</span>) <span class="comment">// Conversion from string to path.</span></span><br><span class="line">    pathName.TruncateAtFinalSlash()</span><br><span class="line">    fmt.Printf(<span class="string">"%s\n"</span>, pathName)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong> 这里的 receiver 必须是 pointer 类型的，否则修改无效。</p>
+<br>
+<br>
+<br>
+
+<h6 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h6><p><a href="https://blog.golang.org/go-slices-usage-and-internals" target="_blank" rel="noopener">https://blog.golang.org/go-slices-usage-and-internals</a><br><a href="http://lib.csdn.net/article/go/37533" target="_blank" rel="noopener">http://lib.csdn.net/article/go/37533</a><br><a href="https://www.dotnetperls.com/slice-go" target="_blank" rel="noopener">https://www.dotnetperls.com/slice-go</a><br><a href="https://blog.golang.org/slices" target="_blank" rel="noopener">https://blog.golang.org/slices</a><br><a href="http://blog.csdn.net/erlib/article/details/50957218" target="_blank" rel="noopener">http://blog.csdn.net/erlib/article/details/50957218</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Programming/">Programming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Programming/go-slice/" data-title="slice in Go | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Programming/go-slice-array/" title="The difference between slice and array in Go">
+  <strong>Prev：</strong><br>
+  <span>
+  The difference between slice and array in Go</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/BigData/hadoop-hadoop-runtime/" title="Hadoop runtime paramters">
+ <strong>Next：</strong><br>
+ <span>Hadoop runtime paramters
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

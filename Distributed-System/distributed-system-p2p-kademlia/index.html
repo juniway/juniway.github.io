@@ -1,0 +1,807 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>P2P 网络核心技术：Kademlia 协议 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="1、简介Kademlia 是分布式散列表（DHT，Distributed Hash Table）的一种，类似的还有 Chord，Pastry 等。DHT 技术是去中心化 P2P 网络中最核心的一种路由寻址技术，可以在无中心服务器（trackerless）的情况下，在网络中快速找到目标节点。现在随着区块链技术的火热，这个 P2P 网络的底层技术也被越来越多的人了解。 这篇文章主要介绍 Kademli">
+<meta property="og:type" content="article">
+<meta property="og:title" content="P2P 网络核心技术：Kademlia 协议">
+<meta property="og:url" content="https://juniway.net/Distributed-System/distributed-system-p2p-kademlia/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="1、简介Kademlia 是分布式散列表（DHT，Distributed Hash Table）的一种，类似的还有 Chord，Pastry 等。DHT 技术是去中心化 P2P 网络中最核心的一种路由寻址技术，可以在无中心服务器（trackerless）的情况下，在网络中快速找到目标节点。现在随着区块链技术的火热，这个 P2P 网络的底层技术也被越来越多的人了解。 这篇文章主要介绍 Kademli">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/p2p/p2p_tracker.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/p2p_trackerless.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/kad_routingtable.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/kad_nodeid.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/kad_distance_xor.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/kad_nodeid_160.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_tree_init.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_rt001.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_rt001_.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_rt001tree.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_rt110.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_rt110_.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_rt110tree.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_rt100.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_rt100_.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_rt100tree.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/lookup_divergency_convergency.png">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.424Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="P2P 网络核心技术：Kademlia 协议">
+<meta name="twitter:description" content="1、简介Kademlia 是分布式散列表（DHT，Distributed Hash Table）的一种，类似的还有 Chord，Pastry 等。DHT 技术是去中心化 P2P 网络中最核心的一种路由寻址技术，可以在无中心服务器（trackerless）的情况下，在网络中快速找到目标节点。现在随着区块链技术的火热，这个 P2P 网络的底层技术也被越来越多的人了解。 这篇文章主要介绍 Kademli">
+<meta name="twitter:image" content="https://juniway.net/image/p2p/p2p_tracker.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Distributed-System/distributed-system-p2p-kademlia/" title="P2P 网络核心技术：Kademlia 协议" itemprop="url">P2P 网络核心技术：Kademlia 协议</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2018-07-23T10:16:25.000Z"> 2018-07-23</time>
+    <span class="post-count">字数 2.6k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h2 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h2><p>Kademlia 是分布式散列表（DHT，Distributed Hash Table）的一种，类似的还有 Chord，Pastry 等。DHT 技术是去中心化 P2P 网络中最核心的一种路由寻址技术，可以在无中心服务器（trackerless）的情况下，在网络中快速找到目标节点。现在随着区块链技术的火热，这个 P2P 网络的底层技术也被越来越多的人了解。</p>
+<p>这篇文章主要介绍 Kademlia 技术原理，以及其在 IPFS，以太坊等项目中的实现。</p>
+<p>先从直观上来看一下 P2P 网络中节点之间连接的方式</p>
+<p><img src="/image/p2p/p2p_tracker.png" alt=""></p>
+<p>图（1）是早的 BtTorrent 网络，需要一个中心服务器也就是种子服务器，来帮助各个 Peers 节点找到彼此进行文件下载。</p>
+<p><img src="/image/p2p/p2p_trackerless.png" alt=""></p>
+<p>图（2） 是实现了 Kademlia 协议的 P2P 网络，每个节点维护一个路由表，仅记录离自己最近的一些节点信息，通过迭代查找，来连接网络中其他的节点。</p>
+<h2 id="2、背景知识"><a href="#2、背景知识" class="headerlink" title="2、背景知识"></a>2、背景知识</h2><p>网上有太多关于 Kademlia 协议原理的文章，我就不详细介绍了，这里我只列出 Kademlia 中最关键的几个部分：</p>
+<ul>
+<li><p><strong>Node ID</strong> 在 P2P 网络中， 节点是通过唯一 ID 来进行标识的，在原始的 Kad 算法中，使用 160-bit 哈希空间来作为 Node ID。</p>
+</li>
+<li><p><strong>Node Distance</strong> 每个节点保存着自己附近（nearest）节点的信息，但是在 Kademlia 中，这个距离不是指物理距离，而是指一种逻辑距离，通过运算得知。</p>
+</li>
+<li><p><strong>XOR 异或运算</strong> XOR 是一种位运算，用于计算两个节点之间距离的远近。把两个节点的 Node ID 进行 XOR 运算，XOR 的结果越小，表示距离越近。</p>
+</li>
+<li><p><strong>K-Bucket</strong> 用一个 Bucket 来保存与当前节点距离在某个范围内的所有节点列表，比如 bucket0, bucket1, bucket2 … bucketN 分别记录[1, 2), [2, 4), [4, 8), … [2^i, 2^(i+1)) 范围内的节点列表</p>
+</li>
+<li><p><strong>Bucket 分裂</strong> 如果初始 bucket 数量不够，则需要分裂（具体跟实现有关）</p>
+</li>
+<li><p><strong>Routing Table</strong> 记录所有 buckets，每个 bucket 限制最多保存 k 个节点，如下图：</p>
+</li>
+</ul>
+<p><img src="/image/p2p/kad_routingtable.png" alt=""></p>
+<ul>
+<li><p><strong>Update</strong> 在节点 bootstrap 过程中，需要把连接上的 peer 节点更新到自己的 Routing table 中对应的 bucket 中</p>
+</li>
+<li><p><strong>LookUp</strong> 查找目标节点，找到与目标节点最近（nearest/closest）的 bucket，如果已在 bucket 中，则直接返回，否则向该 bucket 中的节点发送查询请求，这些节点继续迭代查找</p>
+</li>
+<li><p><strong>收敛 &amp; 时间复杂度</strong> 查找会最终收敛至目标节点，整个查询过程复杂度是 Log N</p>
+</li>
+</ul>
+<p>下面详细介绍每个部分：</p>
+<h4 id="1、Node-ID"><a href="#1、Node-ID" class="headerlink" title="1、Node ID"></a>1、Node ID</h4><p>Kademlia 中使用 SHA1 哈希来计算 Node ID，SHA1 是一个 160 bit 的哈希空间，整个 ID 长度是 160 个位， 也就是 20 个字节。</p>
+<p>IPFS 中都使用 SHA256 来计算 Node ID，ID 长度是 256 位的哈希空间， 也即 32 个字节。</p>
+<p>Ethereum 使用 sha3，也是 256 位哈希空间， 32 字节。</p>
+<p><img src="/image/p2p/kad_nodeid.png" alt=""></p>
+<h4 id="2、Node-Distance-与-XOR"><a href="#2、Node-Distance-与-XOR" class="headerlink" title="2、Node Distance 与 XOR"></a>2、Node Distance 与 XOR</h4><p>直接对两个 Node ID 进行 XOR 运算，就可以得出他们之间的距离。</p>
+<p>比如，当前节点的 NodeID 是 1101，它与另一个节点 1010 的距离计算如下：</p>
+<p><img src="/image/p2p/kad_distance_xor.png" alt=""></p>
+<p>结果是：0101，用十进制数来表示就是 5，也就是他们距离相差 5。</p>
+<p>注：为了简化，这里的节点 ID 我们假设只有 4 bits 长度。</p>
+<p>Kademlia 中，根据当前节点的 Node ID 与它保存的其他 peer 节点 Node ID 的匹配的最多的前缀 bit 个数来构建一颗二叉树（Binary Tree），</p>
+<p>这里前缀匹配的 bit 数也叫 LCP，Longest Common Prefix，的从上面的运算我们可以观察到，当前节点 1101 与 1000 的前缀只有最高位是匹配的。因此，其</p>
+<p>LCP 就是 1。Kademlia 中根据 LCP 来划分子树。当前节点的每个 LCP 都是一个子树。</p>
+<p>比如：假设节点的 ID 是 0011，那么它可以划分为 LCP = 0, 1, 2, 3 一共 4 个子树，如下：</p>
+<p><img src="/image/p2p/kad_nodeid_160.png" alt=""></p>
+<p>所以，对于一个 160 bit 空间的 Node ID 来说，一共会有 160 个子树，也就是 160 个 buckets。每个 bucket 可以通过 XOR 的结果来索引。</p>
+<p>Kad 协议要求每个节点知道其各子树的至少一个节点，只要这些子树非空。在这个前提下，每个节点都可以通过 ID 值来找到任何一个节点。</p>
+<p>3、K-Bucket &amp; Routing Table</p>
+<p>从上图中可以看到，每个子树就是一个 K-Bucket，而且，子树中也包含许多 leaf 节点，每个 leaf 节点都表示一个 Peer。</p>
+<p>Kademlia 中把子树中包含的 leaf 节点数量被设置为最多 k 个。这样可以有效控制整棵树的膨胀。</p>
+<p>routing table 使用 K-Bucket list 来保存上述信息。</p>
+<h4 id="4、K-Bucket-更新"><a href="#4、K-Bucket-更新" class="headerlink" title="4、K-Bucket 更新"></a>4、K-Bucket 更新</h4><p>由于在真实的分布式网络中，由于网络的波动等因素，节点可能是频繁加入和退出网络的，而 kBucket 中保存的是相对静态的信息，因此需要随着一些条件的变化来进行相应的更新，最典型的需要更新 kbucket 的场景就是，当连上一个新的节点，或者有查询原本不在 kbucket 中的节点时。</p>
+<p>kademlia 通过记录 kbucket 中每个节点的最近访问时间戳来判断节点的活跃度。</p>
+<p>当需要更新一个 kbucket，时 取决于两个因素：</p>
+<ul>
+<li><p>kbucket 未满，则直接添加</p>
+</li>
+<li><p>kbucket 已满，则判断是否存在剔除失效节点，存在，则用新节点替换，不存在，则抛弃新节点。</p>
+</li>
+</ul>
+<h4 id="5、Peer-finding"><a href="#5、Peer-finding" class="headerlink" title="5、Peer finding"></a>5、Peer finding</h4><p>想要直观理解 Kademlia 算法的查找过程，我们可以通过一个例子来体会：</p>
+<p>小明想要加撩公司里的美女小芳，但是不知道她微信号，那么他就从自己的微信好友（同事）中挑出 k 个最可能认识她的人，然后依次问他们有没有她的微信号，假如其中一个叫小华的认识小芳，那么他就会直接告诉小明，这样小明就不用继续问其他人了。假如不认识，那么小华就会给告诉小明他微信好友中最有可能认识小芳的 k 个人的联系方式，然后小明继续问这 k 个人，然后整个过程就一直循环迭代下去，直到最终有一个人肯定知道小芳的微信号。</p>
+<p>Kademlia 查找就是这样一个过程。</p>
+<h3 id="K-Bucket-详解"><a href="#K-Bucket-详解" class="headerlink" title="K-Bucket 详解"></a>K-Bucket 详解</h3><p>下面，我们更具体的例子来深入理解 kBucket 构建，分裂及更新等过程，最后，我们再详细解析 Peer LookUp 过程。</p>
+<h4 id="1）构建与更新"><a href="#1）构建与更新" class="headerlink" title="1）构建与更新"></a>1）构建与更新</h4><p>假设当前节点 A 的 Node ID 是 110，初始状态时，没有连接任何其他节点，因此，只有一个 空 bucket，里面没有任何元素。</p>
+<p><img src="/image/p2p/lookup_tree_init.png" alt=""></p>
+<p>当一个新节点 B 连上当前节点 A 时，A 先计算距离 d = A ^ B，由于距离 d 就是我们 bucket 数组的索引，因此可以直接找到对应的 bucket[d]，</p>
+<p>然后进行如下判断：检测其是否已经存满 k 个节点</p>
+<ul>
+<li>如果未满，则直接添加进 kbucket 即可</li>
+<li>如果已满，检测 bucket 列头元素是否能够 ping 通，如果 ping 通，则抛弃新节点，无法 ping 通，则用新节点替换失效节点</li>
+</ul>
+<p>Kademlia 算法在不同的项目中会有不同的实现，区别主要在于 kbucket 数据结构及其相关方法。</p>
+<p>比如，典型的 Kademlia 实现是，先根据 ID 空间预先分配 kbucket 数量的空间（比如 160 位，就分配 160 个 buckets 空间，256 位就直接分配 256 个 buckets 空间，这样，后续计算 distance 的时候可以直接 distance 作为 bucket 索引），还有就是 IPFS 这种，也是原始 Kademlia 论文中提到的，动态分配 buckets，如果节点少的时候，就只有一个 bucket，当节点不断增加之后，原 bucket 不断分裂，具体就是，每次满了 k 个元素，原 bucket 就分裂成 2 个。这样的话，对于内存空间是一个优化。而以太坊中的实现又略有不同，它使用固定数量的 buckets，但是却限定在 17 个，而不是 256 个，它通过一个 log 映射表来把新节点均匀分布在各个 buckets 中。</p>
+<h4 id="核心常量："><a href="#核心常量：" class="headerlink" title="核心常量："></a>核心常量：</h4><ul>
+<li>Alpha 3</li>
+<li>K 20</li>
+<li>nBuckets 160</li>
+</ul>
+<p>Alpha 是查询的并发数，也就是最多返回节点的数量，比如，发出一个查询，最终返回结果中包含 Alpha 个节点信息（包括了目标节点）。如果 Alpha 是 1， 那么只返回目标节点。</p>
+<p>K 就是每个 bucket 中最多能保存的节点数量（通常是 20 ），从另外一个方面也可以把其理解成资源的副本。也就是说，一个资源，在一个分布式网络中，一共有 k 个节点保存了它的副本。</p>
+<p>nBuckets 就是 Routing Table 中 bucket 的数量。</p>
+<p>2）查找 LookUp</p>
+<p>假设现在的当前节点是 001，它想要查的目标节点是 101 节点。</p>
+<p>001 保存的 Routing Table 信息如下</p>
+<p><img src="/image/p2p/lookup_rt001.png" alt=""></p>
+<p>我们先计算 001 与 101 节点的距离，001 ^ 101 等于 100，最高位的 index 是 2，因此，我们去 bucket 2 中查找是否有目标节点，发现没有，因此，我们依次向 bucket 2 中的节点发出查询请求，也即先向 110 发出查询请求，</p>
+<p><img src="/image/p2p/lookup_rt001_.png" alt=""></p>
+<p>即</p>
+<p><img src="/image/p2p/lookup_rt001tree.png" alt=""></p>
+<p>110 节点的 Routing Table 信息如下：</p>
+<p><img src="/image/p2p/lookup_rt110.png" alt=""></p>
+<p>节点 110 收到请求后，计算 110 ^ 101 结果是 011，匹配前缀数量是 1，因此，去 bucket 1 中查找，bucket 1 中也没有 101，因此向 100 发送请求，</p>
+<p><img src="/image/p2p/lookup_rt110_.png" alt=""></p>
+<p>即</p>
+<p><img src="/image/p2p/lookup_rt110tree.png" alt=""></p>
+<p>节点 100 保存的 Routing Table 信息如下</p>
+<p><img src="/image/p2p/lookup_rt100.png" alt=""></p>
+<p>100 收到请求后，计算 100 ^ 101，结果是 001，最长匹配前缀数量 2，因此去 bucket 0 中查找，</p>
+<p><img src="/image/p2p/lookup_rt100_.png" alt=""></p>
+<p>即</p>
+<p><img src="/image/p2p/lookup_rt100tree.png" alt=""></p>
+<p>有 100 的 Routing Table 可知，目标节点 101 就正好在 bucket 0 中，直接返回!</p>
+<p>我们可以看到，整个检索过程是不断收敛的，查询复杂度是可以证明是 Log N</p>
+<p><img src="/image/p2p/lookup_divergency_convergency.png" alt=""></p>
+<p>全文完</p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Distributed-System/">Distributed System</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Distributed-System/distributed-system-p2p-kademlia/" data-title="P2P 网络核心技术：Kademlia 协议 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Distributed-System/distributed-system-p2p-upnp/" title="P2P 网络核心技术：UPnP 和 SSDP 协议">
+  <strong>Prev：</strong><br>
+  <span>
+  P2P 网络核心技术：UPnP 和 SSDP 协议</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Distributed-System/ipfs-how-ipfs-work/" title="IPFS 是怎么工作的？">
+ <strong>Next：</strong><br>
+ <span>IPFS 是怎么工作的？
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

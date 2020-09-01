@@ -1,0 +1,764 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Go 语言 multipart 库解析 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="简介这篇文章作为上一篇文章的实践篇，在掌握了基本的 HTTP 中的 multipart/form-data 这种格式的请求之后，现在通过 Go 语言的官方 multipart 库来深入理解如何发送和处理 multipart/form-data 格式的请求 先来看一段客户端请求的代码和一段服务端处理请求的代码 1. 客户端请求1234567891011121314151617181920212223">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go 语言 multipart 库解析">
+<meta property="og:url" content="https://juniway.net/Programming/go-go-multipart/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="简介这篇文章作为上一篇文章的实践篇，在掌握了基本的 HTTP 中的 multipart/form-data 这种格式的请求之后，现在通过 Go 语言的官方 multipart 库来深入理解如何发送和处理 multipart/form-data 格式的请求 先来看一段客户端请求的代码和一段服务端处理请求的代码 1. 客户端请求1234567891011121314151617181920212223">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1452123-28c9adcb6c048928.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.429Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Go 语言 multipart 库解析">
+<meta name="twitter:description" content="简介这篇文章作为上一篇文章的实践篇，在掌握了基本的 HTTP 中的 multipart/form-data 这种格式的请求之后，现在通过 Go 语言的官方 multipart 库来深入理解如何发送和处理 multipart/form-data 格式的请求 先来看一段客户端请求的代码和一段服务端处理请求的代码 1. 客户端请求1234567891011121314151617181920212223">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1452123-28c9adcb6c048928.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Programming/go-go-multipart/" title="Go 语言 multipart 库解析" itemprop="url">Go 语言 multipart 库解析</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2017-12-03T12:09:26.000Z"> 2017-12-03</time>
+    <span class="post-count">字数 2.4k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>这篇文章作为上一篇文章的实践篇，在掌握了基本的 HTTP 中的 <code>multipart/form-data</code> 这种格式的请求之后，现在通过 Go 语言的官方 multipart 库来深入理解如何发送和处理 <code>multipart/form-data</code> 格式的请求</p>
+<p>先来看一段客户端请求的代码和一段服务端处理请求的代码</p>
+<h3 id="1-客户端请求"><a href="#1-客户端请求" class="headerlink" title="1. 客户端请求"></a>1. 客户端请求</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"io"</span></span><br><span class="line">    <span class="string">"io/ioutil"</span></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">    <span class="string">"mime/multipart"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    destURL = <span class="string">"localhost:8080"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> bufReader bytes.Buffer</span><br><span class="line">    mpWriter := multipart.NewWriter(&amp;bufReader)</span><br><span class="line">    fw, err := mpWriter.CreateFormFile(<span class="string">"upload_file"</span>, <span class="string">"a.txt"</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"Create form file error: "</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    f, _ := os.Open(<span class="string">"a.txt"</span>)</span><br><span class="line">    _, err = io.Copy(fw, f)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"copying f %v"</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    mpWriter.Write([]<span class="keyword">byte</span>(<span class="string">"this is test file"</span>))</span><br><span class="line">    mpWriter.WriteField(<span class="string">"name"</span>, <span class="string">"Trump"</span>)</span><br><span class="line">    mpWriter.Close()</span><br><span class="line"></span><br><span class="line">    client := &amp;http.Client&#123;</span><br><span class="line">        Timeout: <span class="number">10</span> * time.Second</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// resp, err := http.Post(destURL, writer.FormDataContentType(), bufReader)</span></span><br><span class="line">    </span><br><span class="line">    req, _ := http.NewRequest(<span class="string">"POST"</span>, destURL, bufReader)</span><br><span class="line">    req.Header.Set(<span class="string">"Content-Type"</span>, writer.FormDataContentType())</span><br><span class="line">    req.Header.Set(<span class="string">"Accept"</span> , <span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"</span>)</span><br><span class="line">    req.Header.Set(<span class="string">"Accept-Charset"</span> , <span class="string">"GBK,utf-8;q=0.7,*;q=0.3"</span>)</span><br><span class="line">    req.Header.Set(<span class="string">"Accept-Encoding"</span> , <span class="string">"gzip,deflate,sdch"</span>)</span><br><span class="line">    response,_ := client.Do(req)</span><br><span class="line">    <span class="keyword">if</span> response.StatusCode == <span class="number">200</span> &#123;</span><br><span class="line">        body, _ := ioutil.ReadAll(response.Body)</span><br><span class="line">        bodystr := <span class="keyword">string</span>(body)</span><br><span class="line">        fmt.Println(bodystr)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h5><p>在 Go 语言中，想要发送一个 <code>multipart/form-data</code> 格式的请求体，可以使用官方提供的 <code>mime/multipart</code> 库的 <strong>Writer</strong>。</p>
+<p>这个 Writer 的如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Writer generates multipart messages.</span></span><br><span class="line"><span class="keyword">type</span> Writer <span class="keyword">struct</span> &#123;</span><br><span class="line">    w        io.Writer</span><br><span class="line">    boundary <span class="keyword">string</span></span><br><span class="line">    lastpart *part</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Writer 结构体的三个成员清晰而简单，对应着 multipart/form-data 格式的 body 的样式。<br>其中 w 是一个我们用来往其中填充 request body 的 buffer writer，boundary 通常是随机生成的 random string，lastpart 就是结尾符 <code>--boundary--</code>，</p>
+<h5 id="创建-multipart-form-data-格式的请求体分为-4-个步骤："><a href="#创建-multipart-form-data-格式的请求体分为-4-个步骤：" class="headerlink" title="创建 multipart/form-data 格式的请求体分为 4 个步骤："></a>创建 <code>multipart/form-data</code> 格式的请求体分为 4 个步骤：</h5><ul>
+<li>(1) 创建 Writer</li>
+<li>(2) 往 Writer 中写入定制化的 Header</li>
+<li>(3) 往 Writer 中写入 body 内容（body 内容可以是文件，也可以是字段列表等内容）</li>
+<li>(4) 写入结尾符 boundary（调用 Writer.Close() 即可）</li>
+</ul>
+<h5 id="1-创建-Writer"><a href="#1-创建-Writer" class="headerlink" title="(1) 创建 Writer"></a>(1) 创建 Writer</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewWriter returns a new multipart Writer with a random boundary,</span></span><br><span class="line"><span class="comment">// writing to w.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewWriter</span><span class="params">(w io.Writer)</span> *<span class="title">Writer</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;Writer&#123;</span><br><span class="line">        w:        w,</span><br><span class="line">        boundary: randomBoundary(),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-往-Writer-中写入每个-Part-部分的头信息"><a href="#2-往-Writer-中写入每个-Part-部分的头信息" class="headerlink" title="(2) 往 Writer 中写入每个 Part 部分的头信息"></a>(2) 往 Writer 中写入每个 Part 部分的头信息</h5><p>通过调用 <code>w.CreatePart(mimeHeader)</code> 来创建 Part 的头部分</p>
+<p>一个典型的 Part 头部分包含了 boundary 和 Header 部分，其样式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-----------------------------9051914041544843365972754266</span><br><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;a.txt&quot;</span><br><span class="line">Content-Type: text/plain</span><br></pre></td></tr></table></figure>
+
+<p><code>w.CreatePart()</code> 函数就是用来创建上面的内容的，其接受的参数是 MIMEHeader，返回的也是一个 Writer，可以继续往这个 Writer 中写入 body 部分的内容。</p>
+<p>调用 <code>w.CreatePart()</code> 的步骤如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">h := <span class="built_in">make</span>(textproto.MIMEHeader)</span><br><span class="line">h.Set(<span class="string">"Content-Disposition"</span>, fmt.Sprintf(<span class="string">`form-data; name="%s"; filename="%s"`</span>, escapeQuotes(fieldname), escapeQuotes(filename)))</span><br><span class="line">h.Set(<span class="string">"Content-Type"</span>, <span class="string">"application/octet-stream"</span>)</span><br><span class="line">w.CreatePart(h)</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-往-Writer-中写入每个-Part-部分的-Body-内容"><a href="#3-往-Writer-中写入每个-Part-部分的-Body-内容" class="headerlink" title="(3) 往 Writer 中写入每个 Part 部分的 Body 内容"></a>(3) 往 Writer 中写入每个 Part 部分的 Body 内容</h5><p>现在，调用 <code>w.CreatePart()</code> 成功的创建了一个 Part 的头部分，我们还需要往其中写入该 Part 的 Body 部分的内容。根据内容的不同，我们分为两部分：</p>
+<p><strong>&lt;1&gt; Body 内容是文件</strong><br>对于文件，我们可以直接调用 io.Copy(w, f) 往刚才 w.CreatePart() 返回的 Writer 中写入文件内容<br>对于文件流 fileReader，直接调用 <code>io.Copy()</code> 拷贝到 w 中，如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">f, err := os.Open(filename)</span><br><span class="line">_, err = io.Copy(w, f)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"copying file to w error: %v"</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解释：</strong><br>本质上，表单都是 key - value 的形式，key 就是控件（field）名，而 value 就是具体的值了，在 Part 的头部信息中我们写入了 key 为 filename，而 value 就是我们要写入的文件内容了。</p>
+<p><strong>提示：</strong><br>对于文件类型的 Part 头部，Go 语言的 <code>multipart.Writer</code> 提供了 <code>CreateFormFile()</code> 函数，其封装了创建该 Part 头部的过程，我们直接调用 w.CreateFromFile() 就可以创建该 Part 的头部内容，如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CreateFormFile is a convenience wrapper around CreatePart. It creates</span></span><br><span class="line"><span class="comment">// a new form-data header with the provided field name and file name.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *Writer)</span> <span class="title">CreateFormFile</span><span class="params">(fieldname, filename <span class="keyword">string</span>)</span> <span class="params">(io.Writer, error)</span></span>&#123;</span><br><span class="line">    h := <span class="built_in">make</span>(textproto.MIMEHeader)</span><br><span class="line">    h.Set(<span class="string">"Content-Disposition"</span>, fmt.Sprintf(<span class="string">`form-data; name="%s"; filename="%s"`</span>, escapeQuotes(fieldname), escapeQuotes(filename)))</span><br><span class="line">    h.Set(<span class="string">"Content-Type"</span>, <span class="string">"application/octet-stream"</span>)</span><br><span class="line">    <span class="keyword">return</span> w.CreatePart(h)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>&lt;2&gt; Body 内容是 Field 字段</strong><br>对于字段类型，其方法类似文件的处理，先创建 Part 头部，再创建相应的 Body 内容。 <code>multipart.Writer</code> 提供了 <code>CreateFormField()</code> 函数来创建该 Part 头部，其内部也调用了 CreatePart()，最终也是返回一个 Writer，我们可以继续往这个 Writer 中填充 body 内容。</p>
+<p>当然，如果已经有一个 multipart.Writer 的话，可以直接调用其 <strong><code>WriteField()</code></strong> 函数来往里面写入字段， 因为 WriteField() 内部封装了上述的 CreateFormField() 函数，示例如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    writer := multipart.NewWriter(body)</span><br><span class="line">    </span><br><span class="line">    fields := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">        <span class="string">"filename"</span>: filename,</span><br><span class="line">        <span class="string">"age"</span>:      <span class="string">"88"</span>,</span><br><span class="line">        <span class="string">"ip"</span>:       <span class="string">"198.162.5.1"</span>,</span><br><span class="line">        <span class="string">"city"</span>:     <span class="string">"New York"</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> k, v := <span class="keyword">range</span> fields &#123;</span><br><span class="line">        _ = writer.WriteField(k, v)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong>由 multipart 创建的 field 字段，每个 Part 只能有一个 &lt;Key,Value&gt; 对，也就是说，一个部分只能对应一个 field。</p>
+<p>生成的请求样式如下：<br><img src="http://upload-images.jianshu.io/upload_images/1452123-28c9adcb6c048928.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h5 id="4-写入结尾符-–boudary–"><a href="#4-写入结尾符-–boudary–" class="headerlink" title="(4) 写入结尾符 –boudary–"></a>(4) 写入结尾符 –boudary–</h5><p>这一步非常重要，如果不写入结尾符，那么服务端收到请求后只能解析第一个 Part。<br>直接调用 multipart.Writer 的 Close() 方法即可写入结尾符。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Close finishes the multipart message and writes the trailing</span></span><br><span class="line"><span class="comment">// boundary end line to the output.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *Writer)</span> <span class="title">Close</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> w.lastpart != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> err := w.lastpart.<span class="built_in">close</span>(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> err</span><br><span class="line">        &#125;</span><br><span class="line">        w.lastpart = <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    _, err := fmt.Fprintf(w.w, <span class="string">"\r\n--%s--\r\n"</span>, w.boundary)</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-服务端处理"><a href="#2-服务端处理" class="headerlink" title="2. 服务端处理"></a>2. 服务端处理</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SimpleHandler</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">    contentType := r.Header.Get(<span class="string">"Content-Type"</span>)</span><br><span class="line">    mediatype, _, _ := mime.ParseMediaType(contentType)</span><br><span class="line">    </span><br><span class="line">    w.Header().Set(<span class="string">"Content-Type"</span>, <span class="string">"text/plain"</span>)</span><br><span class="line">    <span class="comment">// w.WriteHeader(http.StatusOK)</span></span><br><span class="line">    w.WriteString(<span class="string">"Hello world!"</span>)</span><br><span class="line">    <span class="comment">// w.Write([]byte("This is an example.\n"))</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    http.HandleFunc(<span class="string">"/"</span>, IndexHandler)</span><br><span class="line">    http.ListenAndServe(<span class="string">"127.0.0.0:8000"</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在我们拿到 Request 之后可以根据请求头中的 <code>&quot;Content-Type&quot;</code> 来决定如何处理相应的数据。</p>
+<p>比如，有一个请求的 Header 头信息如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST /t2/upload.do HTTP/1.1</span><br><span class="line">User-Agent: SOHUWapRebot</span><br><span class="line">Accept-Language: zh-cn,zh;q=0.5</span><br><span class="line">Accept-Charset: GBK,utf-8;q=0.7,*;q=0.7</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Content-Length: 10780</span><br><span class="line">Content-Type:multipart/form-data; boundary=---------------------------9051914041544843365972754266</span><br><span class="line">Host: w.sohu.com</span><br></pre></td></tr></table></figure>
+
+<p>我们如下解析头部 “Content-Type” 字段，如果是 “multipart/form-data” 则根据 Request 的 body 创建一个 <strong><code>multipart.Reader</code></strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReceiveHandler</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span></span><br><span class="line">    contentType := r.Header.Get("Content-Type")</span><br><span class="line">    mediatype, param, err := mime.ParseMediaType(contentType)</span><br><span class="line">    <span class="keyword">if</span> mediatype == <span class="string">"multipart/form-data"</span> &#123;</span><br><span class="line">        boundary, _ := params[<span class="string">"boundary"</span>]</span><br><span class="line">        reader := multipart.NewReader(r.Body, boundary)</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码我们最终通过 NewReader() 函数创建了一个 <strong><code>multipart.Reader</code></strong> 类型</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewReader creates a new multipart Reader reading from r using the given MIME boundary.</span></span><br><span class="line"><span class="comment">// The boundary is usually obtained from the "boundary" parameter of the message's "Content-Type" header. </span></span><br><span class="line"><span class="comment">// Use mime.ParseMediaType to parse such headers.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewReader</span><span class="params">(r io.Reader, boundary <span class="keyword">string</span>)</span> *<span class="title">Reader</span></span> &#123;</span><br><span class="line">    b := []<span class="keyword">byte</span>(<span class="string">"\r\n--"</span> + boundary + <span class="string">"--"</span>)</span><br><span class="line">    <span class="keyword">return</span> &amp;Reader&#123;</span><br><span class="line">        bufReader:        bufio.NewReaderSize(&amp;stickyErrorReader&#123;r: r&#125;, peekBufferSize),</span><br><span class="line">        nl:               b[:<span class="number">2</span>],</span><br><span class="line">        nlDashBoundary:   b[:<span class="built_in">len</span>(b)<span class="number">-2</span>],</span><br><span class="line">        dashBoundaryDash: b[<span class="number">2</span>:],</span><br><span class="line">        dashBoundary:     b[<span class="number">2</span> : <span class="built_in">len</span>(b)<span class="number">-2</span>],</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际上，Request 结构体提供了一个 <code>MultipartReader()</code> 来简化上述的步骤，其源码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Request)</span> <span class="title">MultipartReader</span><span class="params">()</span> <span class="params">(*multipart.Reader, error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> r.MultipartForm == multipartByReader &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"http: MultipartReader called twice"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> r.MultipartForm != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"http: multipart handled by ParseMultipartForm"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    r.MultipartForm = multipartByReader</span><br><span class="line">    <span class="keyword">return</span> r.multipartReader()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Request)</span> <span class="title">multipartReader</span><span class="params">()</span> <span class="params">(*multipart.Reader, error)</span></span> &#123;</span><br><span class="line">    v := r.Header.Get(<span class="string">"Content-Type"</span>)</span><br><span class="line">    <span class="keyword">if</span> v == <span class="string">""</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, ErrNotMultipart</span><br><span class="line">    &#125;</span><br><span class="line">    d, params, err := mime.ParseMediaType(v)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> || d != <span class="string">"multipart/form-data"</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, ErrNotMultipart</span><br><span class="line">    &#125;</span><br><span class="line">    boundary, ok := params[<span class="string">"boundary"</span>]</span><br><span class="line">    <span class="keyword">if</span> !ok &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, ErrMissingBoundary</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> multipart.NewReader(r.Body, boundary), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在来看 <strong>multipart.Reader</strong> 的定义：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Reader is an iterator over parts in a MIME multipart body.</span></span><br><span class="line"><span class="comment">// Reader's underlying parser consumes its input as needed. Seeking isn't supported.</span></span><br><span class="line"><span class="keyword">type</span> Reader <span class="keyword">struct</span> &#123;</span><br><span class="line">    bufReader *bufio.Reader</span><br><span class="line"></span><br><span class="line">    currentPart *Part</span><br><span class="line">    partsRead   <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">    nl               []<span class="keyword">byte</span> <span class="comment">// "\r\n" or "\n" (set after seeing first boundary line)</span></span><br><span class="line">    nlDashBoundary   []<span class="keyword">byte</span> <span class="comment">// nl + "--boundary"</span></span><br><span class="line">    dashBoundaryDash []<span class="keyword">byte</span> <span class="comment">// "--boundary--"</span></span><br><span class="line">    dashBoundary     []<span class="keyword">byte</span> <span class="comment">// "--boundary"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="解析："><a href="#解析：" class="headerlink" title="解析："></a>解析：</h5><p>通过 <strong>Reader</strong> 结构体的成员构成我们再一次来理解 <code>multipart/form-data</code> 格式的请求体。<br>其中，这个结构体主要包含了 bufReader，currentPart, 和 boundar 的定义。</p>
+<ul>
+<li>bufReader 就对应 Writer 结构体中的 w，从 w 中读取内容。</li>
+<li>currentPart 是一个指向 Part 类型的指针，顾名思义，Part 类型代表了 multipart 中的每个 Part。</li>
+<li>boudary 变量则定义了 Part 之间的边界标识符以及结束符。</li>
+</ul>
+<p>下面来看 Part 结构体的定义</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Part represents a single part in a multipart body.</span></span><br><span class="line"><span class="keyword">type</span> Part <span class="keyword">struct</span> &#123;</span><br><span class="line">    Header textproto.MIMEHeader</span><br><span class="line"></span><br><span class="line">    mr *Reader</span><br><span class="line"></span><br><span class="line">    disposition       <span class="keyword">string</span></span><br><span class="line">    dispositionParams <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// r is either a reader directly reading from mr, or it's a</span></span><br><span class="line">    <span class="comment">// wrapper around such a reader, decoding the</span></span><br><span class="line">    <span class="comment">// Content-Transfer-Encoding</span></span><br><span class="line">    r io.Reader</span><br><span class="line"></span><br><span class="line">    n       <span class="keyword">int</span>   <span class="comment">// known data bytes waiting in mr.bufReader</span></span><br><span class="line">    total   <span class="keyword">int64</span> <span class="comment">// total data bytes read already</span></span><br><span class="line">    err     error <span class="comment">// error to return when n == 0</span></span><br><span class="line">    readErr error <span class="comment">// read error observed from mr.bufReader</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于一个如下请求体的 Part，从 <code>Content-Disposition</code> 我们可以看到它是一个文件类型的 Part，<br>文件内容的部分都是不可打印字符</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">--49d03132746bfd98bffc0be04783d061e8acaeec7e0054b4bea84fc0ea2c</span><br><span class="line">Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;husky.jpg&quot;</span><br><span class="line">Content-Type: application/octet-stream</span><br><span class="line"></span><br><span class="line">JFIF    ( %!%)+...383,7(-.+</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">--++++--+-++++-+++--+------+--7---+77-+--+++7++++76!1AQa&quot;qB</span><br><span class="line">BHf[tTN4t&apos;(4&quot;?i\m=,52ʺ1Nf%* OCW6jWIlWZ.P3&lt;+7V9u᪖</span><br><span class="line">jeIp=z-v$_e\YZω4 CvXdY(՗8wHv%:hֽ`ԯ 1*6L+X3\9   i)z</span><br><span class="line">?K&#123;j</span><br><span class="line">K&#123;@)9&gt;$#r&apos;gE⺍-CA1V&#123;qZٰ,^SdIdWu;e\1KJJЭ</span><br><span class="line">-G(&apos;db&#125;HaHVKmU521XRjc|dFO1fY[ \WYpF9`&#125;e</span><br></pre></td></tr></table></figure>
+
+<p>Part 结构体的 Header 成员就对应了 boundary 下面的 <code>Content-Disposition</code>，<code>Content-Type</code> 等属性，空过一个换行之后就是文件内容。</p>
+<p>通过调用 Reader 的 <strong>NextPart()</strong> 函数，我们可以遍历一个 multipart 请求体中所有的 Part，其实现如下（已简化）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span> <span class="title">NextPart</span><span class="params">()</span> <span class="params">(*Part, error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> r.currentPart != <span class="literal">nil</span> &#123;</span><br><span class="line">        r.currentPart.Close()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        line, err := r.bufReader.ReadSlice(<span class="string">'\n'</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> r.isBoundaryDelimiterLine(line) &#123;</span><br><span class="line">            r.partsRead++</span><br><span class="line">            bp, err := newPart(r)</span><br><span class="line">            <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">            &#125;</span><br><span class="line">            r.currentPart = bp</span><br><span class="line">            <span class="keyword">return</span> bp, <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> r.isFinalBoundary(line) &#123;</span><br><span class="line">            <span class="comment">// Expected EOF</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span>, io.EOF</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"multipart: unexpected line in Next(): %q"</span>, line)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>全文完！</p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+
+
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Programming/">Programming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Programming/go-go-multipart/" data-title="Go 语言 multipart 库解析 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Programming/web-multipart-formdata/" title="深入解析 multipart/form-data">
+  <strong>Prev：</strong><br>
+  <span>
+  深入解析 multipart/form-data</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Web/web-npm-in-deep/" title="NPM in deep">
+ <strong>Next：</strong><br>
+ <span>NPM in deep
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

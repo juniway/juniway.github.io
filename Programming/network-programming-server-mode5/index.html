@@ -1,0 +1,710 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>服务器端编程模型（5）—— 反应堆模式（基于epoll的反应堆） | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="引言：前面一章简单介绍了关于epoll 的使用方式，这一章介绍一下一个简单的反应堆模型，没有实现超时机制的管理。最主要的是要介绍一下关于异步事件反应堆的设计方式。 反应堆的模型图在上一张可以看到，但是那张图是盗来的，展示的是 twisted 的反应堆。今天给不熟悉这个部分的朋友介绍一下基于 epoll 的反应堆，过程类似于 libevent。 反应堆可以提供几个操作： （0）创建一个反应堆： 1m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="服务器端编程模型（5）—— 反应堆模式（基于epoll的反应堆）">
+<meta property="og:url" content="https://juniway.net/Programming/network-programming-server-mode5/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="引言：前面一章简单介绍了关于epoll 的使用方式，这一章介绍一下一个简单的反应堆模型，没有实现超时机制的管理。最主要的是要介绍一下关于异步事件反应堆的设计方式。 反应堆的模型图在上一张可以看到，但是那张图是盗来的，展示的是 twisted 的反应堆。今天给不熟悉这个部分的朋友介绍一下基于 epoll 的反应堆，过程类似于 libevent。 反应堆可以提供几个操作： （0）创建一个反应堆： 1m">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.441Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="服务器端编程模型（5）—— 反应堆模式（基于epoll的反应堆）">
+<meta name="twitter:description" content="引言：前面一章简单介绍了关于epoll 的使用方式，这一章介绍一下一个简单的反应堆模型，没有实现超时机制的管理。最主要的是要介绍一下关于异步事件反应堆的设计方式。 反应堆的模型图在上一张可以看到，但是那张图是盗来的，展示的是 twisted 的反应堆。今天给不熟悉这个部分的朋友介绍一下基于 epoll 的反应堆，过程类似于 libevent。 反应堆可以提供几个操作： （0）创建一个反应堆： 1m">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Programming/network-programming-server-mode5/" title="服务器端编程模型（5）—— 反应堆模式（基于epoll的反应堆）" itemprop="url">服务器端编程模型（5）—— 反应堆模式（基于epoll的反应堆）</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-09-10T04:30:37.000Z"> 2016-09-10</time>
+    <span class="post-count">字数 1.5k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>引言：前面一章简单介绍了关于epoll 的使用方式，这一章介绍一下一个简单的反应堆模型，没有实现超时机制的管理。最主要的是要介绍一下关于异步事件反应堆的设计方式。</p>
+<p>反应堆的模型图在上一张可以看到，但是那张图是盗来的，展示的是 twisted 的反应堆。今天给不熟悉这个部分的朋友介绍一下基于 epoll 的反应堆，过程类似于 libevent。</p>
+<p>反应堆可以提供几个操作：</p>
+<p>（0）创建一个反应堆：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mc_event_base_t</span> * mc_base_new(<span class="keyword">void</span>) ;</span><br></pre></td></tr></table></figure>
+
+<p>返回一个操作句柄.　　</p>
+<p>（1）为某一个需要监听的文件描述符加入回调函数，并注册事件类型。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mc_event_set</span><span class="params">( <span class="keyword">mc_event_t</span> *ev , <span class="keyword">short</span> revent , <span class="keyword">int</span> fd , mc_ev_callback callback , <span class="keyword">void</span> *args )</span>  </span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Initialize a event , add callback and event type</span></span><br><span class="line"><span class="comment"> * if the event exists , this function will change the mode of this event</span></span><br><span class="line"><span class="comment"> * and fd</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<p>这里的 revent 由宏定义为几种类型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MC_EV_READ     0x0001</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MC_EV_WRITE    0x0002</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MC_EV_SIGNAL   0x0004</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MC_EV_TIMEOUT  0x0008</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MC_EV_LISTEN   0x0010</span></span><br></pre></td></tr></table></figure>
+
+<p>相应的操作可以使用 | 运算来并几个需要监听的事件类型。<br>事件类型定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">mc_event_s</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">mc_event_s</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">mc_event_s</span>;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span>;</span><br><span class="line">    <span class="keyword">int</span> ev_fd;                  <span class="comment">// file des of event</span></span><br><span class="line">    <span class="keyword">short</span> revent;               <span class="comment">// event type</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span>;</span>             <span class="comment">// event timeout time</span></span><br><span class="line">    mc_ev_callback callback;    <span class="comment">// callback of this event</span></span><br><span class="line">    <span class="keyword">void</span>  *;</span><br><span class="line">    <span class="keyword">int</span> ev_flags;</span><br><span class="line">    <span class="keyword">mc_event_base_t</span> *base;</span><br><span class="line">&#125; <span class="keyword">mc_event_t</span> ;</span><br></pre></td></tr></table></figure>
+
+<p>事件结构本身后面解释。　</p>
+<p>（2）将需要监听的并且已经初始化的事件加入反应堆。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mc_event_post</span><span class="params">( <span class="keyword">mc_event_t</span> *ev , <span class="keyword">mc_event_base_t</span> * base )</span> </span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Post this event to event_base</span></span><br><span class="line"><span class="comment"> * struct base has two queue , active queue and added queue</span></span><br><span class="line"><span class="comment"> * this function will post event to added queue , but not in active queue</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<p>将刚才注册了事件类型和回调函数的事件加入 base， 即将其看做一个反应堆。</p>
+<p>（3）最后提供了一个 dispatch 函数，反应堆开始循环，等待事件的发生。如果对应的 fd 上的事件发生，调用相应的回调函数。由第一步注册。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mc_dispatch</span><span class="params">( <span class="keyword">mc_event_base_t</span> * base )</span> </span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * start loop</span></span><br><span class="line"><span class="comment"> * and dispatch event by</span></span><br><span class="line"><span class="comment"> * mc_event_loop</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<p>反应堆支持在循环过程中，通过相应的回调函数再注册事件，类似于热加入，热移除。<br>实现方式很简单，就是在第一个事件的回调函数上调用 mc_event_set()然后注册。再加入 base.</p>
+<p>base 的结构如下 ：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">mc_event_base_s</span>&#123;</span></span><br><span class="line">    <span class="keyword">void</span> *added_list;</span><br><span class="line">    <span class="keyword">void</span> *active_list;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> event_num;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> event_active_num;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// mc_minheap minheap;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> epoll_fd;  <span class="comment">//for epoll only</span></span><br><span class="line">    <span class="keyword">int</span> ev_base_stop;</span><br><span class="line">    <span class="keyword">int</span> magic;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">event_time</span>;</span>  </span><br><span class="line">&#125; <span class="keyword">mc_event_base_t</span>;</span><br></pre></td></tr></table></figure>
+
+<p>让我们来看一个简单的 demo</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//_____________________test bellow ______________________</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> mc_sock_fd  int</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_NET AF_INET</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_DATA_GRAM   SOCK_STREAM</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_PORT        (1115)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_BACKLOG     (200)</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">/* simple connection */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">connection</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> fd            ;</span><br><span class="line">    <span class="keyword">mc_event_t</span>  read  ;</span><br><span class="line">    <span class="keyword">mc_event_t</span>  write ;</span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">1024</span>]    ;</span><br><span class="line">    <span class="keyword">mc_event_base_t</span> * base ;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setreuseaddr</span><span class="params">( mc_sock_fd fd )</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> yes = <span class="number">1</span> ;</span><br><span class="line">    setsockopt( fd , SOL_SOCKET , SO_REUSEADDR , &amp;yes , <span class="keyword">sizeof</span>(<span class="keyword">int</span>) );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mc_socket</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> retsock = socket(DEFAULT_NET,DEFAULT_DATA_GRAM,<span class="number">0</span>) ;</span><br><span class="line">    <span class="keyword">if</span>( retsock &lt; <span class="number">0</span>  ) &#123;</span><br><span class="line">        <span class="comment">/* we should add some debug information here</span></span><br><span class="line"><span class="comment">        fprintf(LOGPATH,"socket error\n");</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> retsock ;</span><br><span class="line">&#125;      </span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mc_bind</span><span class="params">(mc_sock_fd listenfd )</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serveraddr</span> ;</span></span><br><span class="line">    bzero(&amp;serveraddr,<span class="keyword">sizeof</span>(serveraddr));</span><br><span class="line"> </span><br><span class="line">    serveraddr.sin_family = AF_INET ;</span><br><span class="line">    serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);</span><br><span class="line">    serveraddr.sin_port = htons(DEFAULT_PORT);</span><br><span class="line">    <span class="keyword">return</span> bind(listenfd,(struct sockaddr *)&amp;serveraddr , <span class="keyword">sizeof</span>(serveraddr ));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mc_isten</span><span class="params">(mc_sock_fd listenfd)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> listen(listenfd,DEFAULT_BACKLOG);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">handler_accept</span><span class="params">( <span class="keyword">int</span> fd , <span class="keyword">short</span> revent , <span class="keyword">void</span> *args )</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">in_addr</span> ;</span></span><br><span class="line">    <span class="keyword">size_t</span> in_len ;</span><br><span class="line">    <span class="keyword">int</span> s   ;</span><br><span class="line">    <span class="keyword">int</span> done = <span class="number">0</span> ;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">connection</span> * <span class="title">lc</span> = (<span class="title">struct</span> _<span class="title">connection</span> *)<span class="title">args</span> ;</span></span><br><span class="line">     </span><br><span class="line">    in_len = <span class="keyword">sizeof</span>( in_addr );</span><br><span class="line">    mc_setnonblocking(fd) ;</span><br><span class="line">    <span class="keyword">while</span>( !done ) &#123;</span><br><span class="line">        s = accept( fd , (struct sockaddr *)&amp;in_addr , &amp;in_len );</span><br><span class="line">        <span class="keyword">if</span>( s == <span class="number">-1</span> ) &#123;</span><br><span class="line">            <span class="keyword">if</span>( (errno == EAGAIN )|| (errno == EWOULDBLOCK ) ) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                perror(<span class="string">"accept"</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>( s == <span class="number">0</span> ) &#123;</span><br><span class="line">            <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"Accept a connection on %d \n"</span>,fd );</span><br><span class="line">        &#125;</span><br><span class="line">        done = <span class="number">1</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">        mc_setnonblocking(s) ;</span><br><span class="line">        lc-&gt;fd = s ;</span><br><span class="line">        mc_event_set( &amp;(lc-&gt;read) , MC_EV_READ , lc-&gt;fd , handler_read , lc );</span><br><span class="line">         </span><br><span class="line">         </span><br><span class="line">        mc_event_set( &amp;(lc-&gt;write) , MC_EV_WRITE , lc-&gt;fd , handler_write , lc );</span><br><span class="line">        mc_event_post( &amp;(lc-&gt;write) , lc-&gt;base );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">handler_read</span><span class="params">( <span class="keyword">int</span> fd , <span class="keyword">short</span> revent , <span class="keyword">void</span> *args )</span> </span>&#123;</span><br><span class="line">    mc_setnonblocking(fd) ;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">connection</span> * <span class="title">lc</span> ;</span></span><br><span class="line">    lc  = (struct _connection *)args ;</span><br><span class="line">    read( fd , lc-&gt;buf , <span class="number">1024</span> );</span><br><span class="line">    mc_event_set( &amp;(lc-&gt;write) , MC_EV_WRITE , lc-&gt;fd , handler_write , lc );</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">handler_write</span><span class="params">( <span class="keyword">int</span> fd , <span class="keyword">short</span> revent , <span class="keyword">void</span> *args )</span> </span>&#123;</span><br><span class="line">    mc_setnonblocking(fd) ;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">connection</span> * <span class="title">lc</span> ;</span></span><br><span class="line">    lc  = (struct _connection *)args ;</span><br><span class="line">    write( fd , lc-&gt;buf , <span class="number">1024</span> );</span><br><span class="line">    mc_event_set( &amp;(lc-&gt;read) , MC_EV_READ , lc-&gt;fd , handler_read , lc );</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">cab</span><span class="params">( <span class="keyword">int</span> fd , <span class="keyword">short</span> revent , <span class="keyword">void</span> *args )</span> </span>&#123;</span><br><span class="line">    mc_setnonblocking(fd) ;</span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">1024</span>] = <span class="string">"xx00xx00xx00xx00\n"</span>;</span><br><span class="line">    write(fd,buf,<span class="number">1024</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">mc_event_t</span> mev ;</span><br><span class="line">    <span class="keyword">mc_event_base_t</span>  *base = mc_base_new() ;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">connection</span> <span class="title">lc</span> ;</span></span><br><span class="line">    lc.base = base ;</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">int</span> sockfd = mc_socket() ;</span><br><span class="line">    mc_bind(sockfd);</span><br><span class="line">    mc_isten(sockfd);</span><br><span class="line">     </span><br><span class="line">    mc_event_set( &amp;(lc.read) , MC_EV_READ , sockfd , handler_accept , &amp;lc );</span><br><span class="line">    mc_event_post( &amp;(lc.read) , base );</span><br><span class="line">    mc_dispatch(base);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先：封装的几个套接口操作没有考虑错误处理，作为简单的实例。</p>
+<p>定义了一个 connection 结构，用于表示每一个到来的连接，这里的 struct _connection 中包含读写事件和一个缓冲区，还有指向反应堆的指针和对应注册的fd</p>
+<p>工作过程如下：（主要看  main 函数）</p>
+<p>（1）创建一个反应堆。<br>（2）实例化一个 connection<br>（3）创建套接口，bind,listen 老生常谈，这里就不多说了<br>（4）将这个监听套接口注册相应的回调函数，这里我们注册的是 handler_accept() 函数，回调函数类型都是  void *XXX(  int  , short , void *) ;</p>
+<p>当监听套接口发生可读事件时，第一次我们认为是相应的监听套接口得到了新的连接，所以，第一次调用的时候直接调用注册了的回调函数 handler_accept().</p>
+<p>在handler_accept() 函数中，我们为这个连接的读写事件添加了相应的回调函数，并把连接描述符（不是监听描述符）注册到这个上。下次这个套接口可读的时候调用handler_read()，可写的时候调用handler_write(). 如果需要改变状态或改变回调函数，只需要一个状态机或者别的方式来确定需要的回调函数是哪一个，在我们的handler_write() 和 handler_read()中可以改变回调函数，代码所示。</p>
+<p>需要注意的是，我们的事件是一个实例，不管是在connection结构中或是自己定义，都需要不断的向操作系统申请空间，如果采用对象池或者connection池的方式，可以减少服务器的负载。</p>
+<p>总结：反应堆模式最基本的操作就是：注册事件（为需要监听的fd加入回调函数）—–&gt;将事件加入反应堆——&gt;开始事件循环——&gt;事件发生，调用回调函数。</p>
+<p>异步操作的精髓就是在这里，而不是同步的等待每一个事件。下一章讲解这个反应堆的实现。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Programming/">Programming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Programming/network-programming-server-mode5/" data-title="服务器端编程模型（5）—— 反应堆模式（基于epoll的反应堆） | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Programming/network-programming-server-mode6/" title="服务器端编程模型（6）—— Reactor 模式（基于 epoll 的反应堆）">
+  <strong>Prev：</strong><br>
+  <span>
+  服务器端编程模型（6）—— Reactor 模式（基于 epoll 的反应堆）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Programming/network-programming-server-mode4/" title="服务器端编程模型（4）—— Reactor 模式（epoll 简介）">
+ <strong>Next：</strong><br>
+ <span>服务器端编程模型（4）—— Reactor 模式（epoll 简介）
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

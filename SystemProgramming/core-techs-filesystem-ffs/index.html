@@ -1,0 +1,710 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Fast File System | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="英文原文：  A Fast File System for UNIX, 1984作者：Marshall McKusick, William Joy, Samuel Leffler, Robert Fabry  点评：这篇文章可以说是 File System 里面最经典的文章之一。现在 Unix File System 也是 FFS 的延伸。 作者发现了 Old Unix System 的许多问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fast File System">
+<meta property="og:url" content="https://juniway.net/SystemProgramming/core-techs-filesystem-ffs/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="英文原文：  A Fast File System for UNIX, 1984作者：Marshall McKusick, William Joy, Samuel Leffler, Robert Fabry  点评：这篇文章可以说是 File System 里面最经典的文章之一。现在 Unix File System 也是 FFS 的延伸。 作者发现了 Old Unix System 的许多问题。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/filesystem/fs_cylinder_group.png">
+<meta property="og:image" content="https://juniway.net/image/filesystem/parameterized_placement.png">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.419Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Fast File System">
+<meta name="twitter:description" content="英文原文：  A Fast File System for UNIX, 1984作者：Marshall McKusick, William Joy, Samuel Leffler, Robert Fabry  点评：这篇文章可以说是 File System 里面最经典的文章之一。现在 Unix File System 也是 FFS 的延伸。 作者发现了 Old Unix System 的许多问题。">
+<meta name="twitter:image" content="https://juniway.net/image/filesystem/fs_cylinder_group.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/SystemProgramming/core-techs-filesystem-ffs/" title="Fast File System" itemprop="url">Fast File System</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-07-24T15:11:01.000Z"> 2016-07-24</time>
+    <span class="post-count">字数 3.7k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>英文原文：</p>
+<ol>
+<li><a href="https://people.eecs.berkeley.edu/~brewer/cs262/FFS.pdf" target="_blank" rel="noopener">A Fast File System for UNIX, 1984</a><br>作者：Marshall McKusick, William Joy, Samuel Leffler, Robert Fabry</li>
+</ol>
+<p>点评：<br>这篇文章可以说是 File System 里面最经典的文章之一。现在 Unix File System 也是 FFS 的延伸。</p>
+<p>作者发现了 Old Unix System 的许多问题。做出了改进。</p>
+<p>（1）首先，以前的 FS，由于硬件的限制，把 block size 设计的很小，只有 512KB<br>对于大文件的读取 overhead 很大。以读取一个 2MB 的文件为例，需要四次读取。 FFS 的block size 增加到 2MB, 大大减小了 overhead, 2MB 的文件只需要一次 disk access。但是大的 block size 也带来了问题，如果整个系统的文件都很小，比如只有 512KB，那么会浪费空间。</p>
+<p>FFS 的解决方法是：<br>把 block 分为几个 fragments, 如果一个文件只占用了 block 的一部分，其它文件还可以继续使用。不浪费空间。</p>
+<p>（2）其次，作者观察到以前的 FS 随着时间的推移，其 disk access time 会变得越来越大。<br>原因是一开始系统有一个 list of free space, 随着使用越来越多，删除，添加，更新文件。这个 free list 变成了一个 random list. 一个文件可能被放在相隔很远的 cylinder, 或者 sector 里面，读取一个 block 之后，disk head move 到下一个 block 需要花费很长时间。</p>
+<p>FFS 的解决方案是：<br>给出 Global 和 local layout policy， 对文件或者文件夹位置的安排进行优化，尽量缩短 seek 的时间。但是也有缺点：当硬盘使用率非常高的时候，这个优化的时间会变得非常高，因此效率会大幅下降。</p>
+<ol start="2">
+<li><a href="http://pages.cs.wisc.edu/~remzi/OSTEP/file-ffs.pdf" target="_blank" rel="noopener">Locality and The Fast File System</a></li>
+</ol>
+<p>FFS 是 对 VSFS 的一种优化改进使其可以被实际使用。</p>
+<h2 id="1-FFS-基于-VSFS-的改进思想是什么？"><a href="#1-FFS-基于-VSFS-的改进思想是什么？" class="headerlink" title="1. FFS 基于 VSFS 的改进思想是什么？"></a>1. FFS 基于 VSFS 的改进思想是什么？</h2><p>这个呢，VSFS 在存储文件的时候，根本没有考虑磁盘的寻址时间，把磁盘当做了一种随机存储介质！事实上由于局域性原理的存在，依据局域性而对存储做相应改进是非常有助于性能提升的。FFS 则正是看到了这一点，其改进是将磁盘划分为多个子区域（Cylinder Groups），存储文件的时候同一文件夹下的文件尽可能放在同一个 Group。Cylinder Groups是FFS最大的改进来源。</p>
+<h2 id="2-FFS文件系统的实现"><a href="#2-FFS文件系统的实现" class="headerlink" title="2. FFS文件系统的实现"></a>2. FFS文件系统的实现</h2><p>首先，FFS将磁盘划分为很多子区域，也就是很多个 Cylinder Groups，如下图：</p>
+<p><img src="/image/filesystem/fs_cylinder_group.png" alt=""></p>
+<p>每个组内的结构跟 VSFS 基本一样，对于这里面的 SuperBlock 每个组都会有。</p>
+<p>文件存储<br>既然 FFS 号称利用局域性原理，那么具体是什么操作的呢？</p>
+<ul>
+<li>对于文件夹，它会选择一个包含文件夹少而且剩余的空闲 inode 数目多的组来存储；</li>
+<li>对于文件，它确保一个文件的inode和data是属于同一个组的；而且，将同一文件夹的文件尽量放在一个组，这里面的“尽量”是考虑到大文件可能需要被存在好几个组。</li>
+<li>大文件 大文件是需要特殊处理的，因为否则的话因为组内空间被大文件大量占用，这就会使得很难实现“相关文件放一起”的那个使用局域性原理的设计。那么大文件就必须被“分割”为多块分别存储在各个组内，那么如何设定这个切割的大小呢，或者说大文件的每一块设置为多大。<br>这个需要一点计算。设置大文件切割大小核心在于，设置的太小了，那么读取它的时候影响效率（因为是需要额外寻址的，如果太小，这总的传输效率低）。假设磁盘的平均寻址时间是10ms，那么为了达到一半的传输效率，这意思是说磁盘真正用来传数据的时候和寻址时间相同，假设磁盘传输效率是40MB/s，那么10ms传输的数据是409.6KB。换句话说，只需要409KB，就可使的传输效率为50%。事实上，大约3.7MB就可使得磁盘平均传输效率为90%。所以，切割大小设置为4M左右就可以了。</li>
+</ul>
+<p>FFS 的设计者挺聪明的，其实按照之前的 VSFS 的设计，每个 inode 里面会有15个块指针用来索引文件占用磁盘块的，前面12个直接索引可表示12*4KB=48KB的空间，而一级间接索引就可表示4M的空间。所以除了前48KB，之后的每4M数据均放置在不同的组内，这个刚好可以使用一一级间接索引表示。</p>
+<h2 id="3-FFS-设计细节"><a href="#3-FFS-设计细节" class="headerlink" title="3. FFS 设计细节"></a>3. FFS 设计细节</h2><p>小文件问题 这个是说很多文件太小了，用一个磁盘块（4KB）存储有点浪费空间啊！！所以呢，FFS 引入sub-blocks这个概念，一般是512B，也就是一个sector扇区的大小。那么这样一来又会使得写小文件的操作台低效了，哈哈，不用担心，我们可以写文件的时候现在 Cache 中缓存一下，等到收集了 4KB 的数据再一次性写入。这就是 FFS 提供的 libc 库的作用啦。<br>parameterized placement 这个呢，有点难理解，先看这个图吧：</p>
+<p><img src="/image/filesystem/parameterized_placement.png" alt=""></p>
+<p>假设一个文件就包含了12个磁盘块，而且如左边显示的那样存储于一个磁道上面。那么序列读取数据的时候就会有一个很小的问题：当磁头达到0块的时候读取数据，可是等它读完了准备读1块的数据的时候，磁头早就转过去了（假设转到2块的位置），于是需要接着等磁头转回来！！这样是不是很慢，事实上磁盘会将一个磁道的数据一下子缓存在磁盘里面，但是即使是这样，也需要两圈才能读完。因为你在等1快的数据的时候，磁盘转了一圈读出了整个磁道的数据，然后你获得了1块的数据，可是还是需要转一圈才能依次获得每一块的数据。于是乎就很聪明的将数据排列成右边那个样子，这样一来就只需要一圈啦。。。。</p>
+<p>Fast File System，快速文件系统，是由 Berkeley 大学研究人员设计并实现的建立在UNIX操作系统的一套文件系统。这个系统主要目标已经体现在它的名字上，就是建立一个快速的文件系统。因为他们发现之前的UNIX的文件系统（参考之前的Blog文章“Concepts of Unix File System”）在性能方面存在问题，主要问题是在磁头定位，位置转化过程中浪费了大量的时间，导致效率不高。所以FFS的一大设计思路就是降低磁头的seek时间，而解决方案也很简单，keep related stuff together，这样seek的时候就可以节省时间。整个FFS涉及几个关键概念</p>
+<h4 id="Creating-New-File"><a href="#Creating-New-File" class="headerlink" title="Creating New File"></a>Creating New File</h4><p>Cylinder Group翻译过来就是柱组，已经在之前Blog文章Concepts of Unix File System介绍过了，设计Cylinder Group的目的就是为了完成keep related stuff together，因为在一个柱组的文件可以快速访问。所以相关文件就可以放在一个柱组里。每个Group先包含一个superblock来保存一些metadata，后面接着是inode bitmap和data bitmap用来显示每个block的位置和其是不是已经写满了。</p>
+<p>当创建一个文件的时候，比如/foo/bar.txt，并且这个文件大小是4kb。那么因为这是一个新的文件，所以需要分配新的inode而且inode bitmap也需要更新。同时，这个文件大小4kb，在cylinder group中就要分配一个4kb的block然后更新data bitmap来表示对应的data block已经占用。所以这就需要有四次写操作，但是这只是完成了这个文件的创建，并没有把它放进文件目录中。所以父目录/foo也要更新，来把bar.txt放到这个目录下。如此才算完成了一个文件的创建</p>
+<h4 id="Put-Related-File-Together"><a href="#Put-Related-File-Together" class="headerlink" title="Put Related File Together"></a>Put Related File Together</h4><p>具体策略也很简单。第一，将一个文件的所有block放到一个group，这样就避免了磁盘磁头的long seek，从而节省了时间。第二，在相同目录的文件放在一个group里，比如/dir1/1.txt, /dir1/2.txt, /dir1/3.txt, 和/dir99/4.txt，那么前三个就会被放到一个group里，最后一个就被放到另一个group里。</p>
+<h4 id="Large-File-Exception"><a href="#Large-File-Exception" class="headerlink" title="Large File Exception"></a>Large File Exception</h4><p>Put Related File Together的策略有一个例外，就是写入当大文件时。按照之前的策略一个大文件的所有block都会被放到一个group中，但是由于文件太大，可能整个group或者大部分group都被这个文件占满了，这就不符合把相关的文件放在一起的原则，因为这个group里只有这一个文件，只要有再访问别的文件就需要seek别的group，这大大降低了FFS的性能。对于写入大文件的策略就是，把它所有block平均的放到不同的group中。</p>
+<p>开发一个高效，又节约空间的磁盘文件系统真是好难啊。想了各种办法来优化文件系统，老的UNIX系统算法也是针对它那个时候而设计吧，磁盘小，内存小，存储的也主要是文本小文件所以在那个时候，文件系统是没有问题的，问题是后来计算机系统发展了啊，多媒体文件出现了，文件突然变大了，磁盘也变大了，内存也变大了原来的系统就不适合了，我们可以用更多的空间去换取时间。当然，这篇文章是1984年写的，随着SSD价格不断降低，现在SSD也快普及了，现在的文件系统应该还没有把SSD的性能完全释放出来吧，所以应该会有人续写A Fast Fast Fast Fast File System for UNIX吧，哈哈哈。<br>下面来分析下，作者到底都使了哪些魔法让文件系统变快了呢？<br>首先，增加每个block的大小。这个应该是一般的人都想得到的吧，我在做lab1的时候都觉得512字节一个block是不是也忒小了吧，512字节的block意味着superblock也变小了，这样能存储的磁盘信息就更少了，当然较小的block size以为着更少的磁盘浪费，如果系统里面都是小文件的话。作者把磁盘分块大小增加到了4k，这样一次读操作就可以读取更多的数据，意味着读写速度可以提高接近8倍。</p>
+<p>问题是这样存储小文件的时候会造成极大的浪费，所以作者又提出了一个新的概念—片段（fragement），这样在存储文件的时候就尽量的用完整的块存储，剩余的那么些位置也不能浪费了，用块的片段，这样这些小地方可以和别的文件公有，这样在不浪费空间的情况下可以大大提高读取速度，这个概念比较创新，设计上也复杂的多，比原来那种简单粗暴的方法好。</p>
+<p>磁盘系统里面还有个问题就是磁盘碎片，以前的UNIX系统是通过一个队列保存缓存的block，然后再均匀的释放，这样本身并没有问题，可以解决一部分磁盘碎片的问题，问题是永久了还是会产生大量的碎片，这个在读写大文件的时候尤为严重，因此这个时候可以通过一些高效的hash算法来对文件存储的位置进行一些预判，这样每次存储文件的时候就不是随机分配一些block块了而把文件存储用的块局限在一个小的范围里，提高了寻找文件块的速度。<br>还是对于大文件，我们知道如果对一个大文件连续分配很多空间的话，它之前的文件如果又增加的话，就只能分配到大文件的后面，这样每次读取这个小文件就得越过这个大文件，这样是很不划算的，所以作者把大文件做了特殊对待，只允许你在一片连续的空间写上几兆的内容，这样对于大文件虽然连续性不好，但是大文件一次读取几兆的内容已经就很快了，所以无所谓了，反而是更多的小文件可以保持连续读取，这样提高的了小文件读取速度，这样从整体上来说还是很划算的。不过这个方法也不是一直都很好用，因为系统需要使用一些hash算法来保证磁盘上文件被分配到比较好位置，问题是当磁盘已经快被放满了呢，这个时候hash算法就基本上失效啦，可供分配文件的位置就大大减少，这样文件系统的性能大大下降，这样来看的，文件系统对磁盘的实际使用率也不算很高啊。<br>//老规矩，扯一下淡凑字数-_-!
+计算机系统原理虽然很难，学起来很痛苦，但是很有意思啊，在老师给出的基本框架下我们自己实现一个简单的文件系统，了解了不少系统底层的知识，对硬件也不那么陌生了，甚至还捡起来一些算法和数据结构的只是，要知道现在天天做web系统开发，基本上不用考虑算法和数据结构的问题，而且web系统本身结构清晰，现代的语言本身也是为简化开发者难度设计的，开发起来很快，有时候常常不知道所以然。通过一个个痛苦的lab，居然慢慢捡起来了原来那么点点的c知识，链表，队列，二叉树这些以前比较头疼的数据结构也不觉得那么难，谢谢老师在这门课上做出的努力，感谢整个计算机系统原理教学团队。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/SystemProgramming/">SystemProgramming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/SystemProgramming/core-techs-filesystem-ffs/" data-title="Fast File System | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/SystemProgramming/core-techs-filesystem-crash-consistency/" title="Crash Consistency - FSCK and Journaling">
+  <strong>Prev：</strong><br>
+  <span>
+  Crash Consistency - FSCK and Journaling</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/SystemProgramming/core-techs-filesystem-journal-filesystem/" title="Journaling File System，日志文件系统是怎样工作的">
+ <strong>Next：</strong><br>
+ <span>Journaling File System，日志文件系统是怎样工作的
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

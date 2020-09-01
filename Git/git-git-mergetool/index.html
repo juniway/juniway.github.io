@@ -1,0 +1,793 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Use git mergetool to solve commit conflict | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="在使用 Git 与他人合作的过程中，代码冲突（conflict）是一个比较扰人的问题。Git 在 pull 远程库代码时候会自动与本地文件进行 merge（会把把本地文件和远程库文件整合成一个文件），如果不熟悉如何手动 merge 的话，可能容易造成误操作。 经过我的一些搜索和验证，我总结了以下的一种可行方案，期望可以更好的处理 merge 时出现冲突的代码。简单来说就是需要配置 mergetoo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Use git mergetool to solve commit conflict">
+<meta property="og:url" content="https://juniway.net/Git/git-git-mergetool/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="在使用 Git 与他人合作的过程中，代码冲突（conflict）是一个比较扰人的问题。Git 在 pull 远程库代码时候会自动与本地文件进行 merge（会把把本地文件和远程库文件整合成一个文件），如果不熟悉如何手动 merge 的话，可能容易造成误操作。 经过我的一些搜索和验证，我总结了以下的一种可行方案，期望可以更好的处理 merge 时出现冲突的代码。简单来说就是需要配置 mergetoo">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://o8chcdh8l.bkt.clouddn.com/markdown/img/1472649949162.png">
+<meta property="og:image" content="http://o8chcdh8l.bkt.clouddn.com/markdown/img/1473313879722.png">
+<meta property="og:image" content="http://o8chcdh8l.bkt.clouddn.com/markdown/img/1473317625320.png">
+<meta property="og:image" content="http://o8chcdh8l.bkt.clouddn.com/markdown/img/1473317961565.png">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.426Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Use git mergetool to solve commit conflict">
+<meta name="twitter:description" content="在使用 Git 与他人合作的过程中，代码冲突（conflict）是一个比较扰人的问题。Git 在 pull 远程库代码时候会自动与本地文件进行 merge（会把把本地文件和远程库文件整合成一个文件），如果不熟悉如何手动 merge 的话，可能容易造成误操作。 经过我的一些搜索和验证，我总结了以下的一种可行方案，期望可以更好的处理 merge 时出现冲突的代码。简单来说就是需要配置 mergetoo">
+<meta name="twitter:image" content="http://o8chcdh8l.bkt.clouddn.com/markdown/img/1472649949162.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Git/git-git-mergetool/" title="Use git mergetool to solve commit conflict" itemprop="url">Use git mergetool to solve commit conflict</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-08-31T12:30:00.000Z"> 2016-08-31</time>
+    <span class="post-count">字数 1.9k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>在使用 Git 与他人合作的过程中，代码冲突（conflict）是一个比较扰人的问题。<br>Git 在 pull 远程库代码时候会自动与本地文件进行 merge（会把把本地文件和远程库文件整合成一个文件），如果不熟悉如何手动 merge 的话，可能容易造成误操作。</p>
+<p>经过我的一些搜索和验证，我总结了以下的一种可行方案，期望可以更好的处理 merge 时出现冲突的代码。<br>简单来说就是需要配置 mergetool，git 提供了 <code>difftool</code> 和 <code>mergetool</code> 用来做文本比对。</p>
+<p>一般我们在使用 Git 进行代码更新时，在本地修改完成之后，进行 commit，然后 push，如果此时远程库有人提交了一次 commit，与我本地的修改是同一个文件，那么肯定会提示冲突导致 push 被 rejected。<br>这时候，我们一般的习惯应该是 <code>git pull --rebase</code> <strong>（记住： 不是 git pull）。</strong> 或者 <code>git fetch &amp;&amp; git rebase</code></p>
+<p>提示：推荐为 <code>pull --rebase</code> 设置 <code>pl</code> 作为 alias:</p>
+<pre><code>git config --global alias.pl pull --rebase</code></pre><p>这样，执行 <code>git pl</code> 之后，Git 会把远程库拉下来之后会自动 merge 有修改的文件。</p>
+<p>下面来看一个例子：<br>假设我们本地和远程都修改一个叫 test.txt 的文件，Git 自动 merge 之后，冲突的行也会在糅合在 test.txt 中，这些冲突的行会按照使用 Git 特有的 conflict marker 来标示。</p>
+<p>e.g.</p>
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+my local changes
+=======
+remote changes
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; ceabbf16ada5a359ccee1133</code></pre><p>如果我们手动修改这个文件来进行 merge 工作的话，很容易出错，因为冲突的行放在上下而不是同一行进行对比，非常不直观。<br>如果我们想要保留本地修改版本，又想同时保留远程那个版本，会很麻烦。因为只要一执行 <code>git pull</code> 它就会自动进行 merge，产生那个不易看懂的 merge 之后的文件。</p>
+<p>难道它自动 merge 之后我们就只能手动修改那个冲突的文件吗？ 答案显然是NO。</p>
+<p>直接 git pull的话，我们还有有办法找回我们本地的那个文件，因为 git 虽然自动 merge 了，但它其实还为我们保留了 3 份内容，只是没在当前目录显示出来。</p>
+<p>我们可以使用 <code>git checkout --theirs xxx.txt</code> 这种方式来还原 local 或者 remote 版本的文件。</p>
+<p>提示：</p>
+<pre><code>--ours 表示 Local  
+--theirs 表示 Remote   </code></pre><p>执行 rebase 之后，上述标签的意义的变得相反，Remote 表示本地的修改，而 Local 则表示远程的修改！</p>
+<p>我们也可以在 pull 的时候，直接用本地覆盖远程的，除非你想抛弃本地所有的修改，否则<strong>别这么做</strong>。</p>
+<pre><code>git pull --rebase --strategy-option theirs  </code></pre><p>或者</p>
+<pre><code>git pull -Xtheirs</code></pre><p>当然，我们还可以配置一下 mergetool，使得 Local 和 Remote 版本等文件更好的呈现出来，方便我们进行手动 merge。<br>使用 <code>git mergetool</code> 命令，git 会自动调出你配置好的文本比对工具，然后让我们在这个文本比对工具中进行愉快的 merge。</p>
+<p>Command line mergetool editors:</p>
+<ul>
+<li>Emacs based diff tools: <code>emerge</code>, <code>Ediff</code></li>
+<li>Vim based diff tool: <code>vimdiff</code></li>
+</ul>
+<p>而图形界面系统（Windows/Ubuntu/MaxOS 等）可以使用：<code>Beyond Compare</code>, <code>Meld</code>, <code>P4merge</code>, <code>kdiff3</code> 等工具。<br>下面来看看该怎么配置这些工具，以便我们在执行 <code>git mergetool</code> 命令的时候可以 Call 出它们：</p>
+<p>编辑 <code>~/.gitconfig</code> 文件</p>
+<br>
+##### 1. 使用 vimdiff
+---
+
+<pre><code>[diff]
+    tool = vimdiff
+[merge]
+    tool = vimdiff</code></pre><p>配置完成之后，当我们使用 git mergetool 调出 vimdiff 的时候，它会显示 4 个窗口， </p>
+<p>布局效果如下：</p>
+<p><img src="http://o8chcdh8l.bkt.clouddn.com/markdown/img/1472649949162.png" alt=""></p>
+<p>提示：在 Vim 中使用 <code>Ctrl + g</code> 来显示当前文件信息（比如文件名，光标所在当前行等等信息）</p>
+<p>我们也可以直接在命令行指定 mergetool，比如：  </p>
+<pre><code>git mergetool -t gvimdiff</code></pre><p>如果想直接用某个版本覆盖另外一个版本，可以在 vim 中使用下列命令：</p>
+<pre><code>:diffg LO  &quot; get from LOCAL
+:diffg RE  &quot; get from REMOTE
+:diffg BA  &quot; get from BASE
+
+:diffupdate fixes your whitespace issues
+:only        Show only the merged file
+
+:diffget 2  use LOCAL
+:diffget 3  use REMOTE:</code></pre><p>rebase 之后，LOCAL 就是远程库的内容了，REMOTE 就是你自己本地的修改了。因为现在是基于远程库的内容作为 base！<br>因此，conflict marker 的含义也变了：</p>
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt; 
+远程库的修改
+======
+本地的修改
+&gt;&gt;&gt;&gt;&gt;&gt;</code></pre><p>同一个文件中出现多处 conflict：  </p>
+<pre><code>]c move to the next conflict
+[c move to the previous conflict</code></pre><p>设置 conflict marker 的 style：  </p>
+<pre><code>git config merge.conflictstyle diff3</code></pre><p>Define a user specific layout for vimdiff<br>Since the default layout has 4 windows, which looks over complicated sometimes,<br>We can define a 3-view layout through the below method:</p>
+<pre><code>git config --global mergetool.merge3.cmd &apos;vim -d -c \&quot;wincmd J\&quot; \&quot;$MERGED\&quot; \&quot;$LOCAL\&quot; \&quot;$REMOTE\&quot;
+git config --global alias.m3 &apos;mergetool -t merge3&apos;</code></pre><p>提示: <strong>wincmd 用于控制如何移动窗口</strong></p>
+<p>notice we’ve defined an alias m3 for merge3, we can also set an alias for the default mergetool (vimdiff) like this:</p>
+<pre><code>git config --global merge.tool vimdiff
+git config --global alias.mt mergetool</code></pre><p>效果图：<br><img src="http://o8chcdh8l.bkt.clouddn.com/markdown/img/1473313879722.png" alt=""></p>
+<p><strong>Fugitive</strong></p>
+<pre><code>git config --global mergetool.fugitive.cmd &apos;vim -f -c &quot;Gvdiff&quot; &quot;$MERGED&quot;&apos;
+git config --global alias.ft &apos;mergetool -t fugitive&apos;</code></pre><p>提示：use <code>Gvdiff</code> will split the window in 3 vertical views: | 1 | 2 | 3 |</p>
+<br>
+##### 2. Beyond Compare (推荐)
+---
+
+<pre><code>[alias]
+    bc4 = mergetool -t bc4
+[diff]
+    tool = bc4
+[difftool &quot;bc4&quot;]
+        cmd = &quot;\&quot;c:/program files (x86)/beyond compare 4/bcompare.exe\&quot; \&quot;$LOCAL\&quot; \&quot;$REMOTE\&quot;&quot;
+[merge]
+    tool = bc4
+[mergetool &quot;bc4&quot;]
+        cmd = &quot;\&quot;c:/program files (x86)/beyond compare 4/bcompare.exe\&quot; \&quot;$BASE\&quot; \&quot;$LOCAL\&quot; \&quot;$REMOTE\&quot; \&quot;$MERGED\&quot;&quot;
+        trustExitCode = true</code></pre><p>布局效果跟 vimdiff 一样，是 4-way merge。</p>
+<p>我们可以使用 beyond compare 的 <code>2-way merge</code>进行更为直观的 merge：</p>
+<pre><code>[mergetool &quot;bc4&quot;]
+    cmd = &quot;\&quot;c:/program files (x86)/beyond compare 4/bcompare.exe\&quot; \&quot;$LOCAL\&quot; \&quot;$REMOTE\&quot; -savetarget=\&quot;$MERGED\&quot;&quot;
+    trustExitCode = true</code></pre><p>鉴于目前文本比对工具的局限性，个人认为这种 <code>2-way merge</code> 的方式相对来说比较直观。<br>在这种模式下，只有左右两个 pane，左边是 Local，右边是 Remote。同时，右边的 pane 还作为 merge 的 output file。<br>直接在右边 pane 中修改完成之后保存成 merge 的最终结果文件。</p>
+<p>效果图<br><img src="http://o8chcdh8l.bkt.clouddn.com/markdown/img/1473317625320.png" alt=""></p>
+<p>作为更为高级的一种 merge 方式是使用 <code>3-way merge</code> 模式，当文件中有大量 conflict，或者单行 vs 多行 这种 conflict 时，<br><code>2-way merge</code> 模式可能没有这种方便。因为这种模式下，可以把冲突的部分都加入最终文件，而 <code>2-way merge</code> 只能替换（除非手动 copy &amp;&amp; paste）。</p>
+<br>
+##### 3. p4merge
+---
+
+<pre><code>[alias]
+    p4 = mergetool -t p4merge
+[mergetool &quot;p4merge&quot;]
+    cmd = &quot;\&quot;c:/program files/Perforce/p4merge.exe\&quot; \&quot;$LOCAL\&quot; \&quot;$REMOTE\&quot; \&quot;$MERGED\&quot;&quot;
+    trustExitCode = true</code></pre><br>
+##### 4. meld
+---
+
+<pre><code>[alias]
+    meld = mergetool -t meld
+[mergetool &quot;meld&quot;]
+    cmd = meld --diff $BASE $LOCAL --diff $BASE $REMOTE --auto-merge $LOCAL $BASE $REMOTE --output $MERGED
+    trustExitCode = true</code></pre><p>meld 会打开 3 个 tabs, 第1个 tab, 默认会显示 3-way merge view，我们在中间的 pane 中进行merge。<br>第2个和第3个 tab 是 local 和 remote 分别与 base 的 diff views。</p>
+<p>效果图<br><img src="http://o8chcdh8l.bkt.clouddn.com/markdown/img/1473317961565.png" alt=""></p>
+<p><strong>注意：</strong> 使用 mergetool 时，git 会为冲突的文件生成一个 <code>.orig</code> 备份文件，解决掉冲突之后，这个文件默认不会被自动删除，我们手动把它删除掉就可以了。当然，我们也可以配置 git 不生成这个文件：</p>
+<pre><code>git config --global mergetool.keepBackup false
+git config --global mergetool.keepTemporaries false</code></pre><p><strong>流程：</strong> merge 完成之后，执行下列操作完成 push：</p>
+<pre><code>git rebase --continue
+git push -u origin master </code></pre><br>
+<br>
+<br>
+
+<br>
+###### 参考
+http://my.oschina.net/u/1010578/blog/348731 
+http://stackoverflow.com/questions/161813/how-to-resolve-merge-conflicts-in-git
+http://www.zhihu.com/question/21215715
+http://www.scootersoftware.com/support.php?zz=kb_vcs  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Git/">Git</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Git/git-git-mergetool/" data-title="Use git mergetool to solve commit conflict | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Database/mongodb-shard-cluster/" title="Mongodb shard cluster">
+  <strong>Prev：</strong><br>
+  <span>
+  Mongodb shard cluster</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Linux/linux-msys2/" title="Use msys2 in Windows">
+ <strong>Next：</strong><br>
+ <span>Use msys2 in Windows
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

@@ -1,0 +1,734 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Raft | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="简介 Raft 是分布式一致性协议 Paxos 的一个变种，最早是在 2013 年由斯坦福大学 的 PhD 学生 Diego Ongaro 和他的导师 John Ousterhout 在论文“In Search of an Understandable Consensus Algorithm”中提出。根据论文中的介绍，其主要目的就是为了阐述一种易于理解的分布式一致性算法，把易于理解放于作为最主要的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Raft">
+<meta property="og:url" content="https://juniway.net/Distributed-System/distributed-system-raft/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="简介 Raft 是分布式一致性协议 Paxos 的一个变种，最早是在 2013 年由斯坦福大学 的 PhD 学生 Diego Ongaro 和他的导师 John Ousterhout 在论文“In Search of an Understandable Consensus Algorithm”中提出。根据论文中的介绍，其主要目的就是为了阐述一种易于理解的分布式一致性算法，把易于理解放于作为最主要的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://daizuozhuo.github.io/images/server-states.png">
+<meta property="og:image" content="https://juniway.net/image/464e4104-a67a-486c-8fbd-939665becdc7.png">
+<meta property="og:image" content="https://juniway.net/image/663a7241-a835-4c09-a18a-01cc93043ebc.png">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.425Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Raft">
+<meta name="twitter:description" content="简介 Raft 是分布式一致性协议 Paxos 的一个变种，最早是在 2013 年由斯坦福大学 的 PhD 学生 Diego Ongaro 和他的导师 John Ousterhout 在论文“In Search of an Understandable Consensus Algorithm”中提出。根据论文中的介绍，其主要目的就是为了阐述一种易于理解的分布式一致性算法，把易于理解放于作为最主要的">
+<meta name="twitter:image" content="http://daizuozhuo.github.io/images/server-states.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Distributed-System/distributed-system-raft/" title="Raft" itemprop="url">Raft</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-05-22T12:16:25.000Z"> 2016-05-22</time>
+    <span class="post-count">字数 2.7k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><hr>
+<p>Raft 是分布式一致性协议 Paxos 的一个变种，最早是在 2013 年由斯坦福大学 的 PhD 学生 Diego Ongaro 和他的导师 John Ousterhout 在论文“In Search of an Understandable Consensus Algorithm”中提出。根据论文中的介绍，其主要目的就是为了阐述一种易于理解的分布式一致性算法，把易于理解放于作为最主要的目标，因此，借于 Raft 协议的易于理解的特性，这篇论文得到了大量的赞誉和推崇。目前，基于 Raft 协议所产生的变种协议也很多（比如：Multi-Raft 等），而在工业界，基于 Raft 原理所实现的一致性协议更是得到了广泛的应用（比如 etcd）。</p>
+<p>Raft 协议天生简单而易与理解，这篇文章我将根据其原始论文来详细解读 Raft 协议，由于是采用论文导读的方式，因此我会大量引用论文原句来进行解析。</p>
+<h3 id="Raft-协议"><a href="#Raft-协议" class="headerlink" title="Raft 协议"></a>Raft 协议</h3><p>一个 Raft 集群包含若干个服务器节点。假如服务器节点数为n个（n通常是&gt;=3的奇数），这允许整个系统容忍个(n-1)/2节点的失效。</p>
+<p>Raft 协议的理论部分主要分为三个方面：</p>
+<ul>
+<li>Leader Election</li>
+<li>Log Replication</li>
+<li>Safty</li>
+</ul>
+<br>
+
+<h4 id="1-Leader-Election-领导者选举"><a href="#1-Leader-Election-领导者选举" class="headerlink" title="1. Leader Election 领导者选举"></a>1. Leader Election 领导者选举</h4><p>Raft 把时间分为terms. 每一个 term 开始时都进行一次选举. 每一个 term 期间最多有一个leader, 或者没有 leader。</p>
+<p><img src="http://daizuozhuo.github.io/images/server-states.png" alt=""></p>
+<p>Raft servers communicate using remote procedure calls (RPCs), and the basic consensus algorithm requires only two types of RPCs.  </p>
+<p><strong>(1). RequestVote</strong>           由 <strong>Candidate</strong> 在 选举期间发起<br><strong>(2). AppendEntries</strong>         由 <strong>Leader</strong> 发起，用于 replicate log entries 和 发送心跳</p>
+<p>还有一个 RPC 请求，作用是在节点之间传输快照信息（transferring snapshots between servers）。<br>并发的重试 RPC 请求 Servers retry RPCs if they do not receive a response in a timely manner, and they issue RPCs in parallel for best performance.</p>
+<p>Leaders send <strong>periodic heartbeats</strong> (<strong>AppendEntries RPCs</strong> that carry no log entries) to all followers in order to maintain their authority.</p>
+<p>Followers only respond to requests from other servers.<br>If a follower receives no communication in a period of time (e.g. 150ms - 300ms), it becomes a candidate and initiates an election.<br>If a follower receives no communication over a period of time called the <strong>election timeout</strong>, then it assumes there is no viable leader and <strong>begins an election to choose a new leader</strong>.</p>
+<h5 id="1-选举过程"><a href="#1-选举过程" class="headerlink" title="(1) 选举过程"></a>(1) 选举过程</h5><p>先把自己的 term ID 加1，然后从 Follower 状态变为 Candidate 状态，每个 Candidate 都会获得一个随机的 term timeout 在 150 到 300 ms 之间。<br>当一个 Candidate 在 Timeout 到期前收到了大多数人的 Votes，就赢得这次选举。 每个 Candidate 在自己的 term 期间只能 vote 一票，先收到谁的 request 就先投票给谁。<br>一旦一个 Candidate 赢得选举，它就开始发送心跳信息给其他所有 servers 来维持统治。</p>
+<p>在选举期间，Candidate 可能会收到其他也宣称是 leader 的 Server 发来 AppendEntries rpc 请求。<br>如果这个 rpc 请求中所附的 term id 大于等于当前 Candidate 的 term id，那么认为那个 leader 是合法的，并立即把自己置为 Follower 状态。<br>如果这个 rpc 请求所附的 term id 小于当前 Candidate 的 term id，那么就拒绝那个请求，并把自己继续维持在 Candidate 状态。 简单来说，Term ID 越大表示状态越新。</p>
+<h5 id="2-选举结果"><a href="#2-选举结果" class="headerlink" title="(2) 选举结果"></a>(2) 选举结果</h5><p>如果没有任何节点赢得当前 term 的选举（这种情况可能会在很多 followers 同时变成 candidates 时发生，因为 votes 可能被 split（平分），导致没有 candidate 赢得多数票），<br>这种情况发生的时候，每个 candidate 都会 timeout（随机 Timeout 值），并且开始一轮新的选举： 把自己的 term id 加1，发送新的 RequestVote RPCs。<br>Raft 使用了一个随机的 timeout 时间 150 ms - 300 ms，这样可以在大多数情况下，选举失败时只有一个 server 会 timeout。</p>
+<br>
+
+<h4 id="2-Log-Replication"><a href="#2-Log-Replication" class="headerlink" title="2. Log Replication"></a>2. Log Replication</h4><p>选举结束之后，Leader 就开始接受 Clients’ requests。<br>Leader 每接受一个 request，就在 Log 中写一条记录（appends the command to its log as a new entry, then issues AppendEntries RPCs in parallel to each of the other servers to replicate the entry.）。<br>一旦 log entry 被安全的 replicated，leader 就 applies the entry to its state machine and returns the result of that execution to the client. 如果这时候 follower 崩溃了，那么 leader 会无限地发送 AppendEntries RPC 请求。</p>
+<p>Log 的格式：<br>Each log entry stores a state machine command along with the term number.<br>Each log entry also has an integer index identifying its position in the log.</p>
+<p><strong>什么时候认为 log 是 commited 的呢？</strong><br>A log entry is committed once the leader that created the entry has replicated it on a majority of the servers<br>一旦当前这条 log 被认为是 commited，那么这条 log 之前记录的所有 log 都会被 commited，包括由其他 leader 所记录的 log。</p>
+<p><strong>如何消除 leader  的 log 和 follower 的 log 不一致的情况？</strong></p>
+<p>log 的 index 是按照数字从0开始顺序递增的，下一个将要插入的 log entry 的位置称为 nextIndex。<br>当一个新 leader 即位之后，他会发送 AppendEntries RPC Check 来检查 follower 的 log entry 是否跟 leader 的一致，<br>如果不一致，那么 follower 会 reject。然后 leader 会递减当前 index 然后继续发送 check，直到两者一直，然后 Leader 就把从该一致点的 index 到后面所有的 log entries 都发送给 follower，覆盖 follower 后面所有的 log entries，从而保证 leader 和 follower 的 log entries 一致。</p>
+<p>一步一步递减 index 的方式可能会导致大量的 rejects，非常低效。如何减少被 reject 的次数？<br>Leader 发送 AppendEntries RPC check 时，带上 term Id 和 这个 term 期间的第一条 log 的 index。这样的话就可以一次性跳过整个 term 的 entries。</p>
+<p><strong>注意：</strong>Leader 永远不会覆盖或者删除自己的 log entries。</p>
+<br>
+
+<h4 id="3-Safety"><a href="#3-Safety" class="headerlink" title="3. Safety"></a>3. Safety</h4><p>安全性的意思是指一致性协调的最终结果必须是有效的，并且在所有节点都能达到一致的结果。<br>虽然前面描述了 Raft 算法是如何选举和复制日志的。然而，到目前为止上面所描述的机制并不能充分的保证每一个状态机会按照相同的顺序执行相同的指令。</p>
+<p>例如，一个跟随者可能会进入不可用状态同时领导人已经提交了若干的日志条目，然后这个跟随者可能会被选举为领导人并且覆盖这些日志条目；因此，不同的状态机可能会执行不同的指令序列。</p>
+<p>针对这种情况，Raft 使用了一种简单的方法，它可以保证所有之前的任期号中已经提交的日志条目在选举的时候都会出现在新的领导人中，不需要传送这些日志条目给领导人。</p>
+<p>这意味着日志条目的传送是单向的，只从领导人传给跟随者，并且领导人从不会覆盖本地日志中已经存在的条目。</p>
+<p>下面就具体分析几个例子来阐述 Raft 协议为何能在各种情况下都保证 Safety。</p>
+<p><strong>（1） Leader Crash</strong></p>
+<p>可能出现的情况，leader crash 之后，new leader 不包含前一个 leader 所有的 commited entries，从而导致不一致。</p>
+<p>Raft 提出了一些 restriction 去保证 new leader 包含上一个 leader 所有的 commited entries。<br>The restriction ensures that the leader for any given term contains all of the entries committed in previous terms<br>把这个 restriciton 称为：<strong>Leader Completeness Property</strong>。</p>
+<p>Raft uses the voting process to prevent a candidate from winning an election unless its log contains all committed entries.<br>一个 Candidate 要想选举成为 new leader，那么它必然需要联系大多数 servers，那么至少有一个 server 会包含所有的 commited entries。<br>如果这个 Candidate 的 log 比这个 marjority 中所有的 server 的 log 都要新，那么它就包含了所有的 committed log entries。</p>
+<p><strong>这个 restriction 的具体流程就是：</strong><br>Candidate 发送 RequestVote  RPC 时会把自己的 log 信息附上，收到请求的 server 会检查 log 是否比自己当前的 log 更加 up-to-date，如果不，则否决，反之同意。</p>
+<p><strong>如何判定两个 log 谁更 up-to-date？</strong><br>比较 last entry 所在的 term id 以及 index。</p>
+<p>当 leader crash 时，还有可能出现的一种情况是：<br><img src="/image/464e4104-a67a-486c-8fbd-939665becdc7.png" alt=""></p>
+<p>根据 raft commit 原则，只有当 log 被大多数 server 确认 replicated 之后，才认为可以 commit了，这时候 leader 才会 apply。如果在 apply 之前正好 crash 了。那么就会出现如上图所示的情况。<br>如果所示，S1 是 Term T 的 leader，称之为 leader T，当它 crash 时，log entries 已经 replicated 到了大部分节点中（s1, s2, s3）<br>这时候 S5 参加选举，在 term U 中被选举为 new leader，我们称之为 leader U。</p>
+<p>这时候有一个关键信息，S5 需要获得多数 server 才有可能成为 leader，那么必然包含一个 server，这个 server 有上次 committed log 信息。比如上图中的 S3 节点。<br>而且，这个 committed log entry 必然在它同意投票给 S5 之前发生，因为只有这样它（S3）的 term id 才不会大于 S5 的 term id，如果 S3 的 term id 大于 S5 的，必然会拒绝 S5 的 RequestVote RPC。</p>
+<p>这里有个矛盾的地方就是，new leader 必须包含所有 up-to-date 的 entry，而 S5 却比 S3 少了一个 log entry (AE)。<br>所以，显然，S5 不可能被选举为 leader。这就保证了上述的 <strong>Leader Completeness Property</strong> 的正确性。也即 Safty 得到了保证。</p>
+<p><strong>（2） Candidate or Follower crashes</strong></p>
+<p>这种情况比 leader 发生 crash 要简单很多，follower 和 candidate（采用的是相同的处理方法） 一旦 crash，其他 server 会 indefinitely 发送 RequestVote 或 AppendEntries 给它。<br>如果 crash 的 server 重启了，那么 RPC 请求就能够完成。<br>如果 Follower 成功收到 RPC 请求, 但是在其 respond 之前 crash 了，那么它重启之后还会收到相同的 RPC 请求。<br>根据论文所述，由于 Raft RPC 是幂等（idempotent）的，因此这种情况下的 crash has no harm。Safty 不会被违背。</p>
+<p><strong>Timing and Availability</strong></p>
+<p><strong>Cluster MemberShip changes</strong></p>
+<h4 id="4-Log-Compaction"><a href="#4-Log-Compaction" class="headerlink" title="4. Log Compaction"></a>4. Log Compaction</h4><p>In a practical system, it cannot grow without bound. As the log grows longer, it occupies more space and takes more time to replay.<br>log 太多最终会导致 avaliability 问题，必须要想办法丢弃那些过时的 log。</p>
+<p>Raft 采用了 snapshotting 的方式去压缩/减少日志。<br>In snapshotting, the entire current system state is written to a snapshot on stable storage, then the entire log up to that point is discarded.</p>
+<p><img src="/image/663a7241-a835-4c09-a18a-01cc93043ebc.png" alt=""></p>
+<p><strong>Snapshotting technique is also used in Chubby and ZooKeeper</strong></p>
+<p>以上就是 Raft 算法的整个运转机制。</p>
+<h5 id="相关资源"><a href="#相关资源" class="headerlink" title="相关资源"></a>相关资源</h5><p>一些 Raft 相关的资料:</p>
+<p><a href="https://raft.github.io/raft.pdf" target="_blank" rel="noopener">raft original paper</a><br><a href="https://github.com/maemual/raft-zh_cn" target="_blank" rel="noopener">raft 中文版</a><br><a href="http://thesecretlivesofdata.com/raft/" target="_blank" rel="noopener">visualization</a><br><a href="https://raft.github.io/" target="_blank" rel="noopener">a list a open source implementation</a></p>
+<p>[0] - <a href="https://ramcloud.stanford.edu/~ongaro/userstudy/" target="_blank" rel="noopener">https://ramcloud.stanford.edu/~ongaro/userstudy/</a><br>Raft Video - <a href="https://www.youtube.com/watch?v=YbZ3zDzDnrw" target="_blank" rel="noopener">https://www.youtube.com/watch?v=YbZ3zDzDnrw</a><br>Paxos Video - <a href="http://www.youtube.com/watch?v=JEpsBg0AO6o&amp;feature=youtu.be" target="_blank" rel="noopener">http://www.youtube.com/watch?v=JEpsBg0AO6o&amp;feature=youtu.be</a><br>Results: <a href="https://ramcloud.stanford.edu/~ongaro/userstudy/graphs.pdf" target="_blank" rel="noopener">https://ramcloud.stanford.edu/~ongaro/userstudy/graphs.pdf</a><br><a href="http://www.shsnc.com/show-109-1017-1.html" target="_blank" rel="noopener">http://www.shsnc.com/show-109-1017-1.html</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Distributed-System/">Distributed System</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Distributed-System/distributed-system-raft/" data-title="Raft | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Distributed-System/distributed-system-mvcc/" title="MVCC">
+  <strong>Prev：</strong><br>
+  <span>
+  MVCC</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Linux/linux-grep/" title="grep and regular expression">
+ <strong>Next：</strong><br>
+ <span>grep and regular expression
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

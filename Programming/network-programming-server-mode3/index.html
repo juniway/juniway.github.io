@@ -1,0 +1,744 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>服务器端编程模型（3）——多线程并发式（线程池） | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="引言：上篇文章说到了多进程并发式的服务端模型，如上一篇文章所述，进程的频繁创建会导致服务器不堪负载，那这一篇文章主要讲述的是线程模型和线程池的方式来提高服务端的负载能力。同时比较一下不同的模型的好处与坏处。 在Linux下创建一个线程的方式很简单，pthread_create() 函数来创建线程，其中的一个参数的回调函数，也就是线程本身的执行体函数。 1void *thread_entry(voi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="服务器端编程模型（3）——多线程并发式（线程池）">
+<meta property="og:url" content="https://juniway.net/Programming/network-programming-server-mode3/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="引言：上篇文章说到了多进程并发式的服务端模型，如上一篇文章所述，进程的频繁创建会导致服务器不堪负载，那这一篇文章主要讲述的是线程模型和线程池的方式来提高服务端的负载能力。同时比较一下不同的模型的好处与坏处。 在Linux下创建一个线程的方式很简单，pthread_create() 函数来创建线程，其中的一个参数的回调函数，也就是线程本身的执行体函数。 1void *thread_entry(voi">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.441Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="服务器端编程模型（3）——多线程并发式（线程池）">
+<meta name="twitter:description" content="引言：上篇文章说到了多进程并发式的服务端模型，如上一篇文章所述，进程的频繁创建会导致服务器不堪负载，那这一篇文章主要讲述的是线程模型和线程池的方式来提高服务端的负载能力。同时比较一下不同的模型的好处与坏处。 在Linux下创建一个线程的方式很简单，pthread_create() 函数来创建线程，其中的一个参数的回调函数，也就是线程本身的执行体函数。 1void *thread_entry(voi">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Programming/network-programming-server-mode3/" title="服务器端编程模型（3）——多线程并发式（线程池）" itemprop="url">服务器端编程模型（3）——多线程并发式（线程池）</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-09-10T03:30:35.000Z"> 2016-09-10</time>
+    <span class="post-count">字数 2.8k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>引言：上篇文章说到了多进程并发式的服务端模型，如上一篇文章所述，进程的频繁创建会导致服务器不堪负载，那这一篇文章主要讲述的是线程模型和线程池的方式来提高服务端的负载能力。同时比较一下不同的模型的好处与坏处。</p>
+<p>在Linux下创建一个线程的方式很简单，pthread_create() 函数来创建线程，其中的一个参数的回调函数，也就是线程本身的执行体函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread_entry</span><span class="params">(<span class="keyword">void</span> *args)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>那么，在服务端的线程使用方式一般为三种种：<br>（1）按需生成(来一个连接生成一个线程)<br>（2）线程池(预先生成很多线程)<br>（3）Leader follower（LF）</p>
+<p>主要讲解第一种和第二种，第三种暂时手上没有实例代码<br>第一种方式的范式大概是这样:<br>回调函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread_entry</span><span class="params">(<span class="keyword">void</span> *args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd = *(<span class="keyword">int</span>*)args;</span><br><span class="line">    do_handler_fd(fd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序主体：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(;;)&#123;</span><br><span class="line">    fd = accept();</span><br><span class="line">    pthread_create(..., thread_entry, &amp;fd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里所展示的只是一个最简单的方式，但是可以代表多线程的服务器端模型。</p>
+<p>大体服务端分为主线程和工作线程，主线程负责 accept() 连接，而工作线程负责处理业务逻辑和流的读取等。这样，即使在工作线程阻塞的情况下，也只是阻塞在线程范围内，关于这部分内容，可以参考《C++网络编程》第一卷的第五章。在应用层和内核之间的线程比例为 1:1 的操作系统线程机制中，一个线程在内核中会有一个内核线程实例，那么就是说，如果这个线程阻塞，不会引起在同一个进程里面的线程也阻塞。现在大多是的操作系统采用的都是 1:1 的模型，但是这个比传统的 N:1 模型更消耗资源。<br>N:1 模型就是，在应用层级别的多个线程在操作系统中只有一个实例，可以看做一个组，一旦一个线程阻塞，这个工作组的其他线程都会阻塞。</p>
+<p>故上述代码的 <code>do_handler_fd(fd)</code> 里面的系统调用如果阻塞，不会引起整个进程阻塞，线程的阻塞只是在线程范围内。所以，主线程可以一直等待客户连接，而把工作处理过程放到线程中去。</p>
+<p>这个是传统的线程方式，这种方式也会带来一些问题：</p>
+<p>（1）工作开销过大，线程的频繁创建的销毁也是一个很消耗资源的过程，虽然较进程小很多。　<br>（2）对于临界资源的访问需要控制加锁等操作，加大了程序设计的复杂性。<br>（3）一个线程的崩溃会导致整个进程的崩溃，比如调用了exit() 函数等，虽然阻塞操作只阻塞一个线程，但是其他一些系统调用的失败或崩溃将导致服务器整个宕机。后果不堪设想。<br>但是在很多地方也提到了，多线程的方式适合 IO 密集型的程序，比如大文件传输等，这样可以在用户看来所有的操作都是并行的。</p>
+<p>下面来说说线程池的方式，它改进了上述的问题的第一个，频繁的创建线程。<br>线程池的基本思想就是预先创建一部分线程，然后等到任务来的时候，通过条件变量或者其他的机制来唤醒一个工作线程。</p>
+<p>下面详细的讲述一下前段时间写的一个简单的线程池方案。</p>
+<p>线程池有一个任务队列，即由任务对象组成的一组队列。</p>
+<p>我们为这个任务队列提供两个接口：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mc_thread_pool_add_task</span><span class="params">(<span class="keyword">void</span> *task, <span class="keyword">size_t</span> tasksize)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>解释一下这个接口的含义和参数， task 是一个指向任务实例的指针，tasksize 一般取 sizeof(instance_task) 为的是在加入任务队列的时候队列的一些其他操作。为了简单化，这里没有提供任务优先级的考虑。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">mc_thread_pool_get_task</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这个函数用来取得一个指向任务实例的指针，然后可以操作这个任务。<br>一般情况下，由主线程调用第一个函数，而工作线程调用第二个函数。</p>
+<p>我们来看看线程池的结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">thread_pool_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">pthread_mutex_t</span>  queue_lock;</span><br><span class="line">    <span class="keyword">pthread_cond_t</span>   task_cond;</span><br><span class="line">    <span class="keyword">list_t</span>          *tasks;       <span class="comment">// treat it as queue thread_task_t type</span></span><br><span class="line">    <span class="keyword">pthread_t</span>       *pthreads;</span><br><span class="line">    <span class="keyword">int</span>              isdestoried;</span><br><span class="line">    <span class="keyword">int</span>              workersnum;</span><br><span class="line">    <span class="keyword">char</span>             ready;</span><br><span class="line">    thread_task_handler thread_pool_task_handler;</span><br><span class="line">&#125; <span class="keyword">thread_pool_t</span>;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> *  this structure is a global control block of threads poll</span></span><br><span class="line"><span class="comment"> *  as you can see, queue_lock and task_cond is define to protecte access of this whole poll</span></span><br><span class="line"><span class="comment"> *  and task_cond is used to signal to threads that the task queue is ready</span></span><br><span class="line"><span class="comment"> *  tasks is a queue of tasks, each task should posted to this queue and threads</span></span><br><span class="line"><span class="comment"> *  in this pool can get it, we defined this task as void * to use wildly</span></span><br><span class="line"><span class="comment"> *  isdestoried is a boolean flag as his/her name</span></span><br><span class="line"><span class="comment"> *  workersnum is the total number of threads</span></span><br><span class="line"><span class="comment"> *  ready is a flag also and used to judge if the tasks queue is ready</span></span><br><span class="line"><span class="comment"> *  thread_pool_task_handler is a function point which points to the task handler you defined</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>在线程池的结构中，我们定义了两个变量：queue_lock 和 task_cond</p>
+<p>一个是锁，用来控制线程对于 task 任务队列的访问，另一个 task_cond 用来唤醒工作线程。</p>
+<p>说说基本原理：工作线程默认情况下是阻塞在 pthread_cond_wait() 系统调用下的，如果有任务到来，我们可用使用 pthread_cond_singal() 来唤醒一个处于阻塞状态的线程，这样这个线程就可以执行 mc_thread_pool_get_task() 来取得一个任务，并调用相应的回调函数。</p>
+<p>tasks 就是上面所说的任务队列，pthreads 是一个 pthread_t 的数组，也就是用来标示线程 id 的数组。每一次创建线程的时候都会返回线程 id，所以我们需要记录。</p>
+<p>ready 是一个 flag, 标示是否任务队列可用。thread_task_handler 是一个函数指针，定义是这样的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*thread_task_handler)</span><span class="params">(<span class="keyword">void</span> *args)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>结构体里的 thread_pool_task_handler 就是在初始化的时候设置的线程的执行体。</p>
+<p>下面看看初始化函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mc_thread_pool_ini</span><span class="params">(<span class="keyword">mc_thread_pool_t</span> *par_tp, <span class="keyword">int</span> workersnum, thread_task_handler par_handler)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> err;</span><br><span class="line">    <span class="comment">//par_tp = (thread_pool_t *)malloc(sizeof(thread_pool_t));</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(par_tp == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"thread_pool_t malloc\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">    par_tp-&gt;workersnum = workersnum;</span><br><span class="line">     </span><br><span class="line">    pthread_mutex_init(&amp;par_tp-&gt;queue_lock,<span class="literal">NULL</span>);</span><br><span class="line">    pthread_cond_init(&amp;par_tp-&gt;task_cond, <span class="literal">NULL</span>);</span><br><span class="line">     </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    par_tp-&gt;queue_lock = PTHREAD_MUTEX_INITIALIZER;</span></span><br><span class="line"><span class="comment">    par_tp-&gt;task_cond  = PTHREAD_COND_INITIALIZER ;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    par_tp-&gt;tasks = mc_listcreate();</span><br><span class="line">    <span class="keyword">if</span>(par_tp-&gt;tasks == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"listcreate() error\n"</span>);</span><br><span class="line">        <span class="comment">//free(par_tp);</span></span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    par_tp-&gt;pthreads = (<span class="keyword">pthread_t</span> *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">pthread_t</span>)*workersnum);</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">if</span>(par_tp-&gt;pthreads == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"pthreads malloc\n"</span>);</span><br><span class="line">        <span class="comment">//free(par_tp);</span></span><br><span class="line">        mc_freelist(par_tp-&gt;tasks);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(; i &lt; workersnum; i++) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"start to create threads\n"</span>);</span><br><span class="line">        err = pthread_create(&amp;(par_tp-&gt;pthreads[i]),<span class="literal">NULL</span>,mc_thread_entry,<span class="literal">NULL</span>);</span><br><span class="line">        <span class="keyword">if</span>(err == <span class="number">-1</span>) &#123;</span><br><span class="line">            <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"pthread_create error\n"</span>);</span><br><span class="line">            <span class="comment">//free(par_tp);</span></span><br><span class="line">            mc_freelist(par_tp-&gt;tasks);</span><br><span class="line">            <span class="built_in">free</span>(par_tp-&gt;pthreads);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    par_tp-&gt;thread_pool_task_handler = par_handler;</span><br><span class="line">    par_tp-&gt;ready = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"successed to create threads\n"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在初始化函数中，我们传递了一个函数执行体的入口点，也就是函数指针给线程池，当我们有任务的时候，一个线程被唤醒，执行相应的回调函数。</p>
+<p>其他需要注意的地方是使用 for 循环来创建很多的线程，并利用数组方式记录了线程的id 。</p>
+<p>创建线程时候的回调函数并不是我们的参数传递的回调函数地址。因为在创建线程好线程的时候，我们需要一个阻塞操作，使得线程处于睡眠状态，不然函数执行完毕后线程就退出了。所以，创建线程时候的回调函数是这样的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> *<span class="title">mc_thread_entry</span><span class="params">(<span class="keyword">void</span> *args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *task;</span><br><span class="line">    <span class="keyword">for</span>(;;) &#123;</span><br><span class="line">        pthread_mutex_lock(&amp;mc_global_threads_pool.queue_lock);</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">" locked to wait task\n"</span>);</span><br><span class="line">        <span class="keyword">while</span>(mc_global_threads_pool.ready == <span class="number">0</span>)&#123;</span><br><span class="line">            pthread_cond_wait(&amp;mc_global_threads_pool.task_cond, &amp;mc_global_threads_pool.queue_lock);</span><br><span class="line">        &#125;</span><br><span class="line">        task = mc_thread_pool_get_task();</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"get a task and ready to unlock \n"</span>);</span><br><span class="line">        pthread_mutex_unlock(&amp;mc_global_threads_pool.queue_lock);</span><br><span class="line">        mc_global_threads_pool.thread_pool_task_handler(task);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的一点是，我们要用两个变量来判断一个队列是否就绪，ready 和条件变量本身。</p>
+<p>判断条件是 while() 而不是 if，这样可以使得线程在没有工作任务的时候，也就是工作队列为空的时候阻塞在 pthread_cond_wait 上，关于 pthread_cond_wait 的工作机制可以参考 IBM developerworks 上的相关文章。</p>
+<p>这里简单讲一下，pthread_cond_wait 在发现没有任务的时候，条件不成立的时候，是会有一个默认的操作的，就是释放锁，第二个参数的锁，使得其他线程可以得到condition 的竞争权利。所以我们在函数体内 pthread_cond_wait 的调用上下有一个加锁和释放锁的操作。</p>
+<p>在函数内部有一个  mc_global_threads_pool.thread_pool_task_handler(task) 这个操作就是线程内部得到了任务后调用回调函数过程。</p>
+<p>将任务队列加入的函数实例如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mc_thread_pool_add_task</span><span class="params">(<span class="keyword">void</span> *task, <span class="keyword">size_t</span> tasksize)</span> </span>&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;mc_global_threads_pool.queue_lock);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"thread locked and append to list\n"</span>);</span><br><span class="line">    mc_list_append(mc_global_threads_pool.tasks, task, tasksize);</span><br><span class="line">    pthread_mutex_unlock(&amp;mc_global_threads_pool.queue_lock);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"thread unlocked and successed append to list\n"</span>);</span><br><span class="line">    mc_global_threads_pool.ready = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span>(mc_global_threads_pool.ready == <span class="number">1</span>)&#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"signal to threads\n"</span>);</span><br><span class="line">        pthread_cond_signal(&amp;mc_global_threads_pool.task_cond);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里使用了 ready 来判断是有任务，如果有，使用 pthread_cond_signal 来唤醒一个等待的线程。</p>
+<p>取得一个队列的任务方式很简单，直接返回队列的第一个任务：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">mc_thread_pool_get_task</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">void</span> * ret_task;</span><br><span class="line">    ret_task = mc_getnode_del(mc_global_threads_pool.tasks, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(ret_task == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"get node_del error\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">" got a task\n"</span>);</span><br><span class="line">    mc_global_threads_pool.ready = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>(ret_task == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"getnode_del error\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> ret_task;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主体框架是这样的：</p>
+<p>定义一个自己的task结构体比如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">thread_task_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> task_num;</span><br><span class="line">&#125; <span class="keyword">mc_thread_task_t</span>;</span><br></pre></td></tr></table></figure>
+
+<p>定义自己的回调函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">my_thread_task_handler</span><span class="params">(<span class="keyword">void</span> * task)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"task-&gt;tasknum %d\n"</span>, ((<span class="keyword">mc_thread_task_t</span> *)task)-&gt;task_num);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     *  if the task is a event we can like this demo:</span></span><br><span class="line"><span class="comment">     *  (event_t *)task-&gt;handler((event_t *)task);</span></span><br><span class="line"><span class="comment">     *  so in event_t structure there should be a callback called handler</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数主体就是这样：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">mc_thread_task_t</span> ltask;</span><br><span class="line">    ltask.task_num = <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">"begin to ini pool\n"</span>);</span><br><span class="line">    mc_thread_pool_ini(&amp;mc_global_threads_pool, <span class="number">20</span>, my_thread_task_handler);</span><br><span class="line">    mc_thread_pool_add_task(&amp;ltask, <span class="keyword">sizeof</span>(<span class="keyword">mc_thread_task_t</span>));</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">        ltask.task_num = i;</span><br><span class="line">        mc_thread_pool_add_task(&amp;ltask, <span class="keyword">sizeof</span>(<span class="keyword">mc_thread_task_t</span>));</span><br><span class="line">        sleep(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>线程池初始化的时候所传入的结构体就是自己定义的 task 的回调函数。<br>上述所说的是线程池一个方案。回到我们的服务端模型上来看。<br>我们的服务端的改写方式可以换成这样：</p>
+<p>定义一个任务结构，比如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">task</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">task_handler</span><span class="params">(<span class="keyword">void</span> *task)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd = *(<span class="keyword">int</span> *)task;</span><br><span class="line">    do_handler_fd(fd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>好了，我们的服务器主体框架可以是这样：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mc_thread_pool_ini(&amp;mc_global_threads_pool, N, task_handler);  <span class="comment">// 第二个参数为线程池工作线程数</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span>(;;) &#123;</span><br><span class="line">    fd = accept();</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">task</span> * <span class="title">newtask</span> = (<span class="title">struct</span> <span class="title">task</span> *)<span class="title">malloc</span>(<span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">task</span>));</span></span><br><span class="line">    newtask-&gt;fd = fd;</span><br><span class="line">    mc_thread_pool_add_task(&amp;newtask, <span class="keyword">sizeof</span>(struct task*)); <span class="comment">//将newtask 指针加入队列，而不是实例，可以减少队列的存储空间</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h5><p>线程池的方案能够减少线程创建时候带来的开销，但是对于临界资源的访问控制等变得更加的复杂，考虑的因素更多。这里没有完整的贴出线程池的代码。上述模型在平常使用的过程中适合并发连接数目不大的情况，IO密集型。对于CPU 密集型的服务端，线程池返回会加大资源消耗。下一篇文章我们来看看反应堆模型，异步事件驱动，非阻塞IO，并贴出一个简单的 epoll 的反应堆。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Programming/">Programming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Programming/network-programming-server-mode3/" data-title="服务器端编程模型（3）——多线程并发式（线程池） | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Programming/network-programming-server-mode4/" title="服务器端编程模型（4）—— Reactor 模式（epoll 简介）">
+  <strong>Prev：</strong><br>
+  <span>
+  服务器端编程模型（4）—— Reactor 模式（epoll 简介）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Programming/network-programming-server-mode2/" title="服务器端编程模型（2）—— 多进程并发式">
+ <strong>Next：</strong><br>
+ <span>服务器端编程模型（2）—— 多进程并发式
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

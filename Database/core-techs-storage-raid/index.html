@@ -1,0 +1,734 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>RAID notes | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="标题：程序员需要知道的 RAID 基本原理引言RAID，全称为 redundant array of independent disks，是目前商用服务器常见的磁盘管理技术。作为软件开发人员，需要了解各级RAID的特性，以便根据需求做出做合适的选择。本文总结了常见的RAID级别的特性，包括如下内容：  RAID 的基本作用 各级 RAID 的基本原理  RAID 的基本作用RAID 的一般有如下作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAID notes">
+<meta property="og:url" content="https://juniway.net/Database/core-techs-storage-raid/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="标题：程序员需要知道的 RAID 基本原理引言RAID，全称为 redundant array of independent disks，是目前商用服务器常见的磁盘管理技术。作为软件开发人员，需要了解各级RAID的特性，以便根据需求做出做合适的选择。本文总结了常见的RAID级别的特性，包括如下内容：  RAID 的基本作用 各级 RAID 的基本原理  RAID 的基本作用RAID 的一般有如下作">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/database/raid0.png">
+<meta property="og:image" content="https://juniway.net/image/database/raid1.png">
+<meta property="og:image" content="https://juniway.net/image/database/raid2.png">
+<meta property="og:image" content="https://juniway.net/image/database/raid3.png">
+<meta property="og:image" content="https://juniway.net/image/database/raid4.png">
+<meta property="og:image" content="https://juniway.net/image/database/raid5.png">
+<meta property="og:image" content="https://juniway.net/image/database/raid6.png">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.421Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RAID notes">
+<meta name="twitter:description" content="标题：程序员需要知道的 RAID 基本原理引言RAID，全称为 redundant array of independent disks，是目前商用服务器常见的磁盘管理技术。作为软件开发人员，需要了解各级RAID的特性，以便根据需求做出做合适的选择。本文总结了常见的RAID级别的特性，包括如下内容：  RAID 的基本作用 各级 RAID 的基本原理  RAID 的基本作用RAID 的一般有如下作">
+<meta name="twitter:image" content="https://juniway.net/image/database/raid0.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Database/core-techs-storage-raid/" title="RAID notes" itemprop="url">RAID notes</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-06-05T13:11:48.000Z"> 2016-06-05</time>
+    <span class="post-count">字数 2k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h1 id="标题：程序员需要知道的-RAID-基本原理"><a href="#标题：程序员需要知道的-RAID-基本原理" class="headerlink" title="标题：程序员需要知道的 RAID 基本原理"></a>标题：程序员需要知道的 RAID 基本原理</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>RAID，全称为 redundant array of independent disks，是目前商用服务器常见的磁盘管理技术。作为软件开发人员，需要了解各级RAID的特性，以便根据需求做出做合适的选择。本文总结了常见的RAID级别的特性，包括如下内容：</p>
+<ul>
+<li>RAID 的基本作用</li>
+<li>各级 RAID 的基本原理</li>
+</ul>
+<h2 id="RAID-的基本作用"><a href="#RAID-的基本作用" class="headerlink" title="RAID 的基本作用"></a>RAID 的基本作用</h2><p>RAID 的一般有如下作用：</p>
+<ul>
+<li>数据冗余</li>
+<li>性能提升</li>
+</ul>
+<p>数据冗余是指把数据的校验信息存放在冗余的磁盘中，在某些磁盘数据损坏时，能从其他未损坏的磁盘中，重新构建数据。</p>
+<p>性能提升是指RAID能把多块独立的磁盘组成磁盘阵列，通过把数据切成分片的方式，使得读/写数据能走多块磁盘，从而提升性能。</p>
+<h2 id="各级-RAID-的基本原理"><a href="#各级-RAID-的基本原理" class="headerlink" title="各级 RAID 的基本原理"></a>各级 RAID 的基本原理</h2><p>根据 RAID 的冗余信息程度，切分数据的方式等不同，可以把 RAID 分成不同的级别，分别是</p>
+<ul>
+<li>RAID0</li>
+<li>RAID1</li>
+<li>RAID2</li>
+<li>RAID3</li>
+<li>RAID4</li>
+<li>RAID5</li>
+<li>RAID6</li>
+</ul>
+<p>接下来就讨论这些 RAID 级别的基本原理。</p>
+<h2 id="RAID0-的基本原理"><a href="#RAID0-的基本原理" class="headerlink" title="RAID0 的基本原理"></a>RAID0 的基本原理</h2><p>RAID0 设计的目标是为了提升读写性能，但并不带数据冗余信息。</p>
+<p><img src="/image/database/raid0.png" alt="RAID0"></p>
+<p>如上图，RAID0会把数据切成块，分别存储在N个磁盘上。当读数据时，如果要读的数据块比较大，分布在多次磁盘上，那么能同时从多块盘读数据；当写数据时，如果要写的数据块比较大，分布式在多块磁盘上，那么同时能从多块盘写数据。</p>
+<p>因为数据分布在多块盘上，当某块磁盘损坏时，整个RAID系统就不可用了。因此，N块盘的RAID0的特性如下：</p>
+<p>读性能最好情况下是单块盘的N倍<br>写性能最好情况下是单块盘的N倍<br>空间利用率为100%<br>不具有冗余信息，任何一块磁盘损坏，整个RAID不可用</p>
+<h2 id="RAID1-的基本原理"><a href="#RAID1-的基本原理" class="headerlink" title="RAID1 的基本原理"></a>RAID1 的基本原理</h2><p>RAID1 的设计目标是为每份数据都提供一份或多份冗余数据，其结构如下：</p>
+<p><img src="/image/database/raid1.png" alt="RAID1"></p>
+<p>如上图，RAID1中一个磁盘都有一个或多个冗余的镜像盘，所有磁盘的数据是一模一样的。RAID1读数据时，可以利用所有数据盘的带宽；写数据时，要同时写入数据盘和镜像盘，因此，需要等待最慢的磁盘写完成，写操作才完成，因此，写性能跟最慢的磁盘相当。N块盘的RAID1的特性如下：</p>
+<p>读性能最好情况下是原来的N倍<br>写性能跟最慢的磁盘相当<br>空间利用率1/N<br>N块盘，坏掉N-1块，RAID还能正常使用</p>
+<h2 id="RAID2-的基本原理"><a href="#RAID2-的基本原理" class="headerlink" title="RAID2 的基本原理"></a>RAID2 的基本原理</h2><p>RAID2 的设计目标是在RAID0级别的基础上，加了海明纠错码。</p>
+<p><img src="/image/database/raid2.png" alt="RAID2"></p>
+<p>如上图，前面四个盘是数据盘，后面三个盘是纠错码。RAID2读数据时，能同时使用多个数据盘的带宽；RAID2写数据时，除了写数据盘，还需要写校验盘，写性能会有下降。因此，N块盘的RAID2的特性如下：</p>
+<p>读性能不到原来的N倍，因为还有一部分是校验盘<br>写性能会有下降，因为每次都要写校验盘，受限于校验盘的数量<br>空间利用率小于100%，因为海明纠错码需要的冗余盘一般比数据盘的数量少<br>根据海明纠错码位数的不同，能容忍的坏盘数不同，具体信息可以参考海明码</p>
+<h2 id="RAID3-的基本原理"><a href="#RAID3-的基本原理" class="headerlink" title="RAID3 的基本原理"></a>RAID3 的基本原理</h2><p>RAID3 是把数据按照字节分别存在不同的磁盘中，并且最后一个磁盘提供纠错冗余，其结构如下：</p>
+<p><img src="/image/database/raid3.png" alt="RAID3"></p>
+<p>如上图，由于按照字节切分数据，读数据时，一定会同时从多个盘读数据，可以利用所有数据盘的带宽；写数据时，也会利用所有磁盘的带宽，但所有的写校验数据都会在一个盘，因此，写性能主要受限于校验盘。N快盘的RAID3的特性如下：</p>
+<p>读性能是N-1倍，其中一块盘是校验盘<br>写性能受限于校验盘的写性能<br>空间利用率为(N-1)/N<br>坏掉一块盘，RAID还能正常工作</p>
+<h2 id="RAID4"><a href="#RAID4" class="headerlink" title="RAID4"></a>RAID4</h2><p>RAID4 是把数据按照分块分别存在不同的磁盘中，并且最后一个磁盘提供纠错冗余，其结构如下：</p>
+<p><img src="/image/database/raid4.png" alt="RAID4"></p>
+<p>如上图，读数据时，当数据分布在多块盘时，能够利用多块数据盘的带宽；写数据时，如果数据分布在多快盘时，能利用所有磁盘带宽，但写校验数据只能在一块盘上，因此，写性能主要受限于校验盘。N块盘的RAID4的特性如下：</p>
+<p>读性能是N-1倍，其中一块盘是校验盘<br>写性能受限于校验盘的写性能<br>空间利用率为(N-1)/N<br>坏掉一块盘，RAID还能正常工作</p>
+<h2 id="RAID5"><a href="#RAID5" class="headerlink" title="RAID5"></a>RAID5</h2><p>RAID5 是把数据块按照分块分别存在不同的磁盘中，并且冗余信息也会分块分布在多块磁盘中，其结构如下：</p>
+<p><img src="/image/database/raid5.png" alt="RAID5"></p>
+<p>如上图，读数据时，当数据分布在多块盘时，能够利用多块数据盘的带宽；写数据时，如果数据分布在多块盘时，能利用所有数据盘带宽，同时写校验数据也分散在多块盘上，但因为要额外写入校验数据，因此，写数据的性能略微有所下降。N块盘的RAID5的特性如下：</p>
+<p>读性能是N倍<br>写性能略微弱于RAID0<br>空间利用率为(N-1)/N<br>坏掉一块盘，RAID还能正常工作</p>
+<h2 id="RAID6"><a href="#RAID6" class="headerlink" title="RAID6"></a>RAID6</h2><p>RAID6 是把数据块按照分块分别存在不同的磁盘中，并且冗余信息为两份奇偶校验码，分布在多块磁盘中，其结构如下：</p>
+<p><img src="/image/database/raid6.png" alt="RAID6"></p>
+<p>如上图，读数据时，当数据分布在多块盘时，能够利用多块数据盘的带宽；写数据时，如果数据分布在多块盘时，能利用多块数据盘带宽，同时写校验数据也分散在多块盘中，但因为要额外写入两份校验数据，因此，写数据的性能要略微下降。N块盘的RAID6的特性如下：</p>
+<p>读性能是N倍<br>写性能略微弱于RAID0<br>空间利用率为(N-2)/N<br>坏掉两块盘，RAID还能正常工作</p>
+<h2 id="各级RAID的对比"><a href="#各级RAID的对比" class="headerlink" title="各级RAID的对比"></a>各级RAID的对比</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">RAID级别  读性能 写性能 空间利用率   最大能容忍的坏盘数</span><br><span class="line">RAID0   单块盘的N倍  单块盘的N倍  100%    0</span><br><span class="line">RAID1   单块盘的N倍  最慢磁盘的性能 1/N N-1</span><br><span class="line">RAID2   不到单块盘的N倍    单盘的写入速度 * 校验盘的数量    不到100%  取决于海明纠错码位数</span><br><span class="line">RAID3   单块盘的N-1倍    校验盘的写入速度    (N-1)/N 1</span><br><span class="line">RAID4   单块盘的N-1倍    校验盘的写入速度    (N-1)/N 1</span><br><span class="line">RAID5   单块盘的N倍  略微弱于单块盘的N倍  (N-1)/N 1</span><br><span class="line">RAID6   单块盘的N倍  略微弱于单块盘的N倍，差于RAID5  (N-2)/N 2</span><br></pre></td></tr></table></figure>
+
+<p>一般地，RAID0容忍的坏盘数为0，风险太大，一般不常用；RAID1的信息冗余量很多，适合于对信息安全要求很高并且预算充足的场景；RAID2的控制器比较复杂，一般不常用；RAID3和RAID4由于其写入性能差，也不常用；RAID5由于读写性能、能容忍的坏盘数都比较均衡，因此，一般工业界经常使用的是RAID5；RAID6对于坏盘数容忍度较高，适合于对信息安全比较高的场景。</p>
+<p>本文来源：<br><a href="http://oserror.com/backend/raid-principle/" target="_blank" rel="noopener">http://oserror.com/backend/raid-principle/</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Database/">Database</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Database/core-techs-storage-raid/" data-title="RAID notes | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Linux/linux-zip-unzip/" title="zip and unzip in Linux">
+  <strong>Prev：</strong><br>
+  <span>
+  zip and unzip in Linux</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Database/core-techs-storage-ssd/" title="SSD notes">
+ <strong>Next：</strong><br>
+ <span>SSD notes
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

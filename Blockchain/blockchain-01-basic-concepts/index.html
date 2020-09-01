@@ -1,0 +1,798 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>第一章：基本概念介绍 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="区块区块链节点挖矿、矿工、矿场、矿池软分叉、硬分叉算力 hashrateICO去中心化TPS、吞吐量点对点网络公有链、私有链、联盟链智能合约DAODApps梅克尔树比特币数字签名，公钥、私钥共识算法结构化网络/非结构化网络Overlay &amp;amp; Underlay加密货币、虚拟货币、通证，数字证书主链/母链/子链/侧链以下是区块链领域中的一些常见术语，供有兴趣了解区块链技术的初学者参考。 1、地">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第一章：基本概念介绍">
+<meta property="og:url" content="https://juniway.net/Blockchain/blockchain-01-basic-concepts/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="区块区块链节点挖矿、矿工、矿场、矿池软分叉、硬分叉算力 hashrateICO去中心化TPS、吞吐量点对点网络公有链、私有链、联盟链智能合约DAODApps梅克尔树比特币数字签名，公钥、私钥共识算法结构化网络/非结构化网络Overlay &amp;amp; Underlay加密货币、虚拟货币、通证，数字证书主链/母链/子链/侧链以下是区块链领域中的一些常见术语，供有兴趣了解区块链技术的初学者参考。 1、地">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.412Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第一章：基本概念介绍">
+<meta name="twitter:description" content="区块区块链节点挖矿、矿工、矿场、矿池软分叉、硬分叉算力 hashrateICO去中心化TPS、吞吐量点对点网络公有链、私有链、联盟链智能合约DAODApps梅克尔树比特币数字签名，公钥、私钥共识算法结构化网络/非结构化网络Overlay &amp;amp; Underlay加密货币、虚拟货币、通证，数字证书主链/母链/子链/侧链以下是区块链领域中的一些常见术语，供有兴趣了解区块链技术的初学者参考。 1、地">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Blockchain/blockchain-01-basic-concepts/" title="第一章：基本概念介绍" itemprop="url">第一章：基本概念介绍</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2019-05-22T15:11:01.000Z"> 2019-05-22</time>
+    <span class="post-count">字数 6.3k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h4 id="区块"><a href="#区块" class="headerlink" title="区块"></a>区块</h4><h4 id="区块链"><a href="#区块链" class="headerlink" title="区块链"></a>区块链</h4><h4 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h4><h4 id="挖矿、矿工、矿场、矿池"><a href="#挖矿、矿工、矿场、矿池" class="headerlink" title="挖矿、矿工、矿场、矿池"></a>挖矿、矿工、矿场、矿池</h4><h4 id="软分叉、硬分叉"><a href="#软分叉、硬分叉" class="headerlink" title="软分叉、硬分叉"></a>软分叉、硬分叉</h4><h4 id="算力-hashrate"><a href="#算力-hashrate" class="headerlink" title="算力 hashrate"></a>算力 hashrate</h4><h4 id="ICO"><a href="#ICO" class="headerlink" title="ICO"></a>ICO</h4><h4 id="去中心化"><a href="#去中心化" class="headerlink" title="去中心化"></a>去中心化</h4><h4 id="TPS、吞吐量"><a href="#TPS、吞吐量" class="headerlink" title="TPS、吞吐量"></a>TPS、吞吐量</h4><h4 id="点对点网络"><a href="#点对点网络" class="headerlink" title="点对点网络"></a>点对点网络</h4><h4 id="公有链、私有链、联盟链"><a href="#公有链、私有链、联盟链" class="headerlink" title="公有链、私有链、联盟链"></a>公有链、私有链、联盟链</h4><h4 id="智能合约"><a href="#智能合约" class="headerlink" title="智能合约"></a>智能合约</h4><h4 id="DAO"><a href="#DAO" class="headerlink" title="DAO"></a>DAO</h4><h4 id="DApps"><a href="#DApps" class="headerlink" title="DApps"></a>DApps</h4><h4 id="梅克尔树"><a href="#梅克尔树" class="headerlink" title="梅克尔树"></a>梅克尔树</h4><h4 id="比特币"><a href="#比特币" class="headerlink" title="比特币"></a>比特币</h4><h4 id="数字签名，公钥、私钥"><a href="#数字签名，公钥、私钥" class="headerlink" title="数字签名，公钥、私钥"></a>数字签名，公钥、私钥</h4><h4 id="共识算法"><a href="#共识算法" class="headerlink" title="共识算法"></a>共识算法</h4><h4 id="结构化网络-非结构化网络"><a href="#结构化网络-非结构化网络" class="headerlink" title="结构化网络/非结构化网络"></a>结构化网络/非结构化网络</h4><h4 id="Overlay-amp-Underlay"><a href="#Overlay-amp-Underlay" class="headerlink" title="Overlay &amp; Underlay"></a>Overlay &amp; Underlay</h4><h4 id="加密货币、虚拟货币、通证，数字证书"><a href="#加密货币、虚拟货币、通证，数字证书" class="headerlink" title="加密货币、虚拟货币、通证，数字证书"></a>加密货币、虚拟货币、通证，数字证书</h4><h4 id="主链-母链-子链-侧链"><a href="#主链-母链-子链-侧链" class="headerlink" title="主链/母链/子链/侧链"></a>主链/母链/子链/侧链</h4><p>以下是区块链领域中的一些常见术语，供有兴趣了解区块链技术的初学者参考。</p>
+<p>1、地址(Addresses，加密数字货币地址)加密货币地址用于在网络上发送或接收交易。 地址通常表示为个数字字字符，但也可以表示为可扫描的QR码。</p>
+<p>2、协议分类账(Agreement ledger)是由两方或多方用来协商和达成协议的分布式分类账。</p>
+<p>3、Altcoin是“Bitcoin alternative”(比特币的替代品，或着说山寨版)的缩写。目前，大多数Altcoin都是比特币的分叉，通常比特币区块链的工作量证明(POW)算法有一些细微变化。最出名的Altcoin是莱特币。莱特币引入了原始比特币协议的变化，例如减少块生成时间，增加最大货币数量和不同的哈希算法。</p>
+<p>4、认证分类账(Attestation Ledgers)是分类账，提供持久的协议，承诺或声明记录，提供证据(证明)这些协议，承诺或陈述是人为作出的。</p>
+<p>5、ASIC是“专用集成电路”(Application Specific Integrated Circuit)的缩写。 通常，与GPU相比，ASIC专门用于挖矿，可能会节省大量能源。在比特币中，它们被设计为处理SHA-256散列问题以挖掘新的比特币。</p>
+<p>6、比特币(Bitcoin)是一个众所周知的加密货币，基于POW区块链。</p>
+<p>7、区块链(Blockchain)是一种分布式分类账，由不可更改的数字化记录的数据组成，称为数据块(更像是将数据整理成一张纸)。然后使用加密签名将每个块“链接”到下一个块。这允许块链像分类帐一样使用，可以由具有适当权限的任何人共享和访问。</p>
+<p>8、分组密码(Block cipher)是一种对文本进行加密(以产生密文)的方法，其中密码密钥和算法一次作为一组应用于数据块，而不是一次一个bit。</p>
+<p>9、块高度(Block height)是指块链中连接在一起的块的数量。例如，高度0即是第一块，也就是所谓的成因块。</p>
+<p>10、块奖励(Block reward)给予已成功散列一个事务块的矿工。块奖励可以是硬币和交易费用的混合，取决于所讨论的加密货币使用的策略，以及所有的硬币是否已经被成功开采。比特币网络的当前块奖励是每个块有25个比特币。</p>
+<p>11、中央分类帐(Central ledger)是指由中央机构维护的分类帐。</p>
+<p>12、链式链接(Chain linking)是将两个区块链彼此连接的过程，从而允许在链之间进行交易。这将允许像比特币这样的区块链与其他侧链进行沟通，允许它们之间的资产交换。</p>
+<p>13、密码(cipher)是用于信息加密和/或解密的算法。在通用语言中，“密码”也被用来指代加密消息，也被称为“代码”(code)。</p>
+<p>14、确认(Confirmation)意味着区块链交易已经被网络验证。这是在POW系统(比如比特币)中所谓挖掘的过程发生的。一旦交易被确认，不能被撤销或双重消费。交易的确认越多，执行双重支出攻击就越困难。</p>
+<p>15、共识流程(Consensus Process)是一组对等点，负责维护分布式账本的使用，以达到分类账内容的共识。</p>
+<p>16、一个联盟区块链(Consortium blockchain)是一个共识过程由一组预先选定的节点控制的区块链;例如，可以想象一个由15个金融机构组成的联盟，每个联盟都运行一个节点，其中必须有十个成员在每个块上签字，才能使该块有效。阅读区块链的权利可能是公开的，也可能仅限于参与者。还有一些混合路由，例如块的根哈希值与API一起公开，允许公众成员进行有限数量的查询，并获得区块链状态某些部分的密码证明。这些区块链可能被认为是“半分布式的”。</p>
+<p>17、密码分析(Cryptoanalysis)是研究获得加密信息的含义的方法，而不需要访问通常需要的秘密信息。</p>
+<p>18、加密数字货币(Cryptocurrency)是基于数学的数字货币形式，其中使用加密技术来调节货币单位的生成并验证资金的转移。此外，加密货币独立于中央银行运作。</p>
+<p>19、密码使用法(Cryptography)是指加密和解密信息的过程。</p>
+<p>20、dApp是一个分散的应用程序，必须完全开放源代码，它必须自主运行，并且没有实体控制其大部分代币。</p>
+<p>21、一个DAO(分散的自治组织)可以被认为是一个没有任何人的参与下运行的公司，在一套不可变的商业规则的控制之下。</p>
+<p>22、DAO(是的，与一个DAO有区别)是建立在以太坊上的一个风险投资基金，它引发了一次软/硬分叉。</p>
+<p>23、解密(Decryption)是将密文变成纯文本的过程。</p>
+<p>24、加密(Encryption)是将明文消息(明文)转换成数据流(密文)的过程，使其看起来像一个无意义的随机的比特序列。</p>
+<p>25、以太(Ether)是以太坊区块链的原生代币，它用于支付交易费用、矿工奖励和网络上的其他服务。</p>
+<p>26、以太坊(Ethereum)是一个基于区块链技术的开放式软件平台，支持开发人员撰写智能合约，构建和部署分散式应用程序。</p>
+<p>27、以太坊经典(Ethereum Classic)是现有加密数字货币的分拆，经过硬分叉后的以太坊。</p>
+<p>28、EVM代码是以太坊区块链上的帐户可以包含代码的编程语言。每次向该帐户发送消息时，都会执行与帐户关联的EVM代码，且可以读取/写入存储并自行发送消息。</p>
+<p>29、数字商品(Digital commodity)是一种稀缺的，可电子转让的，无形的，具有市场价值的虚拟商品。</p>
+<p>30、数字身份(Digital identity)是由个人，组织或电子设备在网络空间中采用或声明的在线或网络身份。</p>
+<p>31、分布式账本(Distributed ledger)是分布在多个站点，国家或机构中的一种数据库。记录一个接一个地存储在连续分类账中。分布式账本数据可以通过“许可”或“不许可”来控制谁可以查看它。</p>
+<p>32、难度(Difficulty)，在“POW”挖掘中，验证区块链网络中的区块是非常困难的。在比特币网络中，采矿难度调整为每隔2016个块进行验。这是为了保持块验证时间在十分钟。</p>
+<p>33、双倍支出(Double spend)指的是比特币网络中的一种情况，即有人试图同时向两个不同的收款人发送比特币交易。但是，一旦比特币交易得到确认，就几乎不可能将花费翻倍。特定交易的确认越多，双倍花费比特币就越难。</p>
+<p>34、菲亚特货币(Fiat currency)是指政府宣布为履行财务义务而有效的任何货币(如美元或欧元)。</p>
+<p>35、分叉(Fork)指向同一个父块的2个区块被同时生成的情况，某些部分的矿工看到其中一个区块，其他的矿工则看到另外一个区块。这导致2种区块链同时增长。通常来说，随着在一个链上的矿工得到幸运并且那条链增长的话，所有的矿工都会转到那条链上，数学上分几乎会在4个区块内完结自己。</p>
+<p>36、气体(Gas)是一个与计算步骤大致相当的测量法(以太坊)。每笔交易都需要包括一个Gas限制和一个愿意为每个Gas支付的费用;矿工可以选择进行交易和收费。每个操作都有一个Gas支出;对于大多数操作来说，支出范围在3-10，虽然一些昂贵的操作花费高达700，但一般这种情况下，交易本身花费高达21000。</p>
+<p>37、减半(Halving)：比特币的供应有限，这使得它们成为稀缺的数字商品。将要发行的比特币总量为2100万。每块产生的比特币数量每四年下降50%。这就是所谓的“减半”，最后的减半将在2140年完成。</p>
+<p>38、硬分叉(Hardfork)是对区块链协议的改变，使先前无效的块/交易有效，因此要求所有用户升级其客户端。是当比特币协议规则发生改变，旧节点拒绝接受由新节点创造的区块的情况。违反规则的区块将被忽视，矿工会按照他们的规则集，在他们最后见证的区块之后创建区块。</p>
+<p>39、Hashcash是一个用于限制垃圾邮件和拒绝服务攻击的POW系统，最近以其在比特币(和其他加密货币)中的使用而成为挖掘算法的一部分。</p>
+<p>40、哈希率(Hashrate)是比特币矿工在给定的时间段(通常是一秒)内可执行的哈希值。</p>
+<p>41、首次代币发行(ICO)是一种事件，指新的加密数字货币从总体基础币出售高级代币以换取前期资本。 ICO经常被用于新的加密数字货币的开发者来筹集资金。</p>
+<p>42、分类账(Ledger)是一个仅追加记录的存储器，记录是不可变的，可能比财务记录拥有更多的一般信息。</p>
+<p>43、莱特币(Litecoin)是基于Scrypt 工作量证明网络的点对点加密货币。有时被称为比特币黄金中的白银。</p>
+<p>44、挖掘(Mining)是验证交易并将其添加到区块链的过程。这个使用计算硬件解决密码问题的过程也触发了加密货币的发行。</p>
+<p>45、多重签名(multisig)地址允许多方要求多个密钥授权交易。在创建地址时同意所需的签名数量。多重签名地址对盗窃具有更大的抵抗力。</p>
+<p>46、节点(Node)是连接到区块链网络的任何计算机。</p>
+<p>47、完整节点(Full node)是完全实施区块链的所有规则的节点。</p>
+<p>48、点对点(P2P)是指在高度互连的网络中至少两方之间发生的去中心化交互。 P2P参与者通过一个中介点直接处理彼此。</p>
+<p>49、被许可的分类帐(Permissioned ledger)是行动者必须有权访问的分类帐。被许可的分类帐可能有一个或多个所有者。当添加新记录时，分类账的完整性将通过有限的共识流程进行检查。这是由信任的行动者(例如政府部门或银行)执行的，举个例子——未被许可的分类账使用的共识形成过程会使得维持一个共享记录要简单得多。</p>
+<p>50、被许可的区块链(Permissioned blockchain)提供了高度可验证的数据集，因为共识流程创建了数字签名，各方都可以看到。</p>
+<p>51、私钥(Private key)是一串数据，表明您可以访问特定钱包中的比特币。私钥可以被认为是一个密码;私钥绝不能透露给任何人，因为密钥允许你通过加密签名从你的比特币钱包里支付比特币。</p>
+<p>52、权威证明(Proof of Authority)是私人区块链中的一种共识机制，它基本上为一个客户(或特定数量的客户)提供一个特定的私人密钥，使得区块链中的所有区块都成为可能。</p>
+<p>53、权益证明(Proof of Stake)是工作量证明系统的替代方案，在这种系统中，您使用加密货币的现有股份(您持有货币的数量)来计算您可以挖掘的货币数量。该机制是当创造一个区块时，矿工需要创建一个“币权”交易，交易会按设定的比例把一些币发送给矿工本身，类似利息。</p>
+<p>54、工作量证明(Proof of Work)是一个将挖掘能力与计算能力联系起来的系统。块必须被散列，这本身就是一个简单的计算过程，但是在散列过程中增加了一个额外的变量，使其变得更加困难。当一个块被成功散列时，散列必须花费一些时间和计算量。因此，散列块被认为是工作量的证明。</p>
+<p>55、协议(Protocol)是描述如何传输或交换数据的正式规则集，特别是在整个网络中。</p>
+<p>56、Ripple是建立在分布式账本上的支付网络，可以用来转账任何货币。该网络由支付节点和由当局运营的网关组成。付款是使用一系列的借条进行的，网络基于信任关系。</p>
+<p>57、Scrypt是SHA-256工作系统的一个替代证明，旨在对CPU和GPU矿工特别友好，然而对ASIC矿工没有什么优势。</p>
+<p>58、SHA 256是用作比特币工作证明系统基础的密码函数。</p>
+<p>59、智能合约(Smart contract)是其条款以计算机语言记录而非法定语言的合约。智能合约可以由计算系统自动执行，例如合适的分布式账本系统。智能合约由直接在复制的网络上运行的程序组成。智能合约使用一种编程语言在区块链上对业务规则或合同进行编码，由网络中的所有参与者执行。这些程序在 Hyperledger Fabric 中称为链代码，它们被复制到网络中的每个节点，并由拥有权限的各方调用来传输资产。</p>
+<p>60、软分叉(Softfork)是对比特币协议的一个修改，其中只有以前有效的块/事务被无效。由于旧节点会将新块识别为有效，所以软分叉是向后兼容的。这种分叉只需要大量矿工来升级执行新规则。是当比特币协议规则发生改变，旧的节点并不会意识到规则是不同的，它们将遵循改变后的规则集，继续接受由新节点创造的区块。矿工们可能会在他们完全没有理解，或者验证过的区块上进行工作。</p>
+<p>61、流密码(Stream ciphers)是一种对文本(密文)进行加密的方法，其中密码密钥和算法一次一bit地应用于数据流中的每个二进制数字。</p>
+<p>62、代币(Token)是可以被获取的东西的数字身份。</p>
+<p>63、无代币分类帐(Tokenless ledger)是指不需要本地货币操作的分布式分类帐。</p>
+<p>64、交易区块(Transaction block)是比特币网络上的交易集合，集合成一个块，然后可以将其散列并添加到区块链中。</p>
+<p>65、交易费用(Transaction fees)是对通过比特币网络发送的一些交易征收的小额费用。交易费用授予那些成功散列包含相关交易的块的矿工。</p>
+<p>66、像比特币这样的未经许可的分类账(Unpermissioned ledgers)没有单一的所有者——事实上，它们不能被拥有。未经许可的分类帐的目的是允许任何人向分类帐提供数据，并为拥有分类账的每个人提供相同的副本。</p>
+<p>67、钱包(Wallet)是一个包含私钥集合的文件。</p>
+<p>以上只是初级/中级水平上的常见区块链术语，且由于中英文差异可能会出现错误，若有所遗漏或错误请在下方评论区补充和指正。</p>
+<p>68、区块链应用</p>
+<p>一个区块链应用需要 3 个相互依赖的组件：面向用户的应用、智能合约和账本。顶层是面向用户的应用，用于满足网络参与者的需求。该应用让用户调用智能合约在业务网络中触发交易。智能合约 封装网络的业务逻辑：资产、所有权和传输方式。每次调用智能合约，都会在网络中创建一个交易并更新账本。账本 持有智能合约数据的当前值(如 vehicleOwner=Daisy)，并分发到整个网络。</p>
+<p>69、零知识证明</p>
+<p>指的是证明者能够在不向验证者提供任何有用的信息的情况下，使验证者相信某个论断是正确的。</p>
+<p>“零知识证明”实质上是一种涉及两方或更多方的协议，即两方或更多方完成一项任务所需采取的一系列步骤。证明者向验证者证明并使其相信自己知道或拥有某一消息，但证明过程不能向验证者泄漏任何关于被证明消息的信息。</p>
+<p>70、难度炸弹</p>
+<p>为了确保以太坊的矿工能加入到新链条中来，开发团队引入了”难度炸弹”机制。它会使难度系数呈指数增加以至于让挖矿变得几乎不可能的。</p>
+<p>71、挖矿</p>
+<p>挖矿是反复总计交易，构建区块，并尝试不同的随机数，直到找到一个随机数可以符合工作证明的条件的过程。 如果一个矿工走运并产生一个有效的区块的话，会被授予的一定数量的币（区块中的交易全部费用）作为奖励。而且所有的矿工开始尝试创建新的区块，这个新区块 包含作为父块的最新的区块的散列。</p>
+<p>72、工作量证明</p>
+<p>一种共识机制，该机制是一方（通常称为证明人）出示计算结果，这个结果众所周知是很难计算的但却很容易验证的。通过验证这个结果，任何人都能够确认证明人执行了一定量的计算工作量来产生这个结果。</p>
+<p>73、闪电网络</p>
+<p>一个可扩展的微支付通道网络。交易双方若在区块链上预先设有支付通道，就可以多次、高频、双向地通过轧差方式实现瞬间确认的微支付；双方若无直接的点对点支付通道，只要网络中存在一条连通双方的、由多个支付通道构 成的支付路径，闪电网络也可以利用这条支付路径实现资金在双方之间的可靠转移。</p>
+<p>Block Explorer（区块资源管理器）</p>
+<p>区块资源管理器是一种用来来查看区块上的所有交易（过去和当前）在线工具。 它们提供有用的信息，如网络哈希率和交易增长率。</p>
+<p>Block Height（区块高度）</p>
+<p>连接在区块链上的块数</p>
+<p>Block Reward 积分奖励</p>
+<p>它是在采矿期间成功计算区块中的哈希的矿工的一种激励形式。 在区块链上的交易验证的过程中产生新的币，并且矿工被奖励其中的一部分。</p>
+<p>Central Ledger 中央帐簿</p>
+<p>由中央机构维持的分类帐。</p>
+<p>Confirmation（确认）</p>
+<p>去中心化的一次交易，将其添加到blockchain的成功确认</p>
+<p>Consensus（共识）</p>
+<p>当所有网络参与者同意交易的有效性时，达成共识，确保分布式账本是彼此的精确副本。</p>
+<p>Cryptocurrency 加密货币</p>
+<p>也称为令牌，加密货币是数字资产的呈现方式。</p>
+<p>Cryptographic Hash Function（加密哈希函数）</p>
+<p>密码哈希产生从可变大小交易输入固定大小和唯一哈希值。 SHA-256计算算法是加密散列的一个例子。</p>
+<p>Dapp（去中心化应用程序）是一种开源的应用程序，自动运行，将其数据存储在区块链上，以密码令牌的形式激励，并以显示有价值证明的协议进行操作。</p>
+<p>DAO（去中心化自治组织）</p>
+<p>去中心化自治组织可以被认为是在没有任何人为干预的情况下运行的公司，并将一切形式的控制交给一套不可破坏的业务规则。</p>
+<p>Distributed Ledger（分布式账本）</p>
+<p>分布式账本，数据通过分布式节点网络进行存储。 分布式账本不是必须具有自己的货币，它可能会被许可和私有。</p>
+<p>Distributed Network（分布式网络）</p>
+<p>处理能力和数据分布在节点上而不是拥有集中式数据中心的一种网络。</p>
+<p>Difficulty（容易程度）</p>
+<p>这是指成功挖掘交易信息的数据块的容易程度。</p>
+<p>Digital Signature 数字加密<br>通过公钥加密生成的数字代码，附加到电子传输的文档以验证其内容和发件人的身份</p>
+<p>Double Spending 双重支付<br>当花费一笔钱多于一次支付限额时，就会发生双重支付</p>
+<p>Ethereum（以太坊）<br>Ethereum是一个基于blockchain的去中心化运行智能合约的平台，旨在解决与审查，欺诈和第三方干扰相关的问题。</p>
+<p>EVM（以太坊虚拟机）<br>Ethereum虚拟机（EVM）是一个图灵完整的虚拟机，允许任何人执行任意EVM字节码。 每个Ethereum节点都运行在EVM上，以保持整个块链的一致性。</p>
+<p>Fork（分支）<br>分支可以创建区块链的交叉版本，在网络不同的地方兼容的运行两个区块链。</p>
+<p>Genesis Block 创世区块</p>
+<p>区块链的第一个区块。</p>
+<p>Hard Fork（硬分支）<br>一种使以前无效的交易有效的分支类型，反之亦然。 这种类型的分支需要所有节点和用户升级到最新版本的协议软件。</p>
+<p>Hash（哈希）<br>对输出数据执行散列函数的行为。 这是用于确认货币交易。</p>
+<p>Hash Rate（哈希率）<br>采矿钻机的性能测量值以秒为单位表示。</p>
+<p>Hybrid PoS/PoW（混合PoS / PoW）</p>
+<p>POW（Proof of Work，工作证明）是指获得多少货币，取决于你挖矿贡献的工作量，电脑性能越好，分给你的矿就会越多。POS（Proof of Stake，股权证明）根据你持有货币的量和时间进行利息分配的制度，在POS模式下，你的“挖矿”收益正比于你的币龄，而与电脑的计算性能无关。</p>
+<p>混合PoS / PoW可以将网络上的共享分发算法作为共享证明和工作证明。 在这种方法中，可以实现矿工和选民（持有者）之间的平衡，由内部人（持有人）和外部人（矿工）创建一个基于社区的治理体系。</p>
+<p>Mining（挖矿）<br>挖矿是验证区块链交易的行为。 验证的必要性通常以货币的形式奖励给矿工。 在这个密码安全的繁荣期间，当正确完成计算，采矿可以是一个有利可图的业务。 通过选择最有效和最适合的硬件和采矿目标，采矿可以产生稳定的被动收入形式。</p>
+<p>Multi-Signature 多重签名<br>多重签名地址需要一个以上的密钥来授权交易，从而增加了一层安全性。</p>
+<p>Node（节点）<br>由区块链网络的参与者操作的分类帐的副本。</p>
+<p>Oracles（数据库）<br>Oracle通过向智能合约提供数据，它现实世界和区块链之间的桥梁。</p>
+<p>参考：<br><a href="http://graphics.reuters.com/TECHNOLOGY-BLOCKCHAIN/010070P11GN/index.html" target="_blank" rel="noopener">http://graphics.reuters.com/TECHNOLOGY-BLOCKCHAIN/010070P11GN/index.html</a><br><a href="https://t.cj.sina.com.cn/articles/view/6335372514/1799e1ce200100531v" target="_blank" rel="noopener">https://t.cj.sina.com.cn/articles/view/6335372514/1799e1ce200100531v</a></p>
+<p><a href="https://yeasy.gitbooks.io/blockchain_guide/content/appendix/terms.html" target="_blank" rel="noopener">https://yeasy.gitbooks.io/blockchain_guide/content/appendix/terms.html</a></p>
+<p>第 1 页 区块链小知识第（11）话：<br>共识机制的相关定义介绍Ⅱ•<br>第 2 页 验证池机制/ POOL•<br>第 3 页 51% 攻击/ 51% attack•<br>第 4 页 双重支付/ 双重花费/ 双花/ Double Spending•<br>第 5 页 拜占庭将军问题/ Byzantine Generals Problem / BGP•<br>第 6 页 改进型实用拜占庭容错/ Practical Byzantine Fault Tolerance / PBFT•<br>第 7 页 授权拜占庭容错算法/ Delegated Byzantine Fault Tolerance / dBFT•<br>第 8 页 联邦拜占庭协议/ Federated Byzantine Agreement /</p>
+<p><a href="http://www.lianmenhu.com/blockchain-1266-1" target="_blank" rel="noopener">http://www.lianmenhu.com/blockchain-1266-1</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Blockchain/">Blockchain</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Blockchain/blockchain-01-basic-concepts/" data-title="第一章：基本概念介绍 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Blockchain/blockchain-02-consensus-algorithms/" title="第二章：共识算法介绍">
+  <strong>Prev：</strong><br>
+  <span>
+  第二章：共识算法介绍</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Blockchain/blockchain-03-security-issues/" title="第三章：区块链的安全风险">
+ <strong>Next：</strong><br>
+ <span>第三章：区块链的安全风险
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

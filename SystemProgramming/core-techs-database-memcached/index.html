@@ -1,0 +1,759 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Memcached Notes | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="简介memcached 有以下特性：  协议简单(ascii 或 binary 协议) 基于 libevent 事件处理 内置的内存存储方式 不互相通信的分布式(由客户端程序负责分布式) 基于 LRU(least recently used)算法自动删除不使用的缓存  memcached 事件模型memcached 使用 libevent 作为其底层的网络库。 memcached 使用 maste">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Memcached Notes">
+<meta property="og:url" content="https://juniway.net/SystemProgramming/core-techs-database-memcached/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="简介memcached 有以下特性：  协议简单(ascii 或 binary 协议) 基于 libevent 事件处理 内置的内存存储方式 不互相通信的分布式(由客户端程序负责分布式) 基于 LRU(least recently used)算法自动删除不使用的缓存  memcached 事件模型memcached 使用 libevent 作为其底层的网络库。 memcached 使用 maste">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/database/slab_allocator.png">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.417Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Memcached Notes">
+<meta name="twitter:description" content="简介memcached 有以下特性：  协议简单(ascii 或 binary 协议) 基于 libevent 事件处理 内置的内存存储方式 不互相通信的分布式(由客户端程序负责分布式) 基于 LRU(least recently used)算法自动删除不使用的缓存  memcached 事件模型memcached 使用 libevent 作为其底层的网络库。 memcached 使用 maste">
+<meta name="twitter:image" content="https://juniway.net/image/database/slab_allocator.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/SystemProgramming/core-techs-database-memcached/" title="Memcached Notes" itemprop="url">Memcached Notes</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-07-22T15:11:01.000Z"> 2016-07-22</time>
+    <span class="post-count">字数 4.4k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>memcached 有以下特性：</p>
+<ul>
+<li>协议简单(ascii 或 binary 协议)</li>
+<li>基于 libevent 事件处理</li>
+<li>内置的内存存储方式</li>
+<li>不互相通信的分布式(由客户端程序负责分布式)</li>
+<li>基于 LRU(least recently used)算法自动删除不使用的缓存</li>
+</ul>
+<h2 id="memcached-事件模型"><a href="#memcached-事件模型" class="headerlink" title="memcached 事件模型"></a>memcached 事件模型</h2><p>memcached 使用 libevent 作为其底层的网络库。</p>
+<p>memcached 使用 master-worker 的方式, 以多线程对外提供服务, 主线程监听端口建立连接, 然后顺序分配给各个工作线程(对应工具的 -t 选项). 每个线程都有一个 event loop, 它们可以服务于不同的客户端. master 线程和 worker 线程之间使用管道通信, 每个工作的线程都会创建一个管道来保存写端和读端, 并将读端加入 event loop, 监听可读事件。多线程的模型可以充分发挥多核主机的优势.</p>
+<h2 id="memcached-内存分配"><a href="#memcached-内存分配" class="headerlink" title="memcached 内存分配"></a>memcached 内存分配</h2><p>memcached 默认情况下采用了 Slab Allocator 的机制分配和管理内存. 在该机制出现之前内存分配简单的通过 malloc 和 free 来管理所有的记录,旧的方式会导致产生很多内存碎片, 加重机器管理内存的负担, 甚至有可能导致操作系统比 memcached 进程本身还慢, Slab Allocator 则解决了该问题.</p>
+<p>Slab 的基本原理是按照预先规定的大小, 将分配的内存分割成特定长度的块(chunk), 以解决内存碎片的问题。这也意味着存取记录的时候可以减少内存分配的次数, 有点类似线程池/内存池的感觉。当往 memcache 中存储对象时，memcache 并不是简单的按对象大小来分配内存，因为这种情况下会导致内存碎片，加重操作系统内存管理器的负担。memcache 采用的是slab allocation 的内存分配策略，如下图所示：</p>
+<p><img src="/image/database/slab_allocator.png" alt=""></p>
+<p>这张图片里面涉及了slab_class、slab、page、chunk四个概念，它们之间的关系是：</p>
+<p>1、Memcache 将内存空间分为一组slab<br>2、每个 slab 下又有若干个 page，每个 page 默认是 1M，如果一个 slab 占用 100M 内存的话，那么这个 slab 下应该有 100个page<br>3、每个 page 里面包含一组 chunk，chunk 是真正存放数据的地方，同一个 slab 里面的 chunk 的大小是固定的<br>4、有相同大小 chunk 的 slab 被组织在一起，称为 slab_class</p>
+<p>Slaballocation的基本原理是按照预先规定的大小，将分配的内存以page为单位进行分割，默认情况下一个page是1M，可以通过-I参数在启动时指定，分割成各种尺寸的块(chunk)，并把尺寸相同的块分成组(chunk的集合)，如果需要申请内存时，memcached会划分出一个新的page并分配给需要的slab区域。page一旦被分配在重启前不会被回收或者重新分配，以解决内存碎片问题。</p>
+<p>Slab 的原理也比较简单, 是将分配的内存分割成各种尺寸的块(chunk), 且把尺寸相同的 chunk 分成组(chunk 集合), 一个组称为 slab class.<br>Slab class 的主要术语包括以下：<br>page: 分配给 Slab 的内存空间, 默认是 1MB, 分配给 slab 之后根据 slab 大小分成 chunk.<br>chunk: 用于缓存记录的内存空间.<br>slab class: 特定大小的 chunk 的组.</p>
+<p>由此可以看出, 三者之间在内存分配上的关系为 slab class -&gt; page -&gt; chunk, 比如以下信息：<br>$ memcached-tool 127.0.0.1:11211 display</p>
+<h1 id="Item-Size-Max-age-Pages-Count-Full-Evicted-Evict-Time-OOM"><a href="#Item-Size-Max-age-Pages-Count-Full-Evicted-Evict-Time-OOM" class="headerlink" title="Item_Size  Max_age   Pages   Count   Full?  Evicted Evict_Time OOM"></a>Item_Size  Max_age   Pages   Count   Full?  Evicted Evict_Time OOM</h1><p>1      96B         0s       1       0      no        0        0    0<br>2     120B   2417392s      30  257107      no        0        0    0</p>
+<p>该 memcached 内存中, slab class 1 的 chunk 大小为 96 字节, 只分配了一个 page(1MB), 里面的记录数为 0, slab class 2 的 chunk 大小为 120 字节, 一共 30 个 page(约 30MB), 里面的记录数为 257107 个. 我们通过简单计算就可以得知, 30MB ~= 257107 * 120B. 在达到 30M 上线的时候, 如果再增加 key-value 值, 则直接分配一个 page 给 slab class 2, 这就是预分配的功能. 所以 Slab Allocation 的构造图大致如下：<br>       slab class 1         slab class 2<br>      +————-+     +—————+<br>      | 96B  | 96B  |     |  120B  | 120B |<br>      +——+——+     +——–+——+<br>      | 96B  |more..|     |  120B  |more..|<br>      +————-+     +—————+</p>
+<pre><code> slab class 3         slab class 4
++-------------+     +---------------+
+| 152B | 152B |     | 192B  | 192B  |
++------+------+     +-------+-------+
+| 152B |more..|     | 192B  |more.. |
++-------------+     +---------------+
+.....</code></pre><p>每个 slab class 的大小按照增长因子(-f 选项, 默认 1.25)增加,比如上述的 slab 1 默认为 96 字节, 那么 slab 2 则为 96*1.25 = 120 字节, 以此类推. 另外 slab allocator 还有重复使用已分配内存的目的. 也就是说, 分配的到内存不会释放, 而是重复利用.</p>
+<p>Slab的内存分配具体过程如下：<br>Memcached在启动时通过-m参数指定最大使用内存，但是这个不会一启动就占用完，而是逐步分配给各slab的。如果一个新的数据要被存放，首先选择一个合适的slab，然后查看该slab是否还有空闲的chunk，如果有则直接存放进去；如果没有则要进行申请，slab申请内存时以page为单位，无论大小为多少，都会有1M大小的page被分配给该slab(该page不会被回收或者重新分配，永远都属于该slab)。申请到page后，slab会将这个page的内存按chunk的大小进行切分，这样就变成了一个chunk的数组，再从这个chunk数组中选择一个用于存储数据。若没有空闲的page的时候，则会对改slab进行LRU，而不是对整个memcache进行LRU。</p>
+<p>接下来我们通过一组memcache命令来查看memcache的内存分配策略，首先通过telnet命令连接上mencached服务器，通过stats slabs命令我们可以看到memcache的slab信息，从中里我们可以看到，一共有7个在使用中的slab，各个字段的含义如下：<br>chunk_size:slab中每个chunk的大小，这也是该slab能存储的最大item size上限</p>
+<p>chunks_per_page:每个page中chunk数量 chuans_per_size = page大小/chunk_size</p>
+<p>total_pages:该slab中的page数量</p>
+<p>total_chunks:该slab中的chunk总数</p>
+<p>used_chunks:已经使用过的chunk数量</p>
+<p>free_chunks:未使用的chunk数量</p>
+<p>total_malloced:实际已经分配的总内存数，这个数值决定memcache还能申请多少内存</p>
+<p>通过stats命令可以查看memcache能申请的总内存大小。</p>
+<p>limit_maxbytes表示memcache能申请的最大内存数，单位为byte，默认为64m。</p>
+<p>slab 缓存记录的原理</p>
+<p>memcached 会根据收到数据的大小选择合适的 slab class, slab 内保存着空闲的 chunk 列表, memcached 根据这些列表选择合适的 chunk, 然后将数据缓存到该 chunk 中. 如下图所示, 比如需要缓存 100 字节的记录, 则可以选择大小为 120B 的 chunk, 最后存到 slab class 2 中.</p>
+<pre><code>     Slab classes
++----------------+
+| class 1 (96B)  |
++----------------+</code></pre><p>  +———-+   +–| class 2 (120B) |<br>  | 100 byte |  /   +—————-+<br>  +———-+      | class 3 (152B) |<br>                    +—————-+<br>                    |  ……        |<br>                    +—————-+</p>
+<p>slab allocator 的缺点</p>
+<p>尽管 slab 很好的解决了内存碎片的问题, 但该机制也给 memcached 带来了新的问题. 比如上述的缓存记录原理一节中, 由于分配的 chunk 都是固定的长度 120 字节, 将 100 字节存到改 chunk 中之后, 剩余的 20 字节就会被浪费, 如下:<br>      |   120 bytes chunk   |<br>      +————-+——-+<br>      | 100 bytes   | …   |<br>      +————-+——-+</p>
+<p>该问题还没有比较完美的解决方案, 不过应用程序如果能预先知道数据的大小, 只要尽力选择合适的 chunk, 就可以减少内存浪费, 比如 110 字节的数据都保存到 120字节的 chunk 中. 下面小节介绍的增长因子则能较好的减少内存浪费.</p>
+<p>使用增长因子(growth factor)调优</p>
+<p>上述小节中提到了增长因子(-f 选项), 此功能可以用来调节不同 slab class 之间 chunk 的大小差别, 默认为 1.25. 比如以下结果:</p>
+<p>$ memcached-tool 127.0.0.1:11212 display</p>
+<h1 id="Item-Size-Max-age-Pages-Count-Full-Evicted-Evict-Time-OOM-1"><a href="#Item-Size-Max-age-Pages-Count-Full-Evicted-Evict-Time-OOM-1" class="headerlink" title="Item_Size  Max_age   Pages   Count   Full?  Evicted Evict_Time OOM"></a>Item_Size  Max_age   Pages   Count   Full?  Evicted Evict_Time OOM</h1><p>  1      96B   2327514s       1       2      no        0        0    0<br>  2     120B   2071695s       3    6981      no        0        0    0<br>  3     152B   1038377s      23   90100      no        0        0    0<br>  4     192B         0s       1       0      no        0        0    0<br>  5     240B   2327378s       1      28      no        0        0    0<br>  6     304B   2313765s       1       1      no        0        0    0<br>  7     384B   2326507s       1       3      no        0        0    0<br>  8     480B   2310076s       1       1      no        0        0    0<br>  9     600B   2327669s       1       8      no        0        0    0<br> 10     752B   2327425s       1      47      no        0        0    0</p>
+<p>从 class 1 的 chunk 大小 96 字节开始, 增长因子为 1.25，后续的 class 2 的 chunk 大小即为 96<em>1.25 = 120, class 3 的即为 120</em>1.25 = 152 等等. 从示例中我们看到, memcached 中的记录都保存在于 class 2 和 class 3 中. 这意味着大部分数据在 96 ~ 152 字节之间. 假如这里有很多 100 字节和 125 字节的记录的话, 可想而知会有很多的内存被浪费掉, 这个时候, 如果我们调节增长因子为 1.1, 则会减少很多内存的浪费, 如下:</p>
+<h1 id="Item-Size"><a href="#Item-Size" class="headerlink" title="Item_Size"></a>Item_Size</h1><p>  1        96B<br>  2        112B<br>  3        128B</p>
+<p>调整为 1.1 的因子后, 一个 100 字节的记录比调整前少浪费了 8 字节, 一个 125 字节的记录比调整前少浪费了 24 字节. 由此可见在内存使用很紧张的情况下, 调整增长因子也能节省相当多的内存.</p>
+<h2 id="如何处理连接过多的问题"><a href="#如何处理连接过多的问题" class="headerlink" title="如何处理连接过多的问题"></a>如何处理连接过多的问题</h2><p>这个问题在一些短连接的应用中较为突出, 比如使用短连接连接 memcached 的 php 应用, 每一次请求 php 就会新起一个进程连接 memcached,而每起一个进程则消耗一个本地端口, 因为本地端口为两个字节所以最大就是 65535, 如果在并发较大的情况下, 很容易发生本地端口不够用的情况。这个时候程序可以考虑通过 memcached socket 连接 memcached, 但是这种解决方案只适用于 memcached 和应用在一台机器上,如果不在一台机器上则可以考虑官方文档中介绍的使用 udp 协议连接, 而不是 tcp 协议连接, 不过在数据包较大的情况下会引起 udp 连接丢包的现象,这需要应用程序做一个很好的把控, 最好上线前做好测试。</p>
+<h2 id="查看-slabs-的使用状况"><a href="#查看-slabs-的使用状况" class="headerlink" title="查看 slabs 的使用状况"></a>查看 slabs 的使用状况</h2><p>可以使用 memcached 作者编写的 memcahced-tool 工具查看 slabs 的使用状况, 比如上述示例中介绍的命令:<br>$ memcached-tool 127.0.0.1:11211 display</p>
+<h1 id="Item-Size-Max-age-Pages-Count-Full-Evicted-Evict-Time-OOM-2"><a href="#Item-Size-Max-age-Pages-Count-Full-Evicted-Evict-Time-OOM-2" class="headerlink" title="Item_Size  Max_age   Pages   Count   Full?  Evicted Evict_Time OOM"></a>Item_Size  Max_age   Pages   Count   Full?  Evicted Evict_Time OOM</h1><p>  1      96B         0s       1       0      no        0        0    0<br>  2     120B   2417392s      30  257107      no        0        0    0</p>
+<p>各列的含义如下：</p>
+<h2 id="列-含义"><a href="#列-含义" class="headerlink" title="  列            含义"></a>  列            含义</h2><h1 id="slab-class-编号"><a href="#slab-class-编号" class="headerlink" title="slab class 编号"></a>slab class 编号</h1><p>  Item_Size   chunk 大小<br>  Max_age     LRU 内最旧的记录的生存时间<br>  Pages       slab 中 page 的个数, 一个 page 默认大小为 1MB 大小<br>  Count       slab 内的记录数<br>  Full        slab 内是否含有空闲的 chunk<br>  Evicted     slab 中未过期的条目被 LRU 移除的个数<br>  Evict_Time  slab 中最近被移除的条目最后一次访问经过的秒数<br>  OOM         slab 中存储新条目失败的次数</p>
+<h2 id="memcached-删除机制"><a href="#memcached-删除机制" class="headerlink" title="memcached 删除机制"></a>memcached 删除机制</h2><p>所有的数据都缓存到 memcached 中, 所以数据不会永久保存到磁盘上. 上述小节中也介绍过 memcahced 通过 slab 机制不会释放已分配的内存, 记录超时或删除后不会释放内存, 而是重复利用. 另外 memcached 内部不会监视过期的条目, 而是在 get 时查看时间戳, 检查记录是否过期. 这种特性成为 lazy expiration.</p>
+<h2 id="LRU-删除数据的原理"><a href="#LRU-删除数据的原理" class="headerlink" title="LRU: 删除数据的原理"></a>LRU: 删除数据的原理</h2><p>memcached 优先使用超时的记录的内存空间, 但这也会发生增加新条目时空间不足的情况, memcached 采用 LRU(Least Recently Used) 机制解决内存不足的情况. LRU 即表示删除最近最少使用的意思, 很多数据库工具软件都采用 LRU 算法解决类似的问题, 比如 MySQL 的 InnoDB buffer 也采用该机制解决内存不足的问题; 在 memcached 可用内存不足的情况下, 就从最近未被使用的记录中进行搜索, 并将其分配给新的条目记录.</p>
+<p>如果不想采用 LRU 机制可以使用 -M 选项启动 memcached, 该选项在内存用尽时直接返回错误.</p>
+<h2 id="memcached-二进制协议"><a href="#memcached-二进制协议" class="headerlink" title="memcached 二进制协议"></a>memcached 二进制协议</h2><p>老版本中仅支持 ascii 文本协议, 较新的版本都支持新的二进制协议, -B 选项可以选择要使用的协议, 默认情况自动选择. 使用了二进制协议后程序和 memcached 的交互不再需要文本的解析处理, 同样也能减少文本协议相关的漏洞, 所以理论上使用二进制协议效果更好.</p>
+<p>memcached 源代码文件 memcached-master/doc/protocol-binary.xml 对二进制协议做了很详尽的描述, 一个 memcached 协议报文由两部分组成: header 和 memcached 命令. 这两部分组成一个通用格式的 memcached 协议报文, 如下:</p>
+<pre><code>General format of a packet:</code></pre><p>Byte/       0       |       1       |       2       |       3       |<br>    /               |               |               |               |<br>    |0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|<br>    +—————+—————+—————+—————+<br>   0/ HEADER                                                        /<br>    /                                                               /<br>    /                                                               /<br>    /                                                               /<br>    +—————+—————+—————+—————+<br>  24/ COMMAND-SPECIFIC EXTRAS (as needed)                           /<br>    +/  (note length in the extras length header field)             /<br>    +—————+—————+—————+—————+<br>   m/ Key (as needed)                                               /<br>    +/  (note length in key length header field)                    /<br>    +—————+—————+—————+—————+<br>   n/  Value (as needed)                                            /<br>   +/  (note length is total body length header field, minus        /<br>   +/  sum of the extras and key length body fields)                /<br>    +—————+—————+—————+—————+<br>    Total 24 bytes</p>
+<p>可以看到一个memcached 的数据报文, 其中包括24字节的头部(header), 8 字节的 Extras 信息(包括 4 字节的 flag 和 4 字节的 expiration 字段), 以及相应的 key 和 value 长度字节, 这两个长度可以 header 头部中查找到.</p>
+<p>另外 header 头部则可以分为请求 header 和应答 header，如下所示:</p>
+<pre><code>Request header:</code></pre><p>Byte/       0       |       1       |       2       |       3       |<br>    /               |               |               |               |<br>    |0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|<br>    +—————+—————+—————+—————+<br>   0| Magic         | Opcode        | Key length                    |<br>    +—————+—————+—————+—————+<br>   4| Extras length | Data type     | Reserved                      |<br>    +—————+—————+—————+—————+<br>   8| Total body length                                             |<br>    +—————+—————+—————+—————+<br>  12| Opaque                                                        |<br>    +—————+—————+—————+—————+<br>  16| CAS                                                           |<br>    |                                                               |<br>    +—————+—————+—————+—————+<br>    Total 24 bytes</p>
+<pre><code>Response header:</code></pre><p> Byte/       0       |       1       |       2       |       3       |<br>     /               |               |               |               |<br>     |0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|<br>     +—————+—————+—————+—————+<br>    0| Magic         | Opcode        | Key length                    |<br>     +—————+—————+—————+—————+<br>    4| Extras length | Data type     | Reserved                      |<br>     +—————+—————+—————+—————+<br>    8| Total body length                                             |<br>     +—————+—————+—————+—————+<br>   12| Opaque                                                        |<br>     +—————+—————+—————+—————+<br>   16| CAS                                                           |<br>     |                                                               |<br>     +—————+—————+—————+—————+<br>     Total 24 bytes</p>
+<p>可以看到请求头部和应答头部的格式相同, 我们同样查看文档 doc/protocol-binary.xml, 各 header 字段的含义如下:</p>
+<p>Magic: Magic number.<br>Opcode: Command code.<br>Key length: Length in bytes of the text key that follows the command extras.<br>Status: Status of the response (non-zero on error).<br>Extras length: Length in bytes of the command extras.<br>Data type: Reserved for future use (Sean is using this soon).<br>Reserved: Really reserved for future use (up for grabs).<br>Total body length: Length in bytes of extra + key + value.<br>Opaque: Will be copied back to you in the response.<br>CAS: Data version check.</p>
+<h2 id="抓包分析-memcached-二进制协议"><a href="#抓包分析-memcached-二进制协议" class="headerlink" title="抓包分析 memcached 二进制协议"></a>抓包分析 memcached 二进制协议</h2><p>我们使用以下 perl 程序以二进制方式连接测试 memcached, 再抓包分析进行说明, 如下程序:</p>
+<p>#!/usr/bin/env perl<br>use strict;<br>use Data::Dumper;<br>use Cache::Memcached::libmemcached;</p>
+<p>my $memd = Cache::Memcached::libmemcached-&gt;new({<br>  ‘servers’ =&gt; [ “127.0.0.1:11211”],<br>  ‘debug’ =&gt; 0,<br>  ‘compress_threshold’ =&gt; 10_000,<br>});<br>$memd-&gt;set_binary_protocol(1);  # 使用二进制协议<br>print Dumper($memd);<br>$memd-&gt;set(“foo10”, “Some value”);  # set 值</p>
+<p>my $val = $memd-&gt;get(“foo10”);<br>if ($val) {<br>    print Dumper($val);<br>}</p>
+<p>抓包后, 使用 wireshark 分析, 我们以 set request 包分析如下, 下半部分为16进制数据:</p>
+<p>Memcache Protocol, Set Request<br>    Magic: Request (128)<br>    Opcode: Set (1)<br>    Key Length: 5<br>    Extras length: 8<br>    Data type: Raw bytes (0)<br>    Reserved: 0<br>    [Value length: 10]<br>    Total body length: 23<br>    Opaque: 65536<br>    CAS: 0<br>    Extras<br>    Key: foo10<br>    Value: Some value</p>
+<p>0000   80 01 00 05 08 00 00 00 00 00 00 17 00 01 00 00  …………….<br>0010   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  …………….<br>0020   66 6f 6f 31 30 53 6f 6d 65 20 76 61 6c 75 65     foo10Some value</p>
+<p>对比上一小节的 header 头部可以分析如下, memcached 的数据(memcached 通用报文)大小总共为 47 字节:<br>Magic: 80<br>Opcode: 01<br>Key Length: 00 05<br>Extras length: 08<br>Data type: 00<br>Status: 00 00<br>Total body length: 00 00 00 17<br>Opaque: 00 01 00 00<br>CAS: 00 00 00 00 00 00 00 00<br>Extras: 00 00 00 00 00 00 00 00 (4 字节 Flags, 4 字节 Expiration)<br>Key: 66 6f 6f 31 30<br>Value: 53 6f 6d 65 20 76 61 6c 75 65</p>
+<p>key length 为两个字节, 这意味着 key 的最大长度可以到 65535 字节, 比起老的版本确实是很大的进步.</p>
+<p>总结</p>
+<p>综上介绍, 我们可以很好的理解 memcached slab 内存分配的机制, 也能理解通过增长因子就可以达到一定的性能优化, 在一些场景下可能会节省较多的内存消耗.最后通过测试详细说明了二进制协议在 memcached 中的报文格式, 对二进制格式有了较为深入的了解, 值得一提的是大部分的编程语言驱动包还只是支持文本协议, 要使用二进制协议需要安装非通用的驱动包。更多关于Memcached内部协议解析，请参考此处。其特性大致可以总结归纳为如下几点：<br>1、MemCache中可以保存的item数据量是没有限制的，只要内存足够</p>
+<p>2、MemCache单进程在32位机中最大使用内存为2G，这个已经提了多次了，64位机则没有限制</p>
+<p>3、Key最大为250个字节，超过该长度无法存储</p>
+<p>4、单个item最大数据是1MB，超过1MB的数据不予存储</p>
+<p>5、MemCache服务端是不安全的，比如已知某个MemCache节点，可以直接telnet过去，并通过flush_all让已经存在的键值对立即失效</p>
+<p>6、不能够遍历MemCache中所有的item，因为这个操作的速度相对缓慢且会阻塞其他的操作</p>
+<p>来源：<br><a href="http://www.freeoa.net/osuport/servap/memcached-mem-alloca-optimiz_3180.html" target="_blank" rel="noopener">http://www.freeoa.net/osuport/servap/memcached-mem-alloca-optimiz_3180.html</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/SystemProgramming/">SystemProgramming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/SystemProgramming/core-techs-database-memcached/" data-title="Memcached Notes | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/SystemProgramming/core-techs-database-leveldb/" title="LevelDB Notes">
+  <strong>Prev：</strong><br>
+  <span>
+  LevelDB Notes</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/SystemProgramming/core-techs-database-redis/" title="Redis Notes">
+ <strong>Next：</strong><br>
+ <span>Redis Notes
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

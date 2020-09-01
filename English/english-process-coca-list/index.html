@@ -1,0 +1,746 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>COCA 词频表使用 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="无意中看到一篇 COCA 语料库的介绍文章，然后自己就去 http://testyourvocab.com/ 测了下词汇，大约是 2 万多。  神奇的是，我在以前的英语学习时从没接触过这个目前可以说是最知名的英语词汇词频统计库，虽然目测词汇量尚可，但是这个也不是绝对准确的，因为我测的时候感觉差不多认识的单词我就勾了 ，所以结果肯定有不少水分，而且统计方法还因人而异吧，我感觉我目前的词汇应该在 2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="COCA 词频表使用">
+<meta property="og:url" content="https://juniway.net/English/english-process-coca-list/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="无意中看到一篇 COCA 语料库的介绍文章，然后自己就去 http://testyourvocab.com/ 测了下词汇，大约是 2 万多。  神奇的是，我在以前的英语学习时从没接触过这个目前可以说是最知名的英语词汇词频统计库，虽然目测词汇量尚可，但是这个也不是绝对准确的，因为我测的时候感觉差不多认识的单词我就勾了 ，所以结果肯定有不少水分，而且统计方法还因人而异吧，我感觉我目前的词汇应该在 2">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/english/vocab_result.jpg">
+<meta property="og:image" content="https://juniway.net/image/english/coca6000xlsx.png">
+<meta property="og:image" content="https://juniway.net/image/english/coca6000xlsx_preview.jpg">
+<meta property="og:image" content="https://juniway.net/image/english/coca_excel01.jpg">
+<meta property="og:image" content="https://juniway.net/image/english/coca_excel02.jpg">
+<meta property="og:image" content="https://juniway.net/image/english/coca_excel03.jpg">
+<meta property="og:image" content="https://juniway.net/image/english/coca_script.jpg">
+<meta property="og:image" content="https://juniway.net/image/english/coca_split_output.jpg">
+<meta property="og:image" content="https://juniway.net/image/english/eudict_import.jpg">
+<meta property="og:image" content="https://juniway.net/image/english/eudict_batch.jpg">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.425Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="COCA 词频表使用">
+<meta name="twitter:description" content="无意中看到一篇 COCA 语料库的介绍文章，然后自己就去 http://testyourvocab.com/ 测了下词汇，大约是 2 万多。  神奇的是，我在以前的英语学习时从没接触过这个目前可以说是最知名的英语词汇词频统计库，虽然目测词汇量尚可，但是这个也不是绝对准确的，因为我测的时候感觉差不多认识的单词我就勾了 ，所以结果肯定有不少水分，而且统计方法还因人而异吧，我感觉我目前的词汇应该在 2">
+<meta name="twitter:image" content="https://juniway.net/image/english/vocab_result.jpg">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/English/english-process-coca-list/" title="COCA 词频表使用" itemprop="url">COCA 词频表使用</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2018-12-23T11:49:33.000Z"> 2018-12-23</time>
+    <span class="post-count">字数 2.1k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>无意中看到一篇 COCA 语料库的介绍文章，然后自己就去 <a href="http://link.zhihu.com/?target=http%3A//testyourvocab.com/" target="_blank" rel="noopener">http://testyourvocab.com/</a> 测了下词汇，大约是 2 万多。</p>
+<p><img src="/image/english/vocab_result.jpg" alt=""></p>
+<p>神奇的是，我在以前的英语学习时从没接触过这个目前可以说是最知名的英语词汇词频统计库，虽然目测词汇量尚可，但是这个也不是绝对准确的，因为我测的时候感觉差不多认识的单词我就勾了 ，所以结果肯定有不少水分，而且统计方法还因人而异吧，我感觉我目前的词汇应该在 2 万左右。根据网上的论断，这个量貌似也挺大的。虽然我从小对英语学习就非常感兴趣，但是我印象最深的集中大量词汇输入还是在准备出国的时候，当然，这之前我也都是爱背单词的，只不过都是些笨方法，主要是我比较爱看英语相关的东西，而遇到生词了也会刻意去记忆，以前更是爱拿着生词本各种记。</p>
+<p>所以，没接触过这个语料库我还是觉得挺惊讶的，它最有意思的一点就在于它的词频统计，如果我们能很好的利用这个词频表所统计出来的词汇，那对于英语的学习是非常高效的（我现在就在通过这个词频表进行复习和查漏）。</p>
+<p>所以，下面先简单介绍一下这个库</p>
+<p>COCA, 全称 Corpus of Contemporary American English，网站是 <a href="http://link.zhihu.com/?target=https%3A//corpus.byu.edu/" target="_blank" rel="noopener">https://corpus.byu.edu/</a> 它总结了英语国家使用频率最高的词汇，使用大数据的方法把 1990-2012 年美国最有代表性的报纸，杂志，小说，学术，口语（口语可能是用的电视剧或者脱口秀之类的节目转录的）汇集起来，每部分各占 1/5，生成 4.5 亿单词量语料库。<a href="http://link.zhihu.com/?target=https%3A//corpus.byu.edu/" target="_blank" rel="noopener">billions of words of data: free online access</a>COCA, 全称 Corpus of Contemporary American English，网站是 <a href="http://link.zhihu.com/?target=https%3A//corpus.byu.edu/" target="_blank" rel="noopener">https://corpus.byu.edu/</a> 它总结了英语国家使用频率最高的词汇，使用大数据的方法把 1990-2012 年美国最有代表性的报纸，杂志，小说，学术，口语（口语可能是用的电视剧或者脱口秀之类的节目转录的）汇集起来，每部分各占 1/5，生成 4.5 亿单词量语料库。</p>
+<p>COCA词频表，是从众多语料库（corpus）中提取，用大数据的方法从各种文体中提取单词，并按照单词出现次数高低进行排序的一个词频表。</p>
+<p>来看一下这个数据：</p>
+<p>掌握前 500   单词，现实生活中能认识 72% 的单词；<br>掌握前 1000  单词，现实生活中能认识 79% 的单词；<br>掌握前 2000  单词，现实生活中能认识 87% 的单词；<br>掌握前 3000  单词，现实生活中能认识 90% 的单词；<br>掌握前 4000  单词，现实生活中能认识 93% 的单词；<br>掌握前 5000  单词，现实生活中能认识 94% 的单词；<br>掌握前 10000 单词，现实生活中能认识 97% 的单词；<br>掌握前 17634 单词，现实生活中能认识 99% 的单词。</p>
+<p>为什么学了那么多仍然不能达到 99.99%？因为英语实际使用中存在大量专有名词，比如Trump 这个单词，在其竞选前后出现频率相差极大，COCA 中除了媒体来源外的语料中出现很少，而这两年看报纸则是想绕都绕不开。掌握这 17634 词后，学习一个新领域的英文，只要多剩下的 1% 的专有名词，基本就不存在生词障碍了。</p>
+<p>其实，不用完全把表背完，掌握频率最高的一万多词汇就已经非常够用了，在网上，背单词的边际效益是递减的（当然使用词频表来背就可以使边际效益最大化），所以，对于那些迫切希望可以看懂更多英语文章的人来说，利用词频表来进行学习就可以最大化效率。</p>
+<p>好了，这篇文章不是来详细介绍 COCA 到底怎么用的，而是怎么利用它的词频表的。</p>
+<p>首先，需要下载词频表，COCA 官网提供了免费的前 5000 个单词，但是再往后，还提供了 20000 和 60000 词汇量的版本，均是收费的，不过可以在淘宝上购买，或者在网上找到免费的下载链接。</p>
+<p>下面就基于最全的 60000 词汇量的文件，也就是 coca60000full.xlsx 这个 EXCEL 文件。它包含了所有的单词，以及词频统计，分类库等信，是信息最全的一个文件，其他所有衍生版本（比如 coca20000, coca口语等）均可由该文件生成。</p>
+<p><img src="/image/english/coca6000xlsx.png" alt=""></p>
+<p>文件内容预览图如下：</p>
+<p><img src="/image/english/coca6000xlsx_preview.jpg" alt=""></p>
+<p>如果觉得 EXCEL 文件中显示的大写格式不适应，可以通过下面的方法变成小写：</p>
+<p>1、先插入一个空栏（比如在原 WORD 列的左侧插入）</p>
+<p>2、选中空栏，输入公式 =lower(D:D)</p>
+<p>如下：</p>
+<p><img src="/image/english/coca_excel01.jpg" alt=""></p>
+<p>然后，按住 Ctrl + Enter 或者 Command + Enter，就会把函数应用到整列了，效果如下：</p>
+<p><img src="/image/english/coca_excel02.jpg" alt=""></p>
+<p>注意：这时候如果我们删除大写单词的那列，小写列会变成乱码，因为引用的是公式。</p>
+<p>我们可以这样做，选中 C 列，然后直接在本列进行复制粘贴（Ctrl + C， Ctrl + V），在粘贴的时候，选择只拷贝值（Values Only）这一个选项。</p>
+<p><img src="/image/english/coca_excel03.jpg" alt=""></p>
+<p>这样，我们就可以删除原列了。</p>
+<p>好了，简单的 EXCEL 操作介绍完了，下面我们来看看，怎么继续得到我们想要的其他东西。</p>
+<h5 id="脚本处理"><a href="#脚本处理" class="headerlink" title="脚本处理"></a>脚本处理</h5><p>选中单词列，把它复制到 TXT 纯文本文件中，这样就得到一个包含了 6 万单词的纯文本 coca60000.txt。</p>
+<p>我们可以继续细分这个单词本，比如分成只包含前 2 万，前 3 万或前几万的版本，由于原始单词集是包含重复单词的（COCA 根据单词的不同释义列举了多次），所以，我们还可以提取出去重的单词集。当然，根据我们个人的单词学习和记忆需求，我们还可以来进行更多处理。</p>
+<p>因此，下面要介绍的就是用于做这些处理的脚本文件 split.py。</p>
+<p><img src="/image/english/coca_script.jpg" alt=""></p>
+<h6 id="该脚本的大致功能解释如下："><a href="#该脚本的大致功能解释如下：" class="headerlink" title="该脚本的大致功能解释如下："></a>该脚本的大致功能解释如下：</h6><p><strong>1、去重（格式化）</strong></p>
+<p>对于 coca60000 这个词汇集合，原文本包含了重复词汇（coca 根据单词的不同含义，分别列举了多次，形式上出现重复）</p>
+<p>那么，就可以用 split.py 这个脚本进行去重，总量为 60023 的集合去重之后剩余 54150 个。</p>
+<p>另外，还可以对文本进行一些简单的格式化，比如去掉单词前后的空格。</p>
+<p><strong>2、分组</strong></p>
+<p>该脚本支持对想要记忆的单词进行不同大小的分组，比如每 100 个或者 200 个一组，具体命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python split.py coca60000.txt 100</span><br></pre></td></tr></table></figure>
+
+<p>命令执行成功之后，会在 output 目录中生成许多文件，每个文件按指定分组大小来进行分组，并以数字范围的形式（xxx_yyy）命名，如下：</p>
+<p><img src="/image/english/coca_split_output.jpg" alt=""></p>
+<p> <strong>3、生成可导入的格式</strong></p>
+<p>欧陆词典是一个很流行的英文词典，可以加载不同的词库文件，因此许多人都非常乐于使用它来进行词汇的学习。</p>
+<p>这个脚本支持把原单词本格式化成欧陆词典（<a href="http://link.zhihu.com/?target=http%3A//Eudic.net" target="_blank" rel="noopener">http://Eudic.net</a>）所支持的导入规则，比如，欧陆词典中的 “批量导入分组生词本”，它的规则如下：</p>
+<p><img src="/image/english/eudict_import.jpg" alt=""></p>
+<p>那么，只需要把 split.py 中的 batch_import() 函数打开，然后执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python split.py coca60000.txt 15</span><br></pre></td></tr></table></figure>
+
+<p>就会生成一个叫 coca60000_batch_import.txt 的文件 ，然后打开该文件，就可以看到其内容如下：</p>
+<p><img src="/image/english/eudict_batch.jpg" alt=""></p>
+<p>复制文本内容到 <a href="http://link.zhihu.com/?target=http%3A//eudic.net" target="_blank" rel="noopener">http://eudic.net</a> 中的文本框，就可以顺利导入所有分组。</p>
+<p>好了，有了 COCA 词频表，脚本工具，以及背单词 APP，我们就可以愉快的背单词了 。</p>
+<p>全文完！</p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/English/">English</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/English/english-process-coca-list/" data-title="COCA 词频表使用 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/English/english-intro-corpus/" title="英语语料库及词频表介绍">
+  <strong>Prev：</strong><br>
+  <span>
+  英语语料库及词频表介绍</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Life/life-criminal-age/" title="12 岁男孩弑母无罪释放，最低刑责年龄保护了魔鬼？">
+ <strong>Next：</strong><br>
+ <span>12 岁男孩弑母无罪释放，最低刑责年龄保护了魔鬼？
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

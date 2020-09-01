@@ -1,0 +1,762 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>json-rpc 介绍 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="json-rpc 是 rpc 通信过程中定义的一套 json 格式标准，最早是 json-rpc1.0，最新是 json-rpc2.0。 使用 json 格式来通信，通信的双方 client，server 必须约定好统一的字段，以便彼此能互相解析，这就是 json-rpc 标准的来由。 根据 json-rpc 1.0 约定，Request 和 Response 的格式必须符合如下要求： #####">
+<meta property="og:type" content="article">
+<meta property="og:title" content="json-rpc 介绍">
+<meta property="og:url" content="https://juniway.net/Tools-and-Build/tool-and-build-json-rpc/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="json-rpc 是 rpc 通信过程中定义的一套 json 格式标准，最早是 json-rpc1.0，最新是 json-rpc2.0。 使用 json 格式来通信，通信的双方 client，server 必须约定好统一的字段，以便彼此能互相解析，这就是 json-rpc 标准的来由。 根据 json-rpc 1.0 约定，Request 和 Response 的格式必须符合如下要求： #####">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.445Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="json-rpc 介绍">
+<meta name="twitter:description" content="json-rpc 是 rpc 通信过程中定义的一套 json 格式标准，最早是 json-rpc1.0，最新是 json-rpc2.0。 使用 json 格式来通信，通信的双方 client，server 必须约定好统一的字段，以便彼此能互相解析，这就是 json-rpc 标准的来由。 根据 json-rpc 1.0 约定，Request 和 Response 的格式必须符合如下要求： #####">
+<meta name="twitter:image" content="https://juniway.net/image/qrcode_258.jpg">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Tools-and-Build/tool-and-build-json-rpc/" title="json-rpc 介绍" itemprop="url">json-rpc 介绍</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2017-08-25T11:09:26.000Z"> 2017-08-25</time>
+    <span class="post-count">字数 1.8k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>json-rpc 是 rpc 通信过程中定义的一套 json 格式标准，最早是 <a href="http://json-rpc.org/wiki/specification" target="_blank" rel="noopener">json-rpc1.0</a>，最新是 json-rpc2.0。</p>
+<p>使用 json 格式来通信，通信的双方 client，server 必须约定好统一的字段，以便彼此能互相解析，这就是 json-rpc 标准的来由。</p>
+<p>根据 <strong>json-rpc 1.0</strong> 约定，Request 和 Response 的格式必须符合如下要求：</p>
+<p>######（1）Request</p>
+<ul>
+<li><strong>method</strong> A String containing the name of the method to be invoked.</li>
+<li><strong>params</strong> An Array of objects to pass as arguments to the method.</li>
+<li><strong>id</strong> The request id. This can be of any type. It is used to match the response with the request that it is replying to.</li>
+</ul>
+<p>######（2）Response</p>
+<ul>
+<li><strong>result</strong> The Object that was returned by the invoked method. This must be null in - - case there was an error invoking the method.</li>
+<li><strong>error</strong> An Error object if there was an error invoking the method. It must be null if there was no error.</li>
+<li><strong>id</strong> This must be the same id as the request it is responding to.</li>
+</ul>
+<p>例子：<br>request：data sent to service</p>
+<pre><code>{ &quot;method&quot;: &quot;echo&quot;, &quot;params&quot;: [&quot;Hello JSON-RPC&quot;], &quot;id&quot;: 1}</code></pre><p>response：data coming from service</p>
+<pre><code>{ &quot;result&quot;: &quot;Hello JSON-RPC&quot;, &quot;error&quot;: null, &quot;id&quot;: 1}</code></pre><p>####json-rpc2.0</p>
+<p>######（1）Request</p>
+<ul>
+<li><strong>jsonrpc</strong> - A String specifying the version of the JSON-RPC protocol. MUST be exactly “2.0”.</li>
+<li><strong>method</strong> - A String containing the name of the method to be invoked.</li>
+<li><strong>params</strong> - An Array of objects to pass as arguments to the method.</li>
+<li><strong>id</strong> - The request id. This can be of any type. It is used to match the response with the request that it is replying to.</li>
+</ul>
+<p>######（2）Response</p>
+<ul>
+<li><strong>jsonrpc</strong> - A String specifying the version of the JSON-RPC protocol. MUST be exactly “2.0”.</li>
+<li><strong>result</strong> - The Object that was returned by the invoked method. This must be null in case there was an error invoking the method.</li>
+<li><strong>error</strong> - An Error object if there was an error invoking the method. It must be null if there was no error.</li>
+<li><strong>id</strong> - This must be the same id as the request it is responding to.</li>
+</ul>
+<h6 id="Notification"><a href="#Notification" class="headerlink" title="Notification"></a>Notification</h6><p><strong>A Notification is a Request object without an “id” member.</strong> A Request object that is a Notification signifies the Client’s lack of interest in the corresponding Response object, and as such no Response object needs to be returned to the client.<br>The Server MUST NOT reply to a Notification, including those that are within a batch request.</p>
+<p>例子：<br>request：data sent to service</p>
+<pre><code>{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;subtract&quot;, &quot;params&quot;: [42, 23], &quot;id&quot;: 1}</code></pre><p>response：data coming from service</p>
+<pre><code>{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: 19, &quot;id&quot;: 1}</code></pre><p>a notification request</p>
+<pre><code>{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;update&quot;, &quot;params&quot;: [1,2,3,4,5]}</code></pre><p>a notification response</p>
+<pre><code>{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;foobar&quot;}</code></pre><h4 id="json-rpc1-0-VS-json-rpc2-0"><a href="#json-rpc1-0-VS-json-rpc2-0" class="headerlink" title="json-rpc1.0  VS  json-rpc2.0"></a><strong>json-rpc1.0</strong>  VS  <strong>json-rpc2.0</strong></h4><ul>
+<li><strong>“jsonrpc” field added added a version-field to the Request (and also to the Response) to resolve compatibility issues with JSON-RPC 1.0.</strong></li>
+<li><strong>client-server instead of peer-to-peer</strong>:
+JSON-RPC 2.0 uses a client-server-architecture.<br>V1.0 used a peer-to-peer-architecture where every peer was both server and client.</li>
+<li><strong>Transport independence</strong>:
+JSON-RPC 2.0 doesn’t define any transport-specific issues, since transport and RPC are independent.<br>V1.0 defined that exceptions must be raised if the connection is closed, and that invalid requests/responses must close the connection (and raise exceptions).</li>
+<li><strong>Named parameters added</strong> (see <a href="http://www.simple-is-better.org/rpc/#example" target="_blank" rel="noopener">Example</a> below)</li>
+<li><strong>Reduced fields</strong>:<ul>
+<li>Request: params may be omitted</li>
+<li>Notification: doesn’t contain an id anymore</li>
+<li>Response: contains only <code>result</code> OR <code>error</code>  (but not both)</li>
+</ul>
+</li>
+<li><strong>Optional parameters</strong>: defined that unspecified optional parameters SHOULD use a default-value.</li>
+<li><strong>Error-definitions added</strong></li>
+</ul>
+<p>Go官方库实现了<a href="http://json-rpc.org/wiki/specification" target="_blank" rel="noopener">JSON-RPC 1.0</a>。JSON-RPC是一个通过JSON格式进行消息传输的RPC规范，因此可以进行跨语言的调用。</p>
+<p>源文件：<code>rpc/jsonrpc/client.go</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> clientRequest <span class="keyword">struct</span> &#123;</span><br><span class="line">    Method <span class="keyword">string</span>         <span class="string">`json:"method"`</span></span><br><span class="line">    Params [<span class="number">1</span>]<span class="keyword">interface</span>&#123;&#125; <span class="string">`json:"params"`</span></span><br><span class="line">    Id     <span class="keyword">uint64</span>         <span class="string">`json:"id"`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *clientCodec)</span> <span class="title">WriteRequest</span><span class="params">(r *rpc.Request, param <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    c.mutex.Lock()</span><br><span class="line">    c.pending[r.Seq] = r.ServiceMethod</span><br><span class="line">    c.mutex.Unlock()</span><br><span class="line">    c.req.Method = r.ServiceMethod</span><br><span class="line">    c.req.Params[<span class="number">0</span>] = param</span><br><span class="line">    c.req.Id = r.Seq</span><br><span class="line">    <span class="keyword">return</span> c.enc.Encode(&amp;c.req)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的 enc 就是 <code>json.Encoder()</code>，可见 <code>WriteRequest()</code> 函数最终把请求 encode 成 json 格式发送了。</p>
+<p>调用流程分析：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CallRpcService</span><span class="params">(c *rpc.Client)</span></span> &#123;</span><br><span class="line">    args := &amp;server.Args&#123;<span class="number">7</span>, <span class="number">8</span>&#125;</span><br><span class="line">    <span class="keyword">var</span> reply <span class="keyword">int</span></span><br><span class="line">    err := c.Call(<span class="string">"Arith.Mult"</span>, args, &amp;reply)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(<span class="string">"Arith error: "</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">"Arith: %d*%d= %d\n"</span>, args.A, args.B, reply)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里是调用的 <code>c.Call(&quot;Arith.Mult&quot;, args, &amp;reply&quot;)</code> 来实现发送 json-rpc request 到服务器的。<br>Call() 函数内部的调用过程如下：<br>源文件：<code>rpc/client.go</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// (1)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(client *Client)</span> <span class="title">Call</span><span class="params">(serviceMethod <span class="keyword">string</span>, args <span class="keyword">interface</span>&#123;&#125;, reply <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    call := &lt;-client.Go(serviceMethod, args, reply, <span class="built_in">make</span>(<span class="keyword">chan</span> *Call, <span class="number">1</span>)).Done</span><br><span class="line">    <span class="keyword">return</span> call.Error</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// (2)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(client *Client)</span> <span class="title">Go</span><span class="params">(serviceMethod <span class="keyword">string</span>, args <span class="keyword">interface</span>&#123;&#125;, reply <span class="keyword">interface</span>&#123;&#125;, done <span class="keyword">chan</span> *Call)</span> *<span class="title">Call</span></span> &#123;</span><br><span class="line">    call := <span class="built_in">new</span>(Call)</span><br><span class="line">    call.ServiceMethod = serviceMethod</span><br><span class="line">    call.Args = args</span><br><span class="line">    call.Reply = reply</span><br><span class="line">    ...</span><br><span class="line">    client.send(call)</span><br><span class="line">    <span class="keyword">return</span> call</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// (3)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(client *Client)</span> <span class="title">send</span><span class="params">(call *Call)</span></span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// Encode and send the request.</span></span><br><span class="line">    client.request.Seq = seq</span><br><span class="line">    client.request.ServiceMethod = call.ServiceMethod</span><br><span class="line">    err := client.codec.WriteRequest(&amp;client.request, call.Args)</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>源文件：<code>rpc/jsonrpc/client.go</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// (4)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *clientCodec)</span> <span class="title">WriteRequest</span><span class="params">(r *rpc.Request, param <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    c.mutex.Lock()</span><br><span class="line">    c.pending[r.Seq] = r.ServiceMethod</span><br><span class="line">    c.mutex.Unlock()</span><br><span class="line">    c.req.Method = r.ServiceMethod</span><br><span class="line">    c.req.Params[<span class="number">0</span>] = param</span><br><span class="line">    c.req.Id = r.Seq</span><br><span class="line">    <span class="keyword">return</span> c.enc.Encode(&amp;c.req)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Go 的 <code>net/rpc/jsonrpc</code> 库可以将 JSON-RPC 的请求转换成自己内部的格式，比如 request header 的处理：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *serverCodec)</span> <span class="title">ReadRequestHeader</span><span class="params">(r *rpc.Request)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    c.req.reset()</span><br><span class="line">    <span class="keyword">if</span> err := c.dec.Decode(&amp;c.req); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    r.ServiceMethod = c.req.Method</span><br><span class="line">    c.mutex.Lock()</span><br><span class="line">    c.seq++</span><br><span class="line">    c.pending[c.seq] = c.req.Id</span><br><span class="line">    c.req.Id = <span class="literal">nil</span></span><br><span class="line">    r.Seq = c.seq</span><br><span class="line">    c.mutex.Unlock()</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Go 语言官方库目前不支持 JSON-RPC 2.0 ，但是有第三方开发者提供了实现，比如:<br><a href="https://github.com/powerman/rpc-codec" target="_blank" rel="noopener">https://github.com/powerman/rpc-codec</a><br><a href="https://github.com/dwlnetnl/generpc" target="_blank" rel="noopener">https://github.com/dwlnetnl/generpc</a></p>
+<p>一些其它的 codec 如 <a href="https://godoc.org/github.com/skynetservices/skynet/rpc/bsonrpc" target="_blank" rel="noopener">bsonrpc</a>、<a href="https://godoc.org/github.com/hashicorp/net-rpc-msgpackrpc" target="_blank" rel="noopener">messagepack</a>、<a href="https://github.com/mars9/codec" target="_blank" rel="noopener">protobuf</a> 等。<br>如果你使用其它特定的序列化框架，你可以参照这些实现来写一个你自己的 rpc codec。<br>关于 Go 序列化库的性能的比较可以参考 <a href="https://github.com/smallnest/gosercomp" target="_blank" rel="noopener">gosercomp</a>。</p>
+<p><strong>注意：</strong><br>Go 语言提供的 jsonrpc 包不支持 json-rpc over HTTP，因此我们不能通过 curl 命令来给 Server 发送请求来测试。如果我们真的需要用 http 请求来测试的话，那么我们就应该提供一个 HTTP Hanlder 来处理 HTTP request/response，然后把他适配到 ServerCodec 函数中去，比如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"io"</span></span><br><span class="line">    <span class="string">"log"</span></span><br><span class="line">    <span class="string">"net"</span></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line">    <span class="string">"net/rpc"</span></span><br><span class="line">    <span class="string">"net/rpc/jsonrpc"</span></span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> addr = <span class="string">"localhost:8080"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> HttpConn <span class="keyword">struct</span> &#123;</span><br><span class="line">    in  io.Reader</span><br><span class="line">    out io.Writer</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *HttpConn)</span> <span class="title">Read</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span>  &#123; <span class="keyword">return</span> c.in.Read(p) &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *HttpConn)</span> <span class="title">Write</span><span class="params">(d []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123; <span class="keyword">return</span> c.out.Write(d) &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *HttpConn)</span> <span class="title">Close</span><span class="params">()</span> <span class="title">error</span></span>                      &#123; <span class="keyword">return</span> <span class="literal">nil</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RPC Api structure</span></span><br><span class="line"><span class="keyword">type</span> Test <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Greet method arguments</span></span><br><span class="line"><span class="keyword">type</span> GreetArgs <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Grret message accept object with single param Name</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(test *Test)</span> <span class="title">Greet</span><span class="params">(args *GreetArgs, result *<span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    *result = <span class="string">"Hello "</span> + args.Name</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Start server with Test instance as a service</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">startServer</span><span class="params">()</span></span> &#123;</span><br><span class="line">    test := <span class="built_in">new</span>(Test)</span><br><span class="line"></span><br><span class="line">    server := rpc.NewServer()</span><br><span class="line">    server.Register(test)</span><br><span class="line"></span><br><span class="line">    listener, err := net.Listen(<span class="string">"tcp"</span>, addr)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(<span class="string">"listen error:"</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> listener.Close()</span><br><span class="line">    </span><br><span class="line">    http.Serve(listener, http.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> r.URL.Path == <span class="string">"/test"</span> &#123;</span><br><span class="line">            serverCodec := jsonrpc.NewServerCodec(&amp;HttpConn&#123;in: r.Body, out: w&#125;)</span><br><span class="line">            w.Header().Set(<span class="string">"Content-type"</span>, <span class="string">"application/json"</span>)</span><br><span class="line">            w.WriteHeader(<span class="number">200</span>)</span><br><span class="line">            err := server.ServeRequest(serverCodec)</span><br><span class="line">            <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">                log.Printf(<span class="string">"Error while serving JSON request: %v"</span>, err)</span><br><span class="line">                http.Error(w, <span class="string">"Error while serving JSON request, details have been logged."</span>, <span class="number">500</span>)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    startServer()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在，我们就可以用 curl 命令来测试了，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X POST -H &quot;Content-Type: application/json&quot; -d &apos;&#123;&quot;id&quot;: 1, &quot;method&quot;: &quot;Test.Greet&quot;, &quot;params&quot;: [&#123;&quot;name&quot;:&quot;world&quot;&#125;]&#125;&apos; http://localhost:8080/test</span><br></pre></td></tr></table></figure>
+
+<p>网上也有 json-rpc over http 的第三方开源库，比如 <a href="https://github.com/gorilla/rpc/tree/master/json" target="_blank" rel="noopener">gorilla/rpc</a></p>
+<p>使用 gorrlla/rpc 的实例：<br><a href="https://haisum.github.io/2015/10/13/rpc-jsonrpc-gorilla-example-in-golang/" target="_blank" rel="noopener">https://haisum.github.io/2015/10/13/rpc-jsonrpc-gorilla-example-in-golang/</a>  </p>
+<p>参考:<br><a href="http://www.simple-is-better.org/rpc/#differences-between-1-0-and-2-0" target="_blank" rel="noopener">http://www.simple-is-better.org/rpc/#differences-between-1-0-and-2-0</a>  </p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Tools-and-Build/">Tools and Build</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Tools-and-Build/tool-and-build-json-rpc/" data-title="json-rpc 介绍 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Distributed-System/blockchain-ethereum-ether/" title="Ether 币的基本单位">
+  <strong>Prev：</strong><br>
+  <span>
+  Ether 币的基本单位</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Programming/go-go-ioreader/" title="Golang io.Reader 解析">
+ <strong>Next：</strong><br>
+ <span>Golang io.Reader 解析
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

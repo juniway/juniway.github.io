@@ -1,0 +1,971 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>sed and regular expression | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="IntroductionSED is a stream editing command in Linux, it is very powerful in text processing under Linux environment.  SED can be used in many different ways, such as:  Text substitution, Selective pr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sed and regular expression">
+<meta property="og:url" content="https://juniway.net/Linux/linux-sed/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="IntroductionSED is a stream editing command in Linux, it is very powerful in text processing under Linux environment.  SED can be used in many different ways, such as:  Text substitution, Selective pr">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.437Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sed and regular expression">
+<meta name="twitter:description" content="IntroductionSED is a stream editing command in Linux, it is very powerful in text processing under Linux environment.  SED can be used in many different ways, such as:  Text substitution, Selective pr">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Linux/linux-sed/" title="sed and regular expression" itemprop="url">sed and regular expression</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-06-05T13:11:48.000Z"> 2016-06-05</time>
+    <span class="post-count">字数 2.7k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h3 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h3><p>SED is a stream editing command in Linux, it is very powerful in text processing under Linux environment. </p>
+<p>SED can be used in many different ways, such as:</p>
+<ul>
+<li>Text substitution,</li>
+<li>Selective printing of text files,</li>
+<li>In-a-place editing of text files,</li>
+<li>Non-interactive editing of text files, and many more.</li>
+</ul>
+<p>SED follows a simple workflow: Read -&gt; Execute -&gt; Display </p>
+<ul>
+<li><p>Read: SED reads a line from the input stream (file, pipe, or stdin) and stores it in its internal buffer called pattern buffer.</p>
+</li>
+<li><p>Execute: All SED commands are applied sequentially on the pattern buffer. By default, SED commands are applied on all lines (globally) unless line addressing is specified.</p>
+</li>
+<li><p>Display: Send the (modified) contents to the output stream. After sending the data, the pattern buffer will be empty.</p>
+</li>
+</ul>
+<h3 id="Points-to-Note"><a href="#Points-to-Note" class="headerlink" title="Points to Note"></a>Points to Note</h3><ul>
+<li><p>Pattern buffer is a private, in-memory, volatile storage area used by the SED.</p>
+</li>
+<li><p>By default, all SED commands are applied on the pattern buffer, hence the input file remains unchanged. GNU SED provides a way to modify the input file in-a-place. We will explore about it in later sections.</p>
+</li>
+<li><p>There is another memory area called hold buffer which is also private, in- memory, volatile storage area. Data can be stored in a hold buffer for later retrieval. At the end of each cycle, SED removes the contents of the pattern buffer but the contents of the hold buffer remains persistent between SED cycles. However SED commands cannot be directly executed on hold buffer, hence SED allows data movement between the hold buffer and the pattern buffer.</p>
+</li>
+<li><p>Initially both pattern and hold buffers are empty.</p>
+</li>
+<li><p>If no input files are provided, then SED accepts input from the standard input stream (stdin).</p>
+</li>
+<li><p>If address range is not provided by default, then SED operates on each line.</p>
+</li>
+</ul>
+<h3 id="Common-Options"><a href="#Common-Options" class="headerlink" title="Common Options"></a>Common Options</h3><p>Below list are options are GNU specific; and may not be supported by other variants of the SED. </p>
+<ul>
+<li><p><strong>-n</strong>, –silent: Suppress the default printing of the patter buffer.</p>
+</li>
+<li><p><strong>-e</strong> script, script is an editing command. By using this option, we can specify multiple commands.</p>
+</li>
+<li><p><strong>-f</strong> script_file, script_file is a file containing editing commands. </p>
+</li>
+<li><p>–follow-symlinks: If this option is provided, the SED follows symbolic linki while editing files in place.</p>
+</li>
+<li><p><strong>-i</strong>[SUFFIX], –in-place[=SUFFIX]: This option is used to edit file in place. If suffix is provided, it takes a backup of the original file, otherwise it overwrites the original file. Never use this option if you are not sure<br>what sed will do since once the original file was overwriten there is no way to revert it back. Instead, use redirect operator <code>&gt;</code> or combined use with <code>-i.bak</code>.</p>
+</li>
+<li><p><strong>-l N</strong>, –line-lenght=N: This option sets the line length for l command to N characters.</p>
+</li>
+<li><p>–posix: This option disables all GNU extensions.</p>
+</li>
+<li><p><strong>-r</strong>, –regexp-extended: This option allows to use extended regular expressions rather than basic regular expressions.</p>
+</li>
+<li><p><strong>-s</strong>, –separate: deal with multiple files</p>
+</li>
+<li><p><strong>-u</strong>, –unbuffered: When this option is provided, the SED loads minimal amount of data from the input files and flushes the output buffers more often. It is useful for editing the output of “tail -f” when you do not want to wait for the output.</p>
+</li>
+<li><p><strong>-z</strong>, –null-data: By default, the SED separates each line by a new-line character. If NULL-data option is provided, it separates the lines by NULL characters.</p>
+</li>
+</ul>
+<h3 id="Pattern-Flags"><a href="#Pattern-Flags" class="headerlink" title="Pattern Flags"></a>Pattern Flags</h3><ul>
+<li><strong>g</strong> Global</li>
+<li><strong>I</strong> Ignore case</li>
+</ul>
+<h3 id="Addressing"><a href="#Addressing" class="headerlink" title="Addressing"></a><strong>Addressing</strong></h3><p>Addressing is used to restrict SED to operate only on certain lines.<br>There multiply ways to specify an address:</p>
+<ul>
+<li><p><strong>Exact</strong></p>
+<p> Specifying an exact address number <strong>n</strong></p>
+<p> <code>$ sed -n &#39;3s/pattern/abc/p&#39; file</code>  </p>
+<p> <code>$ sed -n &#39;$ p&#39; file</code></p>
+</li>
+<li><p><strong>Range</strong></p>
+<p> <strong>M, N</strong>, Specify a range starting from line <strong>M</strong> end with <strong>N</strong></p>
+<p> <code>$ sed -n &#39;3,$ p&#39; file</code></p>
+<p> <strong>M, /pattern/</strong>, or <strong>/pattern/, N</strong>, Specify a range using <strong>pattern range</strong></p>
+<p> <code>$ sed -n &#39;^, /pattern/p&#39; file</code></p>
+<p> <code>$ sed -n &#39;/pattern/,6p&#39; file</code></p>
+<p> <code>$ sed -n &#39;/patter/, +4 p&#39; file</code></p>
+</li>
+</ul>
+<ul>
+<li><p><strong>Base + Offset</strong></p>
+<p> <strong>M, +n</strong>, Specify a range starting from line <strong>M</strong> and end in next <strong>+N</strong> lines</p>
+<p> <code>$ sed -n &#39;2,+4 p&#39; file</code></p>
+</li>
+<li><p><strong>Base + Step</strong></p>
+<p> <strong>M~N</strong>, Specify a range starting at line number <strong>M</strong> and process every <strong>N</strong>th line</p>
+<p> <code>$ sed -n &#39;1~2 p&#39;</code> This will print only <strong>odd</strong> lines from the file</p>
+<p> <code>$ sed -n &#39;2~2 p&#39;</code> This will print only <strong>even</strong> lines from the file</p>
+</li>
+</ul>
+<h3 id="Commands"><a href="#Commands" class="headerlink" title="Commands"></a><strong>Commands</strong></h3><ul>
+<li><strong>p</strong>    Print</li>
+<li><strong>=</strong>    Print line number </li>
+</ul>
+<p>e.g. <code>$ sed = filename</code> will print line number follow with line content (seperated by ‘\n’)</p>
+<p>Count the total number of lines of a file</p>
+<pre><code>$ sed -n &apos;$ =&apos; file</code></pre><ul>
+<li><p><strong>d</strong>    Delete</p>
+</li>
+<li><p><strong>w</strong>    Write</p>
+<p> If we want to <strong>backup</strong> (copy) or <strong>extract certain lines</strong> from a file, we can use this command.</p>
+<p> <code>$ sed -n &#39;w redis.conf.bak&#39; redis.conf</code> This has exact the same effect with using <code>$ cp redis.conf redis.conf.bak</code></p>
+<p> <code>$ sed -n &#39;2~2 w emphasis.txt&#39; book.txt</code> This will extract only even lines from book.txt</p>
+</li>
+<li><p><strong>a</strong> Append</p>
+<p> <code>$ sed &#39;2 a =====&#39; book.txt</code></p>
+</li>
+<li><p><strong>i</strong> Insert</p>
+<p> <code>$ sed &#39;2 i =====&#39; book.txt</code></p>
+</li>
+<li><p><strong>c</strong> Change</p>
+<p> <code>$ sed &#39;2 c =====&#39; book.txt</code></p>
+</li>
+<li><p><strong>y</strong> Translate</p>
+<p> Transforms the characters by position</p>
+<p> The Syntax of the translate command <strong>y</strong></p>
+<p> <code>[address1[,address2]]y/list-1/list-2/</code></p>
+<p> Note that translation is based on the position of the character from list 1 to the character in the same position in list 2 and both lists must be explicit character lists. Regular expressions and character classes are unsupported. Additionally, the size of list 1 and list 2 must be same.</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ echo &quot;1 5 15 20&quot; | sed &apos;y/151520/IVXVXX/&apos;</span><br><span class="line">I V IV XX</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>l</strong> List</p>
+<p> <strong>l</strong> command is used to display hidden characters in text.</p>
+<p> Suppose we have a file containing a lot of <code>\t</code></p>
+<p> <code>$ sed &#39;s/ /\t/g&#39; books.txt &gt; junk.txt</code></p>
+<p> We can display the hidden characters by using <strong>l</strong> command like this:</p>
+<p> <code>$ sed -n &#39;l&#39; junk.txt</code></p>
+<p> <strong>l</strong> command has a very useful feature that it can be used to perform line wrap after a certain number of characters.</p>
+<p> The following example wraps lines after 25 characters:</p>
+<p> <code>$ sed -n &#39;l 25&#39; books.txt</code></p>
+</li>
+</ul>
+<pre><code>A wrap limit of 0 means never break the line unless there is a new line character. 
+
+`$ sed -n &apos;l 0&apos; books.txt`</code></pre><ul>
+<li><p><strong>q</strong> Quit</p>
+<p> By default, SED follows read, execute, and repeat workflow; but when the quit command is encountered, it simply stops the current execution.</p>
+<p> <strong>q</strong> command does not accept range of addresses, it only supports a single address</p>
+<p> <strong>q</strong> command can accept a value which can be used as the exit status</p>
+<p> <code>$ sed &#39;3 q&#39; books.txt</code>  This will the first 3 lines from the file</p>
+<p> <code>$ sed &#39;/pattern/ q 100&#39; books.txt</code> This command will exit with status code 100</p>
+</li>
+</ul>
+<ul>
+<li><p><strong>r</strong> Read</p>
+<p> Read from a file</p>
+<p> <code>$ sed &#39;3 r junk.txt&#39; books.txt</code></p>
+</li>
+<li><p><strong>e</strong> Execute</p>
+<p> We can execute <strong>external commands</strong> from SED using the <strong>e</strong> command.</p>
+<p> <strong>Syntax:</strong></p>
+<p> [address1[,address2]]e [command]</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sed &apos;3 e date&apos; books.txt</span><br><span class="line">abc</span><br><span class="line">Fri Nov 25 21:00:00 CST 2016</span><br><span class="line">123</span><br></pre></td></tr></table></figure>
+
+<p>If we have a file containing several shell commands like this:</p>
+<pre><code>date 
+cal 
+uname</code></pre><p>We can use sed with <strong><code>e</code></strong> command to execute them like this:</p>
+<pre><code>$ sed &apos;e&apos; commands.txt</code></pre><h3 id="Miscellaneous-Commands"><a href="#Miscellaneous-Commands" class="headerlink" title="Miscellaneous Commands"></a>Miscellaneous Commands</h3><ul>
+<li><p><strong>n</strong></p>
+<p>Clear the current <code>pattern space</code> and read the next line in.</p>
+</li>
+</ul>
+<p><strong>Execution order:</strong></p>
+<pre><code>Sed command1 
+Sed command2 
+Sed command3
+n command 
+Sed command4
+Sed command4</code></pre><p>In this case, SED applies the first three commands on the pattern buffer, clears the pattern buffer, fetches the next line into the pattern buffer,<br>and thereafter applies the fourth and fifth commands on it. This is a very important concept. </p>
+<ul>
+<li><p><strong>N</strong></p>
+<p>Keep current <code>pattern space</code> and append the next line in.</p>
+</li>
+<li><p><em>Explanation*</em></p>
+<p>By default, SED operates on <strong>single line</strong>, however it can operate on <strong>multiple lines</strong> as well. Multi-line commands are denoted by uppercase letters.<br>For example, unlike the <strong>n</strong> command, the <strong>N</strong> command does not clear and print the pattern space.<br>Instead, it adds a newline <strong>\n</strong> at the end of the current pattern space and appends the next line from<br>the input-file to the current pattern space and continues with the SED’s standard flow by executing the rest of the SED commands. </p>
+</li>
+</ul>
+<p>Suppose we have <code>sample.txt</code> whose content is:</p>
+<pre><code>apple
+17.7
+egg
+29.0
+skipboard
+99</code></pre><p>We can convert it to the form of this:</p>
+<pre><code>apple, 17.7
+egg, 29.0
+skipboard, 99</code></pre><p>By executing:</p>
+<pre><code>$ sed &apos;N;s/\n/, /g&apos; sample.txt</code></pre><p><strong>Explanation</strong></p>
+<p>Let’s see how it works.</p>
+<p>Initially, the command <strong>N</strong> reads the first line, apple into the <code>pattern buffer</code> and appends <code>\n</code> followed by <strong>the next line</strong>. 
+Therefore the pattern space now contains <code>apple\n17.7</code>. In the next step, we use <code>s/\n/, /</code> to replace the <code>\n</code> with a comma <code>,</code>.</p>
+<ul>
+<li><strong>P</strong></li>
+</ul>
+<p>Print all lines in a <strong>multi-line patter space</strong> until it reaches a newline character <code>\n</code> created by <strong>N</strong> command.</p>
+<p>Let’s see how we can print only the odd lines of <code>sample.txt</code></p>
+<pre><code>$ sed -n &apos;N;P&apos; books.txt
+apple
+egg
+skipboard</code></pre><ul>
+<li><p><strong>x</strong></p>
+<p>  <strong>Exchange</strong> the content of <strong>pattern buffer</strong> and <strong>hold buffer</strong></p>
+</li>
+</ul>
+<p>Let’s see how we use <strong>x</strong> to print only the <code>even</code> line of the file</p>
+<pre><code>$ sed -n &apos;x;n;p&apos; sample.txt
+17.7
+29.0
+99</code></pre><p>Let us understand how this command works.</p>
+<p>Initially, SED reads the first line, i.e., <code>apple</code> into the <code>pattern buffer</code>.</p>
+<ul>
+<li><strong>x</strong> command moves this line to the hold buffer.</li>
+<li><strong>n</strong> fetches the next line <code>17.7</code> into the pattern buffer.</li>
+<li>The control passes to the command followed by n which prints the contents of the pattern buffer.</li>
+<li>The process repeats until the file is exhausted.</li>
+</ul>
+<ul>
+<li><p><strong>h</strong></p>
+<p>  <strong>h</strong> deals with <strong>hold buffer</strong>, it <strong>copies</strong> data from the pattern buffer to <strong>overwrite</strong> everything in the hold buffer.  </p>
+</li>
+<li><p><strong>H</strong></p>
+<p>  <strong>H</strong> Append a newline <code>\n</code> to the contents of the hold space, and then <strong>append</strong> the contents of the pattern space to that of the hold space</p>
+</li>
+</ul>
+<h3 id="Sed-applications"><a href="#Sed-applications" class="headerlink" title="Sed applications"></a>Sed applications</h3><p><strong>1. Print</strong></p>
+<p>(1) Print whole file, act as <code>cat</code> command</p>
+<pre><code>$ sed &apos;&apos; a.txt</code></pre><p>(2) Print file with line number</p>
+<pre><code>$ sed = me.txt | sed &apos;N;s/\n/ /&apos;</code></pre><p>(3) Print a specific line or a range of line</p>
+<pre><code>$ sed &apos;4!d&apos; me.txt
+
+$ sed &apos;2,4!d&apos; me.txt</code></pre><p>(4) Print the matching line with line number</p>
+<pre><code>$ sed -n &apos;/foo/=&apos;</code></pre><p>(5) Print only the matching line</p>
+<pre><code>$ sed -n &apos;/pattern/p&apos; me.txt
+$ sed -n &apos;/pattern/{!d;p}&apos; me.txt
+$ sed -n &apos;s/pattern/p&apos; me.txt</code></pre><p>(6) Match ignore case</p>
+<pre><code>$ sed &apos;/pattern/I p&apos; me.txt</code></pre><p>(6) Print the matching line preceeded with its line number</p>
+<pre><code>$ sed &apos;/pattern/!d;=&apos; me.txt |sed &apos;N;s/\n/:/&apos;</code></pre><p>(7) Print only the matched string</p>
+<p>Group symbol <code>()</code> of regular expression is very useful to assist operations on a matched string.</p>
+<p>By default, sed will print the whole line, if we want to print only the matched string, we can use <strong>group</strong> symbol <code>()</code>.</p>
+<pre><code>$ sed -nE &apos;s/.* ([0-9.]+)$/\1/p&apos; &lt;&lt;&lt; &quot;the price of egg is 12.7&quot;
+
+$ sed -E &apos;1!d;s/.* ([0-9]+)$/\1/g&apos; &lt;&lt;&lt; &quot;apple good 18901&quot;
+
+$ sed -E &apos;s/^.* \([^ ][^ ]*\)/\1/g&apos; &lt;&lt;&lt; &apos;Apple is a very nutrient-rich friut&apos;
+
+$ sed -E &apos;s/.* ([0-9]+)$/\1/;tx;d;:x&apos;　&lt;&lt;&lt; &quot;apple good 18901&quot;</code></pre><p>Also, if we want to modify the matched string, <code>()</code> is very helpful.</p>
+<p>e.g. we have a file ‘me.txt’ like this:</p>
+<pre><code>1.A_ A_ 1.A_                        1.A A_ 1.A_
+2.B_ B_ 2.B_    Modified to --&gt;     2.B B_ 2.B_     
+3.C_ C_ 3.C_                        3.C C_ 3.C_</code></pre><p>we can do this:</p>
+<pre><code>$ sed sed -nE &apos;s/^([0-9]\S+)_( .*)/\1\2/;p&apos; me.txt</code></pre><p>(8) Print the <strong>last field</strong></p>
+<pre><code>$ sed -E &apos;s/^.* \([^ ][^ ]*\)/\1/g&apos; &lt;&lt;&lt; &apos;Apple is a very nutrient-rich friut&apos;
+$ sed -E &apos;s/.* ([^ ]+)$/\1/g&apos; &lt;&lt;&lt; &apos;Apple is a very nutrient-rich friut&apos;
+$ sed -E &apos;s/^.* (\S*)/\1/&apos; &lt;&lt;&lt; &quot;this is a good day&quot;</code></pre><p><strong>2. Remove</strong></p>
+<p>(1) Remove empty lines</p>
+<pre><code>$ sed &apos;/^$/d&apos;</code></pre><p>(2) Remove leading whitespace of each line</p>
+<pre><code>$ sed -E &apos;s/^\s+//g&apos; &lt;&lt;&lt; &quot;     Nice tutorial!&quot;</code></pre><p>or</p>
+<pre><code>$ sed -n &apos;s/^ *//g&apos; &lt;&lt; &quot;    hahaha&quot;</code></pre><p>(3) Remove trailing whitespace of each line</p>
+<pre><code>$ sed -E &apos;s/\s*$//g&apos; &lt;&lt;&lt; &quot;Nice tutorial!    &quot;</code></pre><p>(4) Remove the next blank line of matching line</p>
+<pre><code>$ sed &apos;/pattern/n;/^$/d&apos; me.txt</code></pre><p>(5) Remove the preceeding <code>/</code> of a path</p>
+<pre><code>$ sed &apos;s/^\///g&apos;</code></pre><p>(6) Remove all the <code>&lt;&gt;</code> tags of a html file</p>
+<pre><code>$ sed &apos;s/&lt;[^&gt;]*&gt;//g&apos; index.html</code></pre><p>(7) Remove consecutive whitespace and replace with single whitespace</p>
+<pre><code>$ sed -E &apos;s/\s+/ /g&apos; &lt;&lt;&lt; &quot;hello    goodbye&quot;</code></pre><p><strong>3. Edit</strong></p>
+<p><strong>&amp;</strong> represents the matched string, we can use it repeatedly</p>
+<p>(1) Copy the matched string</p>
+<pre><code>$ sed &apos;s/[0-9]*/&amp; &amp;/&apos; &lt;&lt;&lt; &quot;123 abc&quot;
+123 123 abc</code></pre><p>(2) Prepend a line with some string</p>
+<pre><code>$ sed &apos;s/.*/HaHa: &amp;/&apos; filename
+
+or simpler
+$ sed &apos;s/^/HaHa:‘ filename  </code></pre><p>(3) Append a line with something</p>
+<pre><code>$ sed &apos;s/$/HoHo&apos; filename</code></pre><p>(4) Uppercase, Lowercase</p>
+<p>GNU extention provides <code>\l</code>, <code>\L</code>, <code>\u</code>, <code>\U</code> to extend the ability of sed</p>
+<p>\U char-list  : Uppercase all char in char-list<br>\u char-list  : Uppercase only the first char in char-list<br>\L char-list  : Lowercase all char in char-list<br>\l char-list  : Lowercase only the first char in char-list</p>
+<p><strong>Capitalize</strong> the first character of a sentence</p>
+<pre><code>$ sed -r &apos;s/.*/\u&amp;/&apos; &lt;&lt;&lt; &quot;nick meets kim in this morning&quot;
+Nick meets kim in this morning</code></pre><p><strong>Capitalize</strong> each word of a sentence</p>
+<pre><code>$ sed -r &apos;s/\w+/\u&amp;/g&apos; &lt;&lt;&lt; &quot;nick meets kim in this morning&quot;
+Nick Meets Kim In This Morning</code></pre><p>We can achieve the above result using <strong><code>tr</code></strong> or <strong><code>awk</code></strong></p>
+<pre><code>$ tr &apos;[:upper:]&apos; &apos;[:lower:]&apos; &lt; input.txt &gt; output.txt
+
+$ awk &apos;{print tolower($0)}&apos; &lt;&lt;&lt; &quot;UPPER&quot;</code></pre><p>(5) Ignore case substitution</p>
+<pre><code>$ sed &apos;s/He/xx/gI&apos; &lt;&lt;&lt; &quot;hello world&quot;
+xxllo world</code></pre><p>(6) Field processing</p>
+<p>It is common that the file SED is processing is a delimiter separated file.<br>In that case, we often need to use group symbols of regular expression to assist processing.</p>
+<p>Assume there are three fields in a line separated by whitespace, we can use <code>&#39;(.*) (.*) (.*)&#39;</code> to match all of them,<br>and then use <code>\1</code>, <code>\2</code>, <code>\3</code> to refer to each of them.</p>
+<pre><code>$ sed -r &apos;s/(.*) (.*) (.*)/Pre1\1 Pre3\2 Pre2\3/&apos; &lt;&lt;&lt; &quot;One Two Three&quot;</code></pre><p>More generally, if fields are separated by whitespace, we can use <code>\w+</code> to match all fields, and use <code>&amp;</code> to refer to each of them.</p>
+<pre><code>$ sed -r &apos;s/\w+/\u&amp;/g&apos; &lt;&lt;&lt; &quot;good bye&quot; </code></pre><p>We can also use a number to refer to a specific field</p>
+<p>Assume we have a <code>friute.csv</code> file like this:</p>
+<pre><code>name     origin    price
+apple     USA      18.5
+orange    Vetran    26.8
+cherry    Mexico    50.1  </code></pre><p>We want to modify the cherry’s price to 60, we can do this:</p>
+<pre><code>$ sed &apos;4s/\S\+/60.6/3&apos; friute.csv</code></pre><p>Another, if we want to capitalize the first column, we can do:</p>
+<pre><code>$ sed -r &apos;s/\S+/\u&amp;/1&apos; friute.csv</code></pre><p>Remove the last field</p>
+<pre><code>$ sed &apos;s/\w*$//&apos; &lt;&lt;&lt; &apos;apple 123 beast&apos;
+$ sed -r &apos;s/^.* ([^ ]*)/\1/&apos; &lt;&lt;&lt; &quot;hello world haha&quot;</code></pre><p><strong>Operations on multiple files</strong></p>
+<p>Use <strong><code>-s</code></strong> option</p>
+<pre><code>$ sed -s -i &apos;s/me/he/g&apos; *.txt</code></pre><p><strong>Reference</strong><br><a href="http://www.grymoire.com/Unix/Sed.html" target="_blank" rel="noopener">http://www.grymoire.com/Unix/Sed.html</a><br><a href="http://www.pement.org/sed/sed1line.txt" target="_blank" rel="noopener">http://www.pement.org/sed/sed1line.txt</a><br><a href="http://www.theunixschool.com/2013/02/sed-examples-replace-delete-print-lines-csv-files.html" target="_blank" rel="noopener">http://www.theunixschool.com/2013/02/sed-examples-replace-delete-print-lines-csv-files.html</a><br><a href="http://coolshell.cn/articles/9104.html" target="_blank" rel="noopener">http://coolshell.cn/articles/9104.html</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Linux/linux-sed/" data-title="sed and regular expression | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Linux/linux-nc/" title="nc">
+  <strong>Prev：</strong><br>
+  <span>
+  nc</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Linux/linux-zip-unzip/" title="zip and unzip in Linux">
+ <strong>Next：</strong><br>
+ <span>zip and unzip in Linux
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

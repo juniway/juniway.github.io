@@ -1,0 +1,741 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Change the virtual hard disk size of a VM | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="Steps:1. Clone HD file “.vdi”1). Show VDI information about the current disk. $ vboxmanage showhdinfo &amp;quot;D:\Ubuntu_clang.vdi&amp;quot;2). Clone the old VDI file to a new VDI file. (Syntax: $ vboxmanage">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Change the virtual hard disk size of a VM">
+<meta property="og:url" content="https://juniway.net/VirtualBox/vbox-vbox-resize-hd/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="Steps:1. Clone HD file “.vdi”1). Show VDI information about the current disk. $ vboxmanage showhdinfo &amp;quot;D:\Ubuntu_clang.vdi&amp;quot;2). Clone the old VDI file to a new VDI file. (Syntax: $ vboxmanage">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.447Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Change the virtual hard disk size of a VM">
+<meta name="twitter:description" content="Steps:1. Clone HD file “.vdi”1). Show VDI information about the current disk. $ vboxmanage showhdinfo &amp;quot;D:\Ubuntu_clang.vdi&amp;quot;2). Clone the old VDI file to a new VDI file. (Syntax: $ vboxmanage">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/VirtualBox/vbox-vbox-resize-hd/" title="Change the virtual hard disk size of a VM" itemprop="url">Change the virtual hard disk size of a VM</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-05-14T12:43:48.000Z"> 2016-05-14</time>
+    <span class="post-count">字数 2.2k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h2 id="Steps"><a href="#Steps" class="headerlink" title="Steps:"></a>Steps:</h2><h3 id="1-Clone-HD-file-“-vdi”"><a href="#1-Clone-HD-file-“-vdi”" class="headerlink" title="1. Clone HD file “.vdi”"></a>1. Clone HD file “.vdi”</h3><p>1). Show VDI information about the current disk.</p>
+<pre><code>$ vboxmanage showhdinfo &quot;D:\Ubuntu_clang.vdi&quot;</code></pre><p>2). Clone the old VDI file to a new VDI file. (Syntax: <code>$ vboxmanage clonehd src dest</code>)</p>
+<pre><code>$ vboxmanage clonehd D:\Ubuntu_clang.vdi D:\tmp\outputfile.vdi</code></pre><p>Show VDI information about the cloned disk.</p>
+<pre><code># vboxmanage showhdinfo path\inputfile_clone.vdi</code></pre><p>3). Resizing the cloned disk.</p>
+<pre><code>$ vboxmanage modifyhd D:\Ubuntu_clang.vdi --resize 51200</code></pre><p>Show VDI information about the resized clone disk.</p>
+<pre><code>$ vboxmanage.exe showhdinfo path\inputfile_clone.vdi</code></pre><p>You can either delete the old “fixed” file, or leave it as a backup. Make sure you test the new VDI file before you delete the original one.</p>
+<p><strong>Note:</strong> </p>
+<ul>
+<li>You will not immediately see the new size of the cloned disk.</li>
+<li>You have to boot the VM with it, and then you have to use your partition management tool to expand your partition to fill the virtual disk (or create more partitions).</li>
+<li>For Windows host, just run <code>diskmgmt.msc</code> and you’ll be able to expand the partition in there.</li>
+</ul>
+<h3 id="2-Partition"><a href="#2-Partition" class="headerlink" title="2. Partition"></a>2. Partition</h3><p>Use GParted<br><a href="https://www.youtube.com/watch?v=ikSIDI535L0&amp;feature=iv&amp;src_vid=r_UyKufXR3c&amp;annotation_id=annotation_4072520487" target="_blank" rel="noopener">https://www.youtube.com/watch?v=ikSIDI535L0&amp;feature=iv&amp;src_vid=r_UyKufXR3c&amp;annotation_id=annotation_4072520487</a></p>
+<p>If you dont’ have a live CD because you are using VBox, just search for Ubuntu Live CD Gparted, download the iso file and use it as your optical - remember to check your boot order.<br>Follow this instructions</p>
+<p>Move <code>.vdi</code> file to another place or directory</p>
+<h4 id="1-GUI-way"><a href="#1-GUI-way" class="headerlink" title="(1) GUI way"></a>(1) GUI way</h4><p>Below method doesn’t require removing your virtual machines and mucking up their settings.<br>1) Copy your Virtualbox VMs folder to a new drive.<br>2) Run the Virtual Box Machine Manager. Run the media Manager File -&gt; Virtual Media Manager<br>    2a. Right click VM, choose the Release button and then click the Remove button.<br>        On the next dialog, you can either remove or keep the virtual drive.<br>        Close the manager leaving you in your Virtualbox Machine Manager.<br>3) Move your VM(.vdi file) to a new location, say D:\tmp\vm_moved.vid<br>4) In virtualbox, select the vm that you just moved, click the Settings button,<br>   Click the Storage section. Add a controller for the media (SATA usually)<br>   and then add a hard drive and choose existing disk and select the .vdi file at your new location.<br>   Repeat for each machine you’re moving<br>4) Fire off your virtual machine at the new location to check.<br>   Next time you visit the Virtual Media Manager, hovering over the VM entry<br>   will show you where the VD is stored.<br>Make sure you change your snapshots folders to point to the new drive if you’re using them.<br>Each machine has a snapshot folder setting and the VM Manager has a Default Machine folder setting<br>in File -&gt; Settings that needs to be changed as well.</p>
+<p>In addition I had to also modify path in xml file. After that it worked flawlessly.<br>NOTE: Things have changed a bit since this was written, see Rob’s answer. It’s extremely simple now.</p>
+<h4 id="2-commandline-way"><a href="#2-commandline-way" class="headerlink" title="(2) commandline way"></a>(2) commandline way</h4><p>1) List existing VMs via <code>VBoxManage list vms</code>.
+2) Next to the names of the VMs, inside curly brackets, their UUIDs are referenced.<br>Copy the one of interest. Details about it can be retrieved via <code>VBoxManage showvminfo UUID</code>.
+3) Unregister the VM of interest via VBoxManage unregistervm UUID.<br>4) Move the directory of the VM of interest.<br>5) Finally, register the machine via VBoxManage register NameOfVM.vbox – obviously,<br>   where NameOfVM is meant the actual name of the VMs .vbox file to be registered.</p>
+<p>For those who are unsure about the exact procedure, the command which clones an entire machine (including snapshots) is:</p>
+<pre><code>$ VBoxManage clonevm --mode all --name &quot;Cloned_VM&quot; --basefolder /new/path/ --register Cloned_VM</code></pre><p>If necessary, quote path and name.</p>
+<p>Finally, check if all is well and remove the original.<br>That’s all, really. No need to bother with xml files or a hex editor. No need to use a GUI, either.</p>
+<p>While there is no way to actually switch a VDI between fixed-size and dynamic,<br>you can clone the existing VDI into a new one with different settings with VBoxManage.</p>
+<pre><code>VBoxManage clonehd [old-VDI] [new-VDI] --variant Standard
+VBoxManage clonehd [old-VDI] [new-VDI] --variant Fixed</code></pre><p>If you want to expand the capacity of a VDI, you can do so with</p>
+<pre><code>VBoxManage modifyhd [VDI] --resize [megabytes]</code></pre><p><strong>Resizing only works for dynamic VDI images.</strong> However, you can combine the resize information with the conversion information to expand fixed-size VDIs. (E.g., convert a fixed-size image to dynamic, expand it, and then convert the dynamic image back to a fixed-size image.)</p>
+<p>If you want to compact the image as much a possibly, be sure to zero out the free space. This can be done in Linux by using the dd command to write endless zeros to a file and then deleting that file. (With the caveat of the reserved space of EXT and other file systems.)</p>
+<p><strong>NOTE:</strong><br>variant option specifies what type of the new .vdi file will be. by default, it is Standard, this is a dynamic format.</p>
+<p>Here’s a fairly simple process that worked for me to resize a VirtualBox (v. 4.3.16) fixed size disk<br>to a 60GB dynamic disk on my Mac (OS X 10.9.4) with Linux (Ubuntu 14.04) running as the guest OS:</p>
+<p>In shell on MAC in directory with vdi:</p>
+<p>(1) clone fixed-size vdi to a dynamic-size vdi<br>VBoxManage showhdinfo mydisk.vdi<br>VBoxManage clonehd mydisk.vdi mydisk_clone.vdi –format vdi –variant Standard<br>VBoxManage modifyhd mydisk_clone.vdi –resize 61440<br>VBoxManage showhdinfo mydisk_clone.vdi</p>
+<p>(2) format newly enlarged partition<br>now boot a live cd ubuntu<br>open gparted(gparted is usually installed in the Live-CD by defaul) Ubuntu 15.10 Desktop<br>delete linux-swap extended partition<br>if it has a lock sign, then right click swap off to unlock so that we can delete the extended partition<br>enlarge the origial parition, leave some space for linux-swap extended partition we will create later<br>right click New partition to create linux-swap extended partition<br>apply all changes, turn down the Live-CD<br>boot into the new enlarged vm<br>df -h to check the resulting disk space</p>
+<p>(3) clone dynamic-size vdi back to fixed-size vdi<br>VBoxManage clonehd mydisk_clone.vdi mydisk_clone_fixed.vdi –format vdi –variant Fixed</p>
+<p>(4) 上一步完成之后就是已经是fixed 分区了</p>
+<p>启动ubuntu系统的话会以下 Warning 信息:<br>A start job is running for dev-disk-by\x2duuid-db1d2b48\x2d0cfb\x2d4bdf\x2dabe8\x2db86b9b08dff9.device(1min 22s / 1min 30s)<br>持续1分30秒的时间，导致启动速度非常慢</p>
+<p>网卡没启动成功：</p>
+<p>A start job is running for Wait on all “auto” /etc/network/interfaces to be up for network-online.target</p>
+<p>这个错误的意思是说，等待所有在 /etc/network/interfaces 中配置的网卡 interface 启动，<br>但是如果没有这块网卡（比如没有 enp0s8 (Host-Only)，这种情况通常发生在clone一个系统时，<br>clone出的vm 的网卡的配置跟原vm 的网卡配置不同，所以就导致了网卡不同，但/etc/network/interface又相同）<br>从而在 /etc/network/interfaces 中配置了一块没有的网卡，那么就会出现这个错误。</p>
+<p>这个错误直接就会导致服务 ifup-wait-all-auto.service 失败。</p>
+<p>解决方案：</p>
+<p>ifconfig -a 或者ifquery –list 命令找出已有的的网卡，手工修改 /etc/network/interfaces， 把没有的网卡配置信息删除掉。<br>修改完成之后， 重启网络服务，service networking restart 或者 sudo /etc/init.d/networking restart 或者 systemctl restart networking</p>
+<p>以下是 debug 过程：</p>
+<p>$ systemctl list-units –type=service<br>UNIT                                     LOAD    ACTIVE  SUB      Description<br>ifup-wait-all-auto.service  loaded   failed      failed    Wait for all “auto” /etc/network/interfaces to be up for network-online.target</p>
+<p>$ systemctl list-unit-files | grep network</p>
+<p>$ systemctl –all | grep ifup<br>● ifup-wait-all-auto.service loaded failed failed Wait for all “auto” /etc/network/interfaces to be up for network-online.target<br><a href="mailto:ifup@enp0s17.service" target="_blank" rel="noopener">ifup@enp0s17.service</a> loaded active exited ifup for enp0s17<br><a href="mailto:ifup@enp0s8.service" target="_blank" rel="noopener">ifup@enp0s8.service</a> loaded active exited ifup for enp0s8<br>system-ifup.slice loaded active active system-ifup.slice</p>
+<p>$ sudo find / -name “<a href="mailto:ifup@enp0s17.service" target="_blank" rel="noopener">ifup@enp0s17.service</a>“
+/sys/fs/cgroup/systemd/system.slice/system-ifup.slice/ifup@enp0s17.service<br>$ ls /sys/fs/cgroup/systemd/system.slice/system-ifup.slice/ifup@enp0s17.service<br>cgroup.clone_children  cgroup.procs  notify_on_release  tasks</p>
+<p>$ sudo find / -name “network-online.target”<br>/lib/systemd/system/network-online.target</p>
+<p>$ systemctl list-dependencies network-online.target<br>network-online.target<br>● ├─ifup-wait-all-auto.service<br>● └─NetworkManager-wait-online.service</p>
+<p>$ sudo find / -name “ifup-wait-all-auto.service”<br>/lib/systemd/system/network-online.target.wants/ifup-wait-all-auto.service<br>/lib/systemd/system/ifup-wait-all-auto.service<br>/sys/fs/cgroup/devices/system.slice/ifup-wait-all-auto.service<br>/sys/fs/cgroup/systemd/system.slice/ifup-wait-all-auto.service</p>
+<p>$ sudo vim /lib/systemd/system/ifup-wait-all-auto.service<br>[Unit]<br>Description=Wait for all “auto” /etc/network/interfaces to be up for network-online.target<br>Documentation=man:interfaces(5) man:ifup(8)<br>DefaultDependencies=no<br>After=local-fs.target<br>Before=network-online.target<br>[Service]<br>Type=oneshot<br>RemainAfterExit=yes<br>TimeoutStartSec=2min            改成 5sec<br>ExecStart=/bin/sh -ec ‘<br>for i in $(ifquery –list –exclude lo –allow auto); do INTERFACES=”$INTERFACES$i “; done; <br>[ -n “$INTERFACES” ] || exit 0; <br>while ! ifquery –state $INTERFACES &gt;/dev/null; do sleep 1; done; <br>for i in $INTERFACES; do while [ -e /run/network/ifup-$i.pid ]; do sleep 0.2; done; done’</p>
+<p>use systemd-analyze blame  to see if there is a service that takes a long time to start.</p>
+<p>By masking the specific service can reduce  getting the startup time down to mere seconds:</p>
+<p>systemctl mask ifup-wait-all-auto.service</p>
+<p>List all network interfaces:<br>$ ifquery –list</p>
+<p>原因：<br>输入下列命令查看(链接:<a href="https://donnutcompute.wordpress.com/2014/04/19/a-start-job-is-running-for-dev-disk-by/" target="_blank" rel="noopener">https://donnutcompute.wordpress.com/2014/04/19/a-start-job-is-running-for-dev-disk-by/</a>)
+$ journalctl -b<br>Feb 01 12:28:36 ub1510alx systemd[679]: Startup finished in 74ms.<br>Feb 01 12:28:36 ub1510alx systemd[1]: Started User Manager for UID 1000.<br>Feb 01 12:28:39 ub1510alx systemd[1]: dev-disk-by\x2duuid-bc922c81\x2d9c9f\x2d4461\x2dadcf\x2db86b9b08dff9.device: Job dev-disk-by\x2duuid-bc922c81\x2d9c9f\x2d4461\x2da<br>Feb 01 12:28:39 ub1510alx systemd[1]: Timed out waiting for device dev-disk-by\x2duuid-bc922c81\x2d9c9f\x2d4461\x2dadcf\x2db86b9b08dff9.device.<br>Feb 01 12:28:39 ub1510alx systemd[1]: Dependency failed for /dev/disk/by-uuid/bc922c81-9c9f-4461-adcf-b86b9b08dff9.<br>Feb 01 12:28:39 ub1510alx systemd[1]: dev-disk-by\x2duuid-bc922c81\x2d9c9f\x2d4461\x2dadcf\x2db86b9b08dff9.swap: Job dev-disk-by\x2duuid-bc922c81\x2d9c9f\x2d4461\x2dadc<br>Feb 01 12:28:39 ub1510alx systemd[1]: Startup finished in 9.433s (kernel) + 3min 2.537s (userspace) = 3min 11.971s.<br>Feb 01 12:28:39 ub1510alx systemd[1]: dev-disk-by\x2duuid-bc922c81\x2d9c9f\x2d4461\x2dadcf\x2db86b9b08dff9.device: Job dev-disk-by\x2duuid-bc922c81\x2d9c9f\x2d4461\x2d</p>
+<p>什么是 swap status?<br>$ cat /proc/swaps<br>Filename                                Type            Size    Used    Priority<br>There is nothing there!</p>
+<p>Is fstab right?<br>$ cat /etc/fstab</p>
+<h1 id="etc-fstab-static-file-system-information"><a href="#etc-fstab-static-file-system-information" class="headerlink" title="/etc/fstab: static file system information."></a>/etc/fstab: static file system information.</h1><p>#</p>
+<h1 id="Use-‘blkid’-to-print-the-universally-unique-identifier-for-a"><a href="#Use-‘blkid’-to-print-the-universally-unique-identifier-for-a" class="headerlink" title="Use ‘blkid’ to print the universally unique identifier for a"></a>Use ‘blkid’ to print the universally unique identifier for a</h1><h1 id="device-this-may-be-used-with-UUID-as-a-more-robust-way-to-name-devices"><a href="#device-this-may-be-used-with-UUID-as-a-more-robust-way-to-name-devices" class="headerlink" title="device; this may be used with UUID= as a more robust way to name devices"></a>device; this may be used with UUID= as a more robust way to name devices</h1><h1 id="that-works-even-if-disks-are-added-and-removed-See-fstab-5"><a href="#that-works-even-if-disks-are-added-and-removed-See-fstab-5" class="headerlink" title="that works even if disks are added and removed. See fstab(5)."></a>that works even if disks are added and removed. See fstab(5).</h1><p>#</p>
+<h1 id=""><a href="#" class="headerlink" title="                                 "></a><file system="">                   <mount point="">  <type>  <options>        <dump>  <pass></pass></dump></options></type></mount></file></h1><h1 id="was-on-dev-sda1-during-installation"><a href="#was-on-dev-sda1-during-installation" class="headerlink" title="/ was on /dev/sda1 during installation"></a>/ was on /dev/sda1 during installation</h1><p>UUID=96f31591-dcd7-4e89-b50d-b8a62a4776db    /        ext4  errors=remount-ro     0      1</p>
+<h1 id="swap-was-on-dev-sda5-during-installation"><a href="#swap-was-on-dev-sda5-during-installation" class="headerlink" title="swap was on /dev/sda5 during installation"></a>swap was on /dev/sda5 during installation</h1><p>UUID=bc922c81-9c9f-4461-adcf-b86b9b08dff9   none       swap    sw             0      0</p>
+<p>What is Swap UUID?<br>$ lsblk -f<br>NAME   FSTYPE  LABEL                       UUID                                 MOUNTPOINT<br>sda<br>├─sda1 ext4                              96f31591-dcd7-4e89-b50d-b8a62a4776db /<br>├─sda2<br>└─sda5 swap                              04080eae-5988-4f53-a362-796c3408dd08<br>sr0    iso9660 VBOXADDITIONS_5.0.12_104815 2015-12-18-16-03-06-00</p>
+<p>这里显示的分区后的各个分区的真实UUID，显然fstab表里的Swap UUID还是原来删除的那个swap分区的UUID，<br>显然是错的。Swap UUID in fstab is incorrect!</p>
+<p>分析：删除老的swap分区之后，新建的swap分区的UUID没有更新到fstab表里，fstab表里存的还是之前的老的swap分区的UUID，<br>所以导致了启动的时候花很多时间去检查</p>
+<p>解决办法：<br>Solution<br>更新fstab表里的Swap分区的UUID(即/dev/sda5 swap下的UUID)<br>$ vim /etc/fstab</p>
+<p>把 UUID 改成 lsblk -f 里显示的正确的</p>
+<h1 id="dev-sda5"><a href="#dev-sda5" class="headerlink" title="/dev/sda5"></a>/dev/sda5</h1><p>UUID=da7fa69a8-31bd-448c-98de-55de4aa6f06a       none            swap            defaults        0 0</p>
+<p><strong>References</strong><br>印象笔记: <a href="https://app.yinxiang.com/Home.action#n=01862315-0296-4ebf-8360-b1ca3241ec18&amp;b=6ac15670-a7da-4bb7-b91d-9bdedaf2583e&amp;ses=4&amp;sh=1&amp;sds=5&amp;" target="_blank" rel="noopener">https://app.yinxiang.com/Home.action#n=01862315-0296-4ebf-8360-b1ca3241ec18&amp;b=6ac15670-a7da-4bb7-b91d-9bdedaf2583e&amp;ses=4&amp;sh=1&amp;sds=5&amp;</a><br><a href="http://boluns.blog.163.com/blog/static/69845968201411691347597/" target="_blank" rel="noopener">http://boluns.blog.163.com/blog/static/69845968201411691347597/</a><br><a href="https://cnzhx.net/blog/resizing-lvm-centos-virtualbox-guest/" target="_blank" rel="noopener">https://cnzhx.net/blog/resizing-lvm-centos-virtualbox-guest/</a><br><a href="http://www.cnblogs.com/codemood/p/3142848.html" target="_blank" rel="noopener">http://www.cnblogs.com/codemood/p/3142848.html</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/VirtualBox/">VirtualBox</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/VirtualBox/vbox-vbox-resize-hd/" data-title="Change the virtual hard disk size of a VM | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Linux/linux-netstat/" title="netstat">
+  <strong>Prev：</strong><br>
+  <span>
+  netstat</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/VirtualBox/vbox-vboxmanage/" title="Use VBoxManage to manage VirtualBox">
+ <strong>Next：</strong><br>
+ <span>Use VBoxManage to manage VirtualBox
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

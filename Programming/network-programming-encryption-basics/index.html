@@ -1,0 +1,755 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Encryption terminology | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="在进行网络开发时，经常会需要处理加密连接等跟证书加密等相关的概念，本文总结了证书加密等常见的名词术语及文件格式。   术语及常见概念SSL - Secure Sockets Layer 现在应该叫”TLS”,但由于习惯问题,还有很多场景下会称为”SSL”，涵义跟 TLS 完全相同。我们知道，HTTP 协议默认情况下是不加密内容的，在内容传播的时候由于是明文的容易被人截获。对于安全性要求较高的场合，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Encryption terminology">
+<meta property="og:url" content="https://juniway.net/Programming/network-programming-encryption-basics/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="在进行网络开发时，经常会需要处理加密连接等跟证书加密等相关的概念，本文总结了证书加密等常见的名词术语及文件格式。   术语及常见概念SSL - Secure Sockets Layer 现在应该叫”TLS”,但由于习惯问题,还有很多场景下会称为”SSL”，涵义跟 TLS 完全相同。我们知道，HTTP 协议默认情况下是不加密内容的，在内容传播的时候由于是明文的容易被人截获。对于安全性要求较高的场合，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.440Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Encryption terminology">
+<meta name="twitter:description" content="在进行网络开发时，经常会需要处理加密连接等跟证书加密等相关的概念，本文总结了证书加密等常见的名词术语及文件格式。   术语及常见概念SSL - Secure Sockets Layer 现在应该叫”TLS”,但由于习惯问题,还有很多场景下会称为”SSL”，涵义跟 TLS 完全相同。我们知道，HTTP 协议默认情况下是不加密内容的，在内容传播的时候由于是明文的容易被人截获。对于安全性要求较高的场合，">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Programming/network-programming-encryption-basics/" title="Encryption terminology" itemprop="url">Encryption terminology</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2014-09-16T03:30:33.000Z"> 2014-09-16</time>
+    <span class="post-count">字数 2.7k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>在进行网络开发时，经常会需要处理加密连接等跟证书加密等相关的概念，本文总结了证书加密等常见的名词术语及文件格式。</p>
+<br>
+
+<h5 id="术语及常见概念"><a href="#术语及常见概念" class="headerlink" title="术语及常见概念"></a>术语及常见概念</h5><p><strong>SSL - Secure Sockets Layer</strong></p>
+<p>现在应该叫”TLS”,但由于习惯问题,还有很多场景下会称为”SSL”，涵义跟 TLS 完全相同。我们知道，HTTP 协议默认情况下是不加密内容的，在内容传播的时候由于是明文的容易被人截获。对于安全性要求较高的场合，需要对传输加密才能保证内容不被泄露，HTTPS 就是带加密的 HTTP 协议，它的加密是基于 SSL 加密协议的，这个加密对用户和开发者来说都是透明的，详见<a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank" rel="noopener">维基百科</a>。</p>
+<p><strong>OpenSSL</strong></p>
+<p>简单地说，OpenSSL 是 SSL 的一个实现，SSL只是一种规范。理论上来说，SSL 这种规范是安全的，目前的技术水平很难破解。但SSL的实现就可能有些漏洞，如著名的”<a href="https://en.wikipedia.org/wiki/Heartbleed" target="_blank" rel="noopener">心脏出血(Heartbleed bug)</a>“。OpenSSL 提供了一大堆强大的工具软件，强大到 90% 我们都用不到。</p>
+<p><strong>ASN.1</strong></p>
+<p>Abstract Syntax Notation One，抽象语法标记，一种 ISO/ITU-T 标准，该标准描述了一种对数据进行表示、编码、传输和解码的数据格式。<br>我们可以把其类比成为开发语言提供的各种基础类型，X.509使用了这些基础类型来定义了数字证书的数据结构。（参考链接：<a href="http://baike.baidu.com/link?url=MWBtdL-WJS4sIBuxg4FY5gtFeVV6FARF_EaXDBCmBRhreSAQ1BAlSvyy2yCh0JHtgQMbUVqk0Zq6nt5c5jEwmq" target="_blank" rel="noopener">ASN.1</a>）</p>
+<p><strong>X.509</strong></p>
+<p>X.509 是最常见的一种数字证书标准，由国际电信联盟（ITU-T）依据 ASN.1 规范制定，它规定了证书应包含哪些信息和使用什么样的编码格式（默认DER二进制编码）。<br>其详情可以参考 RFC5280，SSL使用的就是这种证书标准。简单来说，X.509 是使用ASN.1 提供的抽象语法定义了证书的数据结构和编码规范。<br>同样的 X.509 数字证书，可能有不同的编码格式，目前有以下两种编码格式：</p>
+<p><strong>（1）PEM - Privacy Enhanced Mail</strong><br>最初是为了增强邮件安全，将 X.509 证书用 base64 进行重新编码随着邮件一起传输，现在基本就用来生成公钥/私钥文件供用户下载了，原本的功能反而不再重要。</p>
+<p>Openssl 使用 PEM 格式来存放各种信息，是 openssl 默认采用的信息存放方式。<br>Openssl 中的 PEM 文件一般包含如下信息:</p>
+<ul>
+<li>内容类型: 表明本文件存放的是什么信息内容，它的形式为 “——-BEGIN XXXX ——”，与结尾的 “——END XXXX——” 对应。</li>
+<li>头信息: 表明数据是如果被处理后存放，openssl 中用的最多的是加密信息，比如加密算法以及初始化向量 iv。</li>
+<li>信息体: 为 BASE64 编码的数据。可以包括所有私钥（RSA 和 DSA）、公钥（RSA 和 DSA）和 (x509) 证书。它存储用 Base64 编码后的 DER 格式数据，用 ascii 报头包围，因此适合系统之间的文本模式传输。</li>
+</ul>
+<p><strong>(i) 使用PEM格式存储的证书：</strong></p>
+<pre><code>—–BEGIN CERTIFICATE—–
+MIICJjCCAdCgAwIBAgIBITANBgkqhkiG9w0BAQQFADCBqTELMAkGA1UEBhMCVVMx
+...
+1p8h5vkHVbMu1frD1UgGnPlOO/K7Ig/KrsU=
+—–END CERTIFICATE—–</code></pre><p><strong>(ii) 使用PEM格式存储的私钥：</strong></p>
+<pre><code>—–BEGIN RSA PRIVATE KEY—–
+MIICJjCCAdCgAwIBAgIBITANBgkqhkiG9w0BAQQFADCBqTELMAkGA1UEBhMCVVMx
+...
+1p8h5vkHVbMu1frD1UgGnPlOO/K7Ig/KrsU=
+—–END RSA PRIVATE KEY—–</code></pre><p><strong>(iii) 使用PEM格式存储的证书请求文件：</strong></p>
+<pre><code>—–BEGIN CERTIFICATE REQUEST—–
+MIICJjCCAdCgAwIBAgIBITANBgkqhkiG9w0BAQQFADCBqTELMAkGA1UEBhMCVVMx
+...
+1p8h5vkHVbMu1frD1UgGnPlOO/K7Ig/KrsU=
+—–END CERTIFICATE REQUEST—–</code></pre><p>根据上述例子展示的是证书的文本内容，我们可以看到，如果起始行是 <strong>–BEGIN CERTIFICATE–</strong>，说明这是一个证书<br>如果是 <strong>—–BEGIN RSA PRIVATE KEY—–</strong>，就说明这是一个私钥。<br>文本格式怎么变成二进制？从程序角度来说，去掉前后的—-行，剩下的去掉回车，然后用 base64 解码，就得到二进制了格式的证书了。</p>
+<p>我们通过 openssl 来完成这个工作，</p>
+<p>(i) 用openssl创建 CA 证书的 RSA 密钥（PEM格式）：</p>
+<pre><code>$ openssl genrsa -des3 -out ca.key 1024</code></pre><p>(ii) 用openssl创建CA证书(PEM格式,假如有效期为一年)：</p>
+<pre><code>$ openssl req -new -x509 -days 365 -key ca.key -out ca.crt -config openssl.cnf</code></pre><p>openssl 是可以生成DER格式的CA证书的，在 Windows 下最好将 PEM 格式的 CA 证书转换成 DER 格式的 CA 证书。</p>
+<p>查看PEM格式证书的信息: <code>openssl x509 -in certificate.pem -text -noout</code></p>
+<p><strong>（2）DER - Distinguished Encoding Rules</strong></p>
+<p>可包含所有私钥、公钥和证书。它是大多数浏览器的缺省格式，并按 ASN1 DER 格式存储。注意它是无报头的，而 PEM 则是用文本报头包围的 DER。</p>
+<p>其他</p>
+<p><strong>PKCS</strong></p>
+<p>The Public-Key Cryptography Standards，公钥密码学标准。RSA 公司制定的一系列规范，#7/#12对基础X.509证书和证书对应的私钥进行扩充、加密、重新编码后用于交换，#8定义了一种私钥格式标准。<br>PKCS#7 常用的后缀是：<code>.P7B</code>, <code>.P7C</code>, <code>.SPC</code>，PKCS#12 常用的后缀有：<code>.P12</code>, <code>.PFX</code>。</p>
+<br>
+
+<h5 id="文件扩展名"><a href="#文件扩展名" class="headerlink" title="文件扩展名"></a>文件扩展名</h5><p>一般来说上述的两种加密格式分别使用 <code>.pem</code> 和 <code>.der</code> 作为文件名后缀来进行标示。</p>
+<p>还有以下常见后缀:</p>
+<p><strong>CRT</strong><br>Certificate的简写，*NIX 系统下常见的证书文件后缀。<code>.crt</code> 后缀的证书文件有可能是 PEM 编码，也有可能是DER编码，大多数是 PEM 编码。</p>
+<p><strong>CER</strong><br>同样是 Certificate 的简写，Windows系统下常见的证书文件类型后缀。<code>.cer</code> 后缀的证书可能是PEM编码，也可能是DER编码，大多数是 DER 编码。</p>
+<p>注意：<code>.cer</code> 或 <code>.crt</code> 文件是二进制形式存放的，只放证书，不含私钥。</p>
+<p><strong>KEY</strong><br>通常用来存放一个公钥或者私钥，并非X.509证书，编码类型可能是 PEM 或 DER。<br>查看 KEY 的办法: <code>openssl rsa -in mykey.key -text -noout</code><br>如果是 DER 格式：<code>openssl rsa -in mykey.key -text -noout -inform der</code></p>
+<p><strong>CSR</strong><br>Certificate Signing Request，证书签名请求。<br>生成 X509 数字证书前，需要用户向权威证书颁发机构提交证书申请文件，然后由 CA 来签发签名后的证书。<br>X509 证书申请的格式标准为 pkcs#10 和 rfc2314，大致过程如下：</p>
+<pre><code>1. 用户生成自己的公私钥对;
+2. 构造自己的证书申请文件,符合 PKCS#10 标准。该文件主要包括了用户信息、公钥以及一些可选的属性信息,并用自己的私钥给该内容签名;
+3. 用户将证书申请文件提交给 CA;
+4. CA 验证签名,提取用户信息,并加上其他信息(比如颁发者等信息),用 CA 的私钥签发数字证书;
+
+说明:数字证书(如x.509)是将用户(或其他实体)身份与公钥绑定的信息载体。一个合法的数字证书不仅要符合 X509 格式规范，还必须有 CA 的签名。
+用户不仅有自己的数字证书，还必须有对应的私钥。
+X509v3 数字证书主要包含的内容有:证书版本、证书序列号、签名算法、颁发者信息、有效时间、持有者信息、公钥信息、颁发者 ID、持有者 ID 和扩展项。</code></pre><p>其核心内容是一个公钥(还附带了一些别的信息)，在生成这个申请的时候，同时也会生成一个私钥，私钥要自己保管好。<br>查看 CSR 的办法: <code>openssl req -noout -text -in my.csr</code> (如果是DER格式的话照旧加上 <code>-inform der</code>)</p>
+<p><strong>PFX/P12</strong><br>Personal Information Exchange 个人信息交换协议。Predecessor of PKCS#12, 对 *nix 服务器来说，一般 CRT 和 KEY 是分开存放在不同文件中的，但 Windows 下的 IIS 则将它们存在一个 PFX 文件中（因此这个文件同时包含了证书及私钥）。那么这样会不会造成不安全？答案是不会，PFX 通常会有一个”提取密码”，你想把里面的东西读取出来的话，它就要求你提供提取密码，PFX使用的是 DER 编码，那么如何把 PFX 转换为 PEM 编码？</p>
+<p>A <code>.pfx</code> file is a <a href="https://en.wikipedia.org/wiki/PKCS_12" target="_blank" rel="noopener">PKCS#12</a> archive, usually containing a certificate and the corresponding private key.<br>On the other hand, a <code>.cer</code> or <code>.crt</code> file usually contains a single certificate, alone and without any wrapping (no private key, no password protection, just the certificate).</p>
+<pre><code>$ openssl pkcs12 -in for-iis.pfx -out for-iis.pem -nodes</code></pre><p>这个时候会提示你输入提取代码。提取成功后 for-iis.pem 就是可读的文本.<br>生成 pfx 的命令类似这样: <code>openssl pkcs12 -export -in certificate.crt -inkey privateKey.key -out certificate.pfx -certfile CACert.crt</code><br>其中 <code>CACert.crt</code> 是CA（权威证书颁发机构）的根证书，有的话也通过 <code>-certfile</code> 参数一起带进去。</p>
+<p>从 PFX 格式文件中提取私钥格式文件 (.key)</p>
+<pre><code>$ openssl pkcs12 -in mycert.pfx -nocerts -nodes -out mycert.key</code></pre><p>简单来说，pfx/p12 用于存放个人证书/私钥，其通常包含保护密码，2进制方式存储。</p>
+<p><strong>JKS</strong><br>Java Key Storage，这是 Java 的专利，跟OpenSSL关系不大。利用Java的一个叫”keytool”的工具可以将PFX转为JKS，当然 keytool 也能直接生成JKS。</p>
+<br>
+
+<h5 id="证书编码的转换"><a href="#证书编码的转换" class="headerlink" title="证书编码的转换"></a>证书编码的转换</h5><p><strong>(1) PEM转为DER</strong></p>
+<pre><code>$ openssl x509 -in cert.crt -outform der -out cert.der</code></pre><p><strong>(2) DER转为PEM</strong></p>
+<pre><code>$ openssl x509 -in cert.crt -inform der -outform pem -out cert.pem</code></pre><p>(提示:要转换KEY文件也类似，只不过把 x509 换成 rsa，要转CSR的话,把x509换成req…)</p>
+<br>
+
+<h5 id="获得证书"><a href="#获得证书" class="headerlink" title="获得证书"></a>获得证书</h5><p>有两种方式获得证书</p>
+<p><strong>(1) 向权威证书颁发机构申请证书</strong></p>
+<p>先生成一个 csr 证书请求</p>
+<pre><code>$ openssl req -newkey rsa:2048 -new -nodes -keyout my.key -out my.csr</code></pre><p>生成 .csr 文件之后，把其交给权威证书颁发机构，权威证书颁发机构将会对改 .csr 文件进行签名。签名返回给用户，当权威证书颁发机构颁发的证书过期的时候，你还可以用同样的csr来申请新的证书，key 可以保持不变。</p>
+<p><strong>(2) 生成自签名的证书</strong></p>
+<pre><code>$ openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem</code></pre><p>在生成证书的过程中会要你填一堆的东西，其实真正要填的只有 Common Name，通常填写你服务器的域名（如”yourcompany.com”），或者你服务器的IP地址，其它项可以默认留空。<br>生产环境中还是不要使用自签的证书，否则浏览器会不认。或者如果你是企业应用的话能够强制让用户的浏览器接受你的自签证书也行。向权威机构要证书通常是要钱的，但也有一些是免费的，仅仅需要一个简单的域名验证即可。</p>
+<br>
+<br>
+<br>
+
+<p><strong>Reference</strong><br><a href="http://blog.csdn.net/anxuegang/article/details/6157927" target="_blank" rel="noopener">http://blog.csdn.net/anxuegang/article/details/6157927</a><br><a href="https://www.sslshopper.com/ssl-converter.html" target="_blank" rel="noopener">https://www.sslshopper.com/ssl-converter.html</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Programming/">Programming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Programming/network-programming-encryption-basics/" data-title="Encryption terminology | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Programming/network-programming-select/" title="Use select to multiplexing network connections">
+  <strong>Prev：</strong><br>
+  <span>
+  Use select to multiplexing network connections</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Programming/cpp-extern-c/" title="Call C functions in C++">
+ <strong>Next：</strong><br>
+ <span>Call C functions in C++
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

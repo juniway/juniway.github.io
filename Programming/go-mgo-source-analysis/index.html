@@ -1,0 +1,852 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>mgo source code ananlysis | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="mgo 是 Go 语言用于连接 mongodb 的 开源 driver 程序。其源码共 2.6w+ 行代码，代码简洁而且质量很高，值得学习。  #### mgo 的连接模型 --- 使用 mgo 连接 mongodb 可以用下面两种方式： 1session, err := mgo.Dial(host)  或者 1session, err := mgo.DialWithInfo()  这个 sess">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mgo source code ananlysis">
+<meta property="og:url" content="https://juniway.net/Programming/go-mgo-source-analysis/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="mgo 是 Go 语言用于连接 mongodb 的 开源 driver 程序。其源码共 2.6w+ 行代码，代码简洁而且质量很高，值得学习。  #### mgo 的连接模型 --- 使用 mgo 连接 mongodb 可以用下面两种方式： 1session, err := mgo.Dial(host)  或者 1session, err := mgo.DialWithInfo()  这个 sess">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.431Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mgo source code ananlysis">
+<meta name="twitter:description" content="mgo 是 Go 语言用于连接 mongodb 的 开源 driver 程序。其源码共 2.6w+ 行代码，代码简洁而且质量很高，值得学习。  #### mgo 的连接模型 --- 使用 mgo 连接 mongodb 可以用下面两种方式： 1session, err := mgo.Dial(host)  或者 1session, err := mgo.DialWithInfo()  这个 sess">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Programming/go-mgo-source-analysis/" title="mgo source code ananlysis" itemprop="url">mgo source code ananlysis</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-07-29T13:30:33.000Z"> 2016-07-29</time>
+    <span class="post-count">字数 4.1k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>mgo 是 Go 语言用于连接 mongodb 的 开源 driver 程序。其源码共 2.6w+ 行代码，代码简洁而且质量很高，值得学习。</p>
+<br>
+#### mgo 的连接模型
+---
+使用 mgo 连接 mongodb 可以用下面两种方式：
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session, err := mgo.Dial(host)</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session, err := mgo.DialWithInfo()</span><br></pre></td></tr></table></figure>
+
+<p>这个 session 会被全局使用，通常，在实际的程序中，我们会开启 goroutine 来处理每个连接，其他的 goroutine 会通过 session.Clone() 来复用这个连接，使用完成之后通过 session.Close() 来关闭这个连接。<br>如果并发很高，其他 goroutine 可能来不及释放 session，那么当前 goroutine 就要么等待，要么新建一个 session。</p>
+<br>
+#### 测试方法
+---
+在程序中开启 10000 个 goroutines， 在每个 goroutine 里面 time.Sleep(10 * time.Second)，睡眠 10 秒的目的 Hold 住连接暂时不释放，这样的话，就可以看到 mgo 会不断创建新连接。
+我们可以在 mongodb shell 中执行 `db.serverStatus().connections` 来查看连接数或者直接在本地客户端上执行 `netstat -natp | grep app_name | wc -l` 来查看连接数。
+
+<p>在 sleep 状态下由于不释放连接，测试效果如下：<br>100 并发： mongodb 增加 100 个连接<br>1w 并发：  mongodb 增加 4390 - 4700 个左右 的连接。<br>5w 并发：  同上<br>10w 并发： 同上</p>
+<p>由于 mgo 默认的 <strong>pool limit</strong> 是 4096， 在高并发情况下（超过连接池限制时），如果每个 session 不调用 close（我这里使用 sleep 的方式让其不释放连接），这样，连接数会很快就达到 4096，并堵死其他请求，所以 clone 或 copy session 时一定要使用 defer close() 把连接关闭。启用 <code>maxPoolLimit</code> 参数则会限制总连接大小，连接到限制则当前协程会 sleep 等待，直到可以创建连接，高并发时锁有问题，会导致多创建一些连接，我测试下来发现最多4700多个，也就是多了超出连接池限制多创建了 600 多个连接。</p>
+<p>运行 <code>testmgo 4096 &gt; res.txt</code> 创建 4096 个 goroutines, 并把真正执行连接（dial）了的信息打印， log 全部导到 res.txt 中方便分析。</p>
+<pre><code>$ grep &quot;dial&quot; res.txt | wc -l
+104
+
+$ grep &quot;n &gt; 0&quot; res.txt | wc -l
+3989</code></pre><p>可以看到真正的 dial 只有 104 次， 也就是<strong>只创建了 104 个 socket 物理连接</strong>， 而有 3989 次都复用了 socket。3989 + 104 = 4093。<br>创建的 socket 少，跟查询语句耗时有关，如果一条查询语句耗时很短，那么连接会很快释放而被复用。相反，如果查询比较耗时，那么那个 socket 可能一直占用，那么其他请求来的时候没有可用的 socket 就会创建一个新的 socket。当创建的连接超过 pool limit 时，会返回 errPoolLimit 错误，并且 sleep 0.1s 之后重新获取/创建 socket。</p>
+<p>代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">s, abended, err := server.AcquireSocket(poolLimit, socketTimeout)</span><br><span class="line"><span class="keyword">if</span> err == errPoolLimit &#123;</span><br><span class="line">    <span class="keyword">if</span> !warnedLimit &#123;</span><br><span class="line">        warnedLimit = <span class="literal">true</span></span><br><span class="line">        log(<span class="string">"WARNING: Per-server connection limit reached."</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    time.Sleep(<span class="number">100</span> * time.Millisecond)                  <span class="comment">// 注意这里， Sleep 了</span></span><br><span class="line">    <span class="keyword">continue</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：在不调用 session close 的情况下，其他的连接请求只能新建连接，</p>
+<br>
+#### 整个连接流程的源码解读
+---
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sess := session.Copy()   -&gt; copySession()</span><br><span class="line">c := sess.DB(<span class="string">"test"</span>).C(<span class="string">"person"</span>) -&gt;</span><br><span class="line">c.Find().One() -&gt;</span><br><span class="line">s.acquireSocket() -&gt;</span><br><span class="line">s.cluster.AcquireSocket() -&gt; </span><br><span class="line">server.AcquireSocket(poolLimit, socketTimeout) -&gt; </span><br><span class="line">server.Connect(timeout) -&gt; </span><br><span class="line">server.net.DialTimeout(<span class="string">"tcp"</span>, server.ResolvedAddr, timeout)</span><br></pre></td></tr></table></figure>
+
+<p><strong>核心函数</strong><br>(1). session.DialWithInfo()<br>(2). cluster.newCluster()<br>(3). session.newSession()</p>
+<br>
+###### (1). session.DialWithInfo()
+---
+DialWithInfo establishes a new session to the cluster identified by info.
+Dial("localhost:27017") 内部实际上也会调用 DialWithInfo()
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DialWithInfo</span><span class="params">(info *DialInfo)</span> <span class="params">(*Session, error)</span></span> &#123;</span><br><span class="line">    addrs := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="built_in">len</span>(info.Addrs))</span><br><span class="line">    <span class="keyword">for</span> i, addr := <span class="keyword">range</span> info.Addrs &#123;</span><br><span class="line">        p := strings.LastIndexAny(addr, <span class="string">"]:"</span>)</span><br><span class="line">        <span class="keyword">if</span> p == <span class="number">-1</span> || addr[p] != <span class="string">':'</span> &#123;</span><br><span class="line">            <span class="comment">// XXX This is untested. The test suite doesn't use the standard port.</span></span><br><span class="line">            addr += <span class="string">":27017"</span></span><br><span class="line">        &#125;</span><br><span class="line">        addrs[i] = addr</span><br><span class="line">    &#125;</span><br><span class="line">    cluster := newCluster(addrs, info.Direct, info.FailFast, dialer&#123;info.Dial, info.DialServer&#125;, info.ReplicaSetName)</span><br><span class="line">    session := newSession(Eventual, cluster, info.Timeout)  <span class="comment">// 注意： 初始化时， consistency 是 Eventual</span></span><br><span class="line">    session.defaultdb = info.Database</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> info.PoolLimit &gt; <span class="number">0</span> &#123;                  <span class="comment">// info.PoolLimit &gt; 0 说明传进来的 info对象设置了 PoolLimit， 否则默认为0</span></span><br><span class="line">        session.poolLimit = info.PoolLimit   <span class="comment">// 只要用户自定义了 PoolLimit 的值， 那么就使用该值， 否则使用默认的 4096</span></span><br><span class="line">    &#125;</span><br><span class="line">    cluster.Release()                                   <span class="comment">// 注意： 这里 cluster 就 Release 了， ref-1</span></span><br><span class="line">    <span class="comment">// People get confused when we return a session that is not actually established to any servers yet (e.g. what if url was wrong). </span></span><br><span class="line">    <span class="comment">// So, ping the server to ensure there's someone there, and abort if it fails.</span></span><br><span class="line">    <span class="keyword">if</span> err := session.Ping(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        session.Close()</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line">    session.SetMode(Strong, <span class="literal">true</span>)                             <span class="comment">// 完事之后， 把 consistency 设置成了 Strong</span></span><br><span class="line">    <span class="keyword">return</span> session, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+##### (2). cluster.newCluster()
+---
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newCluster</span><span class="params">(userSeeds []<span class="keyword">string</span>, direct, failFast <span class="keyword">bool</span>, dial dialer, setName <span class="keyword">string</span>)</span> *<span class="title">mongoCluster</span></span> &#123;</span><br><span class="line">    cluster := &amp;mongoCluster&#123;</span><br><span class="line">        userSeeds: userSeeds,                      <span class="comment">// seed server， 用于 查找 topology</span></span><br><span class="line">        references: <span class="number">1</span>,                        <span class="comment">// 这里要注意：创建时 cluster.reference 就是 1， 在 cluster.syncServersLoop() 里面又会 +1</span></span><br><span class="line">        direct: direct,                               所以，一旦 cluster 创建了， 那么 ref 就至少是 <span class="number">1</span></span><br><span class="line">        failFast: failFast,</span><br><span class="line">        dial: dial,</span><br><span class="line">        setName: setName,</span><br><span class="line">    &#125;</span><br><span class="line">    cluster.serverSynced.L = cluster.RWMutex.RLocker()</span><br><span class="line">    cluster.sync = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line">    stats.cluster(+<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">go</span> cluster.syncServersLoop()                        <span class="comment">// 这里 sync servers， 会发现 topology 中所有的 servers</span></span><br><span class="line">    <span class="keyword">return</span> cluster</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+##### (3). session.newSession()
+---
+
+<p>创建新 Session, 函数原型：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newSession</span><span class="params">(consistency Mode, cluster *mongoCluster, timeout time.Duration)</span> <span class="params">(session *Session)</span></span> &#123;</span><br><span class="line">    cluster.Acquire()</span><br><span class="line">    session = &amp;Session&#123;</span><br><span class="line">        cluster_: cluster,</span><br><span class="line">        syncTimeout: timeout,</span><br><span class="line">        sockTimeout: timeout,</span><br><span class="line">        poolLimit: <span class="number">4096</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    debugf(<span class="string">"New session %p on cluster %p"</span>, session, cluster)</span><br><span class="line">    session.SetMode(consistency, <span class="literal">true</span>)    session.SetSafe(&amp;Safe&#123;&#125;)</span><br><span class="line">    session.queryConfig.prefetch = defaultPrefetch</span><br><span class="line">    <span class="keyword">return</span> session</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>session 有两个 socket， 一个是 masterSocket， 一个是 slaveSocket， 如果 masterSocket 是 nil 的话， 那么 slaveOk 就是true。</p>
+<p><strong>注意：</strong> 在 newSession() 的时候，这两个 sockets 都不会初始化，所以一直会是 nil。<br><span class="redBold">直到真正调用 query 去查询数据库的时候才会通过 session.acqureSocket() 去新建一个 socket！</span></p>
+<p>详细代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">c := session.DB(<span class="string">"lanxin"</span>).C(<span class="string">"user_message_to_audit_t"</span>)</span><br><span class="line"><span class="keyword">var</span> res <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">err = c.Find(bson.M&#123;<span class="string">"audit_message_id"</span>: <span class="number">99</span>&#125;).One(&amp;res)</span><br></pre></td></tr></table></figure>
+
+<p>collection.Find() 函数返回一个 Query 对象，<br>Query 对象的 One()函数（linenumber 3032）里面调用 socket, err := session.acquireSocket(true)，<br><span class="redBold">这时候才真正创建一个 socket！</span></p>
+<p>session 的 acquireSocket 定义在 <em>linenumber 4360</em></p>
+<p>详细代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Query)</span> <span class="title">One</span><span class="params">(result <span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(err error)</span></span> &#123;</span><br><span class="line">    q.m.Lock()</span><br><span class="line">    session := q.session</span><br><span class="line">    op := q.op <span class="comment">// Copy.</span></span><br><span class="line">    q.m.Unlock()</span><br><span class="line">    socket, err := session.acquireSocket(<span class="literal">true</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> socket.Release()</span><br><span class="line">    op.limit = <span class="number">-1</span></span><br><span class="line">    session.prepareQuery(&amp;op)</span><br><span class="line">    expectFindReply := prepareFindOp(socket, &amp;op, <span class="number">1</span>)</span><br><span class="line">    data, err := socket.SimpleQuery(&amp;op)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> data == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ErrNotFound</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> expectFindReply &#123;</span><br><span class="line">        <span class="keyword">var</span> findReply <span class="keyword">struct</span> &#123;</span><br><span class="line">            Ok <span class="keyword">bool</span></span><br><span class="line">            Code <span class="keyword">int</span></span><br><span class="line">            Errmsg <span class="keyword">string</span></span><br><span class="line">            Cursor cursorData</span><br><span class="line">        &#125;</span><br><span class="line">        err = bson.Unmarshal(data, &amp;findReply)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> err</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> !findReply.Ok &amp;&amp; findReply.Errmsg != <span class="string">""</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> &amp;QueryError&#123;Code: findReply.Code, Message: findReply.Errmsg&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(findReply.Cursor.FirstBatch) == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> ErrNotFound</span><br><span class="line">        &#125;</span><br><span class="line">        data = findReply.Cursor.FirstBatch[<span class="number">0</span>].Data</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> result != <span class="literal">nil</span> &#123;</span><br><span class="line">        err = bson.Unmarshal(data, result)</span><br><span class="line">        <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">            debugf(<span class="string">"Query %p document unmarshaled: %#v"</span>, q, result)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            debugf(<span class="string">"Query %p document unmarshaling failed: %#v"</span>, q, err)</span><br><span class="line">            <span class="keyword">return</span> err</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> checkQueryError(op.collection, data)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者 </p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">err = c.Find(bson.M&#123;<span class="string">"audit_message_id"</span>: <span class="number">99</span>&#125;).All(&amp;res)</span><br></pre></td></tr></table></figure>
+
+<p>会调用 Query 对象的 All() 函数， All() 内部会调用 q.Iter().All()<br>Iter() 里面会调用 socket, err := session.acquireSocket(true) 来新建一个 socket！</p>
+<p>详细代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(q *Query)</span> <span class="title">Iter</span><span class="params">()</span> *<span class="title">Iter</span></span> &#123;</span><br><span class="line">    q.m.Lock()</span><br><span class="line">    session := q.session</span><br><span class="line">    op := q.op</span><br><span class="line">    prefetch := q.prefetch</span><br><span class="line">    limit := q.limit</span><br><span class="line">    q.m.Unlock()</span><br><span class="line">    iter := &amp;Iter&#123;</span><br><span class="line">        session: session,</span><br><span class="line">        prefetch: prefetch,</span><br><span class="line">        limit: limit,</span><br><span class="line">        timeout: <span class="number">-1</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    iter.gotReply.L = &amp;iter.m</span><br><span class="line">    iter.op.collection = op.collection</span><br><span class="line">    iter.op.limit = op.limit</span><br><span class="line">    iter.op.replyFunc = iter.replyFunc()</span><br><span class="line">    iter.docsToReceive++</span><br><span class="line">    socket, err := session.acquireSocket(<span class="literal">true</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        iter.err = err</span><br><span class="line">        <span class="keyword">return</span> iter</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> socket.Release()</span><br><span class="line">    session.prepareQuery(&amp;op)</span><br><span class="line">    op.replyFunc = iter.op.replyFunc</span><br><span class="line">    <span class="keyword">if</span> prepareFindOp(socket, &amp;op, limit) &#123;</span><br><span class="line">        iter.findCmd = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    iter.server = socket.Server()</span><br><span class="line">    err = socket.Query(&amp;op)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// Must lock as the query is already out and it may call replyFunc.</span></span><br><span class="line">        iter.m.Lock()</span><br><span class="line">        iter.err = err</span><br><span class="line">        iter.m.Unlock()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> iter</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面解读处理连接过程的代码</p>
+<br>
+###### (1). session.acquireSocket()
+---
+session.acquireSocket() 会先判断是否已经存在 masterSocket 和 slaveSocket， 如果都为 nil。 那么就会调用 cluster.AcquireSocket()， 
+session 拿到新创建的 socket 之后， 调用 setSocket(socket) -> socket.Acquire() 返回 serverInfo， 通过 serverInfo.Master 来判断是 master 还是 slave,
+然后相应的设置 s.masterSocket 和 s.slaveSocket
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Session)</span> <span class="title">acquireSocket</span><span class="params">(slaveOk <span class="keyword">bool</span>)</span> <span class="params">(*mongoSocket, error)</span></span> &#123;</span><br><span class="line">    <span class="comment">// Read-only lock to check for previously reserved socket.</span></span><br><span class="line">    s.m.RLock()</span><br><span class="line">    <span class="comment">// If there is a slave socket reserved and its use is acceptable, take it as long</span></span><br><span class="line">    <span class="comment">// as there isn't a master socket which would be preferred by the read preference mode.</span></span><br><span class="line">    <span class="keyword">if</span> s.slaveSocket != <span class="literal">nil</span> &amp;&amp; s.slaveOk &amp;&amp; slaveOk &amp;&amp; (s.masterSocket == <span class="literal">nil</span> || s.consistency != PrimaryPreferred &amp;&amp; s.consistency != Monotonic) &#123;</span><br><span class="line">        socket := s.slaveSocket</span><br><span class="line">        socket.Acquire()</span><br><span class="line">        s.m.RUnlock()</span><br><span class="line">        <span class="keyword">return</span> socket, <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> s.masterSocket != <span class="literal">nil</span> &#123;</span><br><span class="line">        socket := s.masterSocket</span><br><span class="line">        socket.Acquire()</span><br><span class="line">        s.m.RUnlock()</span><br><span class="line">        <span class="keyword">return</span> socket, <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    s.m.RUnlock()</span><br><span class="line">    <span class="comment">// No go. We may have to request a new socket and change the session,</span></span><br><span class="line">    <span class="comment">// so try again but with an exclusive lock now.</span></span><br><span class="line">    s.m.Lock()</span><br><span class="line">    <span class="keyword">defer</span> s.m.Unlock()</span><br><span class="line">    <span class="keyword">if</span> s.slaveSocket != <span class="literal">nil</span> &amp;&amp; s.slaveOk &amp;&amp; slaveOk &amp;&amp; (s.masterSocket == <span class="literal">nil</span> || s.consistency != PrimaryPreferred &amp;&amp; s.consistency != Monotonic) &#123;</span><br><span class="line">        s.slaveSocket.Acquire()</span><br><span class="line">        <span class="keyword">return</span> s.slaveSocket, <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> s.masterSocket != <span class="literal">nil</span> &#123;</span><br><span class="line">        s.masterSocket.Acquire()</span><br><span class="line">        <span class="keyword">return</span> s.masterSocket, <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Still not good. We need a new socket.</span></span><br><span class="line">    sock, err := s.cluster().AcquireSocket(s.consistency, slaveOk &amp;&amp; s.slaveOk, s.syncTimeout, s.sockTimeout, s.queryConfig.op.serverTags, s.poolLimit)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Authenticate the new socket.</span></span><br><span class="line">    <span class="keyword">if</span> err = s.socketLogin(sock); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        sock.Release()</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Keep track of the new socket, if necessary.</span></span><br><span class="line">    <span class="comment">// Note that, as a special case, if the Eventual session was</span></span><br><span class="line">    <span class="comment">// not refreshed (s.slaveSocket != nil), it means the developer</span></span><br><span class="line">    <span class="comment">// asked to preserve an existing reserved socket, so we'll</span></span><br><span class="line">    <span class="comment">// keep a master one around too before a Refresh happens.</span></span><br><span class="line">    <span class="keyword">if</span> s.consistency != Eventual || s.slaveSocket != <span class="literal">nil</span> &#123;</span><br><span class="line">        s.setSocket(sock)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Switch over a Monotonic session to the master.</span></span><br><span class="line">    <span class="keyword">if</span> !slaveOk &amp;&amp; s.consistency == Monotonic &#123;</span><br><span class="line">        s.slaveOk = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sock, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Session)</span> <span class="title">setSocket</span><span class="params">(socket *mongoSocket)</span></span> &#123;</span><br><span class="line">    info := socket.Acquire()</span><br><span class="line">    <span class="keyword">if</span> info.Master &#123;</span><br><span class="line">        <span class="keyword">if</span> s.masterSocket != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="built_in">panic</span>(<span class="string">"setSocket(master) with existing master socket reserved"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        s.masterSocket = socket</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> s.slaveSocket != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="built_in">panic</span>(<span class="string">"setSocket(slave) with existing slave socket reserved"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        s.slaveSocket = socket</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### (2). cluster.AcquireSocket()
+---
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(cluster *mongoCluster)</span> <span class="title">AcquireSocket</span><span class="params">(mode Mode, slaveOk <span class="keyword">bool</span>, syncTimeout time.Duration, socketTimeout time.Duration, serverTags []bson.D, poolLimit <span class="keyword">int</span>)</span> <span class="params">(s *mongoSocket, err error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> started time.Time</span><br><span class="line">    <span class="keyword">var</span> syncCount <span class="keyword">uint</span></span><br><span class="line">    warnedLimit := <span class="literal">false</span></span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        cluster.RLock()</span><br><span class="line">        <span class="keyword">for</span> &#123;</span><br><span class="line">            mastersLen := cluster.masters.Len()</span><br><span class="line">            slavesLen := cluster.servers.Len() - mastersLen</span><br><span class="line">            debugf(<span class="string">"Cluster has %d known masters and %d known slaves."</span>, mastersLen, slavesLen)</span><br><span class="line">            <span class="keyword">if</span> mastersLen &gt; <span class="number">0</span> &amp;&amp; !(slaveOk &amp;&amp; mode == Secondary) || slavesLen &gt; <span class="number">0</span> &amp;&amp; slaveOk &#123;</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> mastersLen &gt; <span class="number">0</span> &amp;&amp; mode == Secondary &amp;&amp; cluster.masters.HasMongos() &#123;</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> started.IsZero() &#123;</span><br><span class="line">                <span class="comment">// Initialize after fast path above.</span></span><br><span class="line">                started = time.Now()</span><br><span class="line">                syncCount = cluster.syncCount</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> syncTimeout != <span class="number">0</span> &amp;&amp; started.Before(time.Now().Add(-syncTimeout)) || cluster.failFast &amp;&amp; cluster.syncCount != syncCount &#123;</span><br><span class="line">                cluster.RUnlock()</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"no reachable servers"</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            log(<span class="string">"Waiting for servers to synchronize..."</span>)</span><br><span class="line">            cluster.syncServers()</span><br><span class="line">            <span class="comment">// Remember: this will release and reacquire the lock.</span></span><br><span class="line">            cluster.serverSynced.Wait()</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">var</span> server *mongoServer                   <span class="comment">// 这里的 server 会取一个 Best Fit 的！</span></span><br><span class="line">        <span class="keyword">if</span> slaveOk &#123;</span><br><span class="line">            server = cluster.servers.BestFit(mode, serverTags)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            server = cluster.masters.BestFit(mode, <span class="literal">nil</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        cluster.RUnlock()</span><br><span class="line">        <span class="keyword">if</span> server == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="comment">// Must have failed the requested tags. Sleep to avoid spinning.</span></span><br><span class="line">            time.Sleep(<span class="number">1e8</span>)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        s, abended, err := server.AcquireSocket(poolLimit, socketTimeout)</span><br><span class="line">        <span class="keyword">if</span> err == errPoolLimit &#123;</span><br><span class="line">            <span class="keyword">if</span> !warnedLimit &#123;</span><br><span class="line">                warnedLimit = <span class="literal">true</span></span><br><span class="line">                log(<span class="string">"WARNING: Per-server connection limit reached."</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            time.Sleep(<span class="number">100</span> * time.Millisecond)</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            cluster.removeServer(server)</span><br><span class="line">            cluster.syncServers()</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> abended &amp;&amp; !slaveOk &#123;</span><br><span class="line">            <span class="keyword">var</span> result isMasterResult</span><br><span class="line">            err := cluster.isMaster(s, &amp;result)</span><br><span class="line">            <span class="keyword">if</span> err != <span class="literal">nil</span> || !result.IsMaster &#123;</span><br><span class="line">                logf(<span class="string">"Cannot confirm server %s as master (%v)"</span>, server.Addr, err)</span><br><span class="line">                s.Release()</span><br><span class="line">                cluster.syncServers()</span><br><span class="line">                time.Sleep(<span class="number">100</span> * time.Millisecond)</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> s, <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">"unreached"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### 3. server.AcquireSocket()
+----
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AcquireSocket returns a socket for communicating with the server.</span></span><br><span class="line"><span class="comment">// This will attempt to reuse an old connection, if one is available. Otherwise,</span></span><br><span class="line"><span class="comment">// it will establish a new one. The returned socket is owned by the call site,</span></span><br><span class="line"><span class="comment">// and will return to the cache when the socket has its Release method called</span></span><br><span class="line"><span class="comment">// the same number of times as AcquireSocket + Acquire were called for it.</span></span><br><span class="line"><span class="comment">// If the poolLimit argument is greater than zero and the number of sockets in</span></span><br><span class="line"><span class="comment">// use in this server is greater than the provided limit, errPoolLimit is</span></span><br><span class="line"><span class="comment">// returned.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(server *mongoServer)</span> <span class="title">AcquireSocket</span><span class="params">(poolLimit <span class="keyword">int</span>, timeout time.Duration)</span> <span class="params">(socket *mongoSocket, abended <span class="keyword">bool</span>, err error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        server.Lock()</span><br><span class="line">        abended = server.abended</span><br><span class="line">        <span class="keyword">if</span> server.closed &#123;</span><br><span class="line">            server.Unlock()</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span>, abended, errServerClosed</span><br><span class="line">        &#125;</span><br><span class="line">        n := <span class="built_in">len</span>(server.unusedSockets)</span><br><span class="line">        <span class="keyword">if</span> poolLimit &gt; <span class="number">0</span> &amp;&amp; <span class="built_in">len</span>(server.liveSockets)-n &gt;= poolLimit &#123;</span><br><span class="line">            server.Unlock()</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">false</span>, errPoolLimit</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> n &gt; <span class="number">0</span> &#123;</span><br><span class="line">            socket = server.unusedSockets[n<span class="number">-1</span>]</span><br><span class="line">            server.unusedSockets[n<span class="number">-1</span>] = <span class="literal">nil</span> <span class="comment">// Help GC.</span></span><br><span class="line">            server.unusedSockets = server.unusedSockets[:n<span class="number">-1</span>]</span><br><span class="line">            info := server.info</span><br><span class="line">            server.Unlock()</span><br><span class="line">            err = socket.InitialAcquire(info, timeout)</span><br><span class="line">            <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            server.Unlock()</span><br><span class="line">            socket, err = server.Connect(timeout)</span><br><span class="line">            <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">                server.Lock()</span><br><span class="line">                <span class="comment">// We've waited for the Connect, see if we got closed in the meantime</span></span><br><span class="line">                <span class="keyword">if</span> server.closed &#123;</span><br><span class="line">                    server.Unlock()</span><br><span class="line">                    socket.Release()</span><br><span class="line">                    socket.Close()</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">nil</span>, abended, errServerClosed</span><br><span class="line">                &#125;</span><br><span class="line">                server.liveSockets = <span class="built_in">append</span>(server.liveSockets, socket)        <span class="comment">// 获得新建的 socket 之后， 就放在 server.liveSockets 列表里！  </span></span><br><span class="line">                server.Unlock()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">"unreachable"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### (4). server.Connect()
+----
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Connect establishes a new connection to the server. This should generally be done through server.AcquireSocket().</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(server *mongoServer)</span> <span class="title">Connect</span><span class="params">(timeout time.Duration)</span> <span class="params">(*mongoSocket, error)</span></span> &#123;</span><br><span class="line">    server.RLock()</span><br><span class="line">    master := server.info.Master</span><br><span class="line">    dial := server.dial</span><br><span class="line">    server.RUnlock()</span><br><span class="line">    logf(<span class="string">"Establishing new connection to %s (timeout=%s)..."</span>, server.Addr, timeout)</span><br><span class="line">    <span class="keyword">var</span> conn net.Conn</span><br><span class="line">    <span class="keyword">var</span> err error</span><br><span class="line">    <span class="keyword">switch</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> !dial.isSet():</span><br><span class="line">        <span class="comment">// Cannot do this because it lacks timeout support. :-(</span></span><br><span class="line">        <span class="comment">//conn, err = net.DialTCP("tcp", nil, server.tcpaddr)</span></span><br><span class="line">        conn, err = net.DialTimeout(<span class="string">"tcp"</span>, server.ResolvedAddr, timeout)               <span class="comment">// 1. 这里是真正的 dial， 建立连接！</span></span><br><span class="line">        <span class="keyword">if</span> tcpconn, ok := conn.(*net.TCPConn); ok &#123;</span><br><span class="line">            tcpconn.SetKeepAlive(<span class="literal">true</span>)                                                  <span class="comment">// 2. 建立连接之后设置 keepAlive ！ </span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="built_in">panic</span>(<span class="string">"internal error: obtained TCP connection is not a *net.TCPConn!?"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">case</span> dial.old != <span class="literal">nil</span>:</span><br><span class="line">        conn, err = dial.old(server.tcpaddr)</span><br><span class="line">    <span class="keyword">case</span> dial.<span class="built_in">new</span> != <span class="literal">nil</span>:</span><br><span class="line">        conn, err = dial.<span class="built_in">new</span>(&amp;ServerAddr&#123;server.Addr, server.tcpaddr&#125;)</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">"dialer is set, but both dial.old and dial.new are nil"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        logf(<span class="string">"Connection to %s failed: %v"</span>, server.Addr, err.Error())</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line">    logf(<span class="string">"Connection to %s established."</span>, server.Addr)</span><br><span class="line">    stats.conn(+<span class="number">1</span>, master)</span><br><span class="line">    <span class="keyword">return</span> newSocket(server, conn, timeout), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### (5). socket.newSocket()
+----
+通过 dial 建立一个 conn 之后， 需要新建一个 socket struct， 把 conn 存进去。
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newSocket</span><span class="params">(server *mongoServer, conn net.Conn, timeout time.Duration)</span> *<span class="title">mongoSocket</span></span> &#123;</span><br><span class="line">    socket := &amp;mongoSocket&#123;</span><br><span class="line">        conn: conn,                                <span class="comment">// 这里把新连接的 conn 存给了 sockt 对象</span></span><br><span class="line">        addr: server.Addr,</span><br><span class="line">        server: server,</span><br><span class="line">        replyFuncs: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">uint32</span>]replyFunc),</span><br><span class="line">    &#125;</span><br><span class="line">    socket.gotNonce.L = &amp;socket.Mutex</span><br><span class="line">    <span class="keyword">if</span> err := socket.InitialAcquire(server.Info(), timeout); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">"newSocket: InitialAcquire returned error: "</span> + err.Error())</span><br><span class="line">    &#125;</span><br><span class="line">    stats.socketsAlive(+<span class="number">1</span>)</span><br><span class="line">    debugf(<span class="string">"Socket %p to %s: initialized"</span>, socket, socket.addr)</span><br><span class="line">    socket.resetNonce()</span><br><span class="line">    <span class="keyword">go</span> socket.readLoop()</span><br><span class="line">    <span class="keyword">return</span> socket</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### 6. socket.InitialAcquire()
+---
+在新建一个 socket （尚未有人使用, 即 ref == 0）时，或者 从 pool 里面取出一个空闲的（ref == 0）时，
+需要调用这个 InitialAcquire() 把 ref + 1
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// InitialAcquire obtains the first reference to the socket, either right after the connection is made </span></span><br><span class="line"><span class="comment">// or once a recycled socket is fetched from pool for reuse.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(socket *mongoSocket)</span> <span class="title">InitialAcquire</span><span class="params">(serverInfo *mongoServerInfo, timeout time.Duration)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    socket.Lock()</span><br><span class="line">    <span class="keyword">if</span> socket.references &gt; <span class="number">0</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">"Socket acquired out of cache with references"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> socket.dead != <span class="literal">nil</span> &#123;</span><br><span class="line">        dead := socket.dead</span><br><span class="line">        socket.Unlock()</span><br><span class="line">        <span class="keyword">return</span> dead</span><br><span class="line">    &#125;</span><br><span class="line">    socket.references++</span><br><span class="line">    socket.serverInfo = serverInfo</span><br><span class="line">    socket.timeout = timeout</span><br><span class="line">    stats.socketsInUse(+<span class="number">1</span>)</span><br><span class="line">    stats.socketRefs(+<span class="number">1</span>)</span><br><span class="line">    socket.Unlock()</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+##### 关闭连接
+---
+
+<p>session.Close() -&gt; session.unsetSocket() -&gt; socket.Release()<br>                -&gt; cluster.Release() -&gt; for … range –&gt; server.Close() -&gt;<br>                        for … range { liveSockets, unusedSockets } -&gt; socket.Close() -&gt; socket.Kill()</p>
+<br>
+###### (1). session.Close()
+----
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Session)</span> <span class="title">Close</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s.m.Lock()</span><br><span class="line">    <span class="keyword">if</span> s.cluster_ != <span class="literal">nil</span> &#123;</span><br><span class="line">        debugf(<span class="string">"Closing session %p"</span>, s)</span><br><span class="line">        s.unsetSocket()              <span class="comment">// 1. ref--， logout credential</span></span><br><span class="line">        s.cluster_.Release()         <span class="comment">// 2. cluster 中所有 server 里存的 liveSockets 和 unusedSockets 全部 close()</span></span><br><span class="line">        s.cluster_ = <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    s.m.Unlock()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### (2). session.unsetSocket()
+---
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Session)</span> <span class="title">unsetSocket</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> s.masterSocket != <span class="literal">nil</span> &#123;</span><br><span class="line">        s.masterSocket.Release()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> s.slaveSocket != <span class="literal">nil</span> &#123;</span><br><span class="line">        s.slaveSocket.Release()</span><br><span class="line">    &#125;</span><br><span class="line">    s.masterSocket = <span class="literal">nil</span></span><br><span class="line">    s.slaveSocket = <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### (3). socket.Release()
+---
+socket.Release() 函数里面会先判断引用计数是否为0， 为0的话就close， 否则 references--
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(socket *mongoSocket)</span> <span class="title">Release</span><span class="params">()</span></span> &#123;</span><br><span class="line">    socket.Lock()</span><br><span class="line">    <span class="keyword">if</span> socket.references == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">"socket.Release() with references == 0"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    socket.references--</span><br><span class="line">    stats.socketRefs(<span class="number">-1</span>)</span><br><span class="line">    <span class="keyword">if</span> socket.references == <span class="number">0</span> &#123;</span><br><span class="line">        stats.socketsInUse(<span class="number">-1</span>)</span><br><span class="line">        server := socket.server</span><br><span class="line">        socket.Unlock()</span><br><span class="line">        socket.LogoutAll()</span><br><span class="line">        <span class="comment">// If the socket is dead server is nil.</span></span><br><span class="line">        <span class="keyword">if</span> server != <span class="literal">nil</span> &#123;</span><br><span class="line">            server.RecycleSocket(socket)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        socket.Unlock()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### (4). cluster.Release()
+---
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(cluster *mongoCluster)</span> <span class="title">Release</span><span class="params">()</span></span> &#123;</span><br><span class="line">    cluster.Lock()</span><br><span class="line">    <span class="keyword">if</span> cluster.references == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">"cluster.Release() with references == 0"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    cluster.references--</span><br><span class="line">    debugf(<span class="string">"Cluster %p released (refs=%d)"</span>, cluster, cluster.references)</span><br><span class="line">    <span class="keyword">if</span> cluster.references == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> _, server := <span class="keyword">range</span> cluster.servers.Slice() &#123;</span><br><span class="line">            server.Close()                         <span class="comment">// 注意： 在这里关闭 server 中的所有 sockets</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Wake up the sync loop so it can die.</span></span><br><span class="line">        cluster.syncServers()</span><br><span class="line">        stats.cluster(<span class="number">-1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    cluster.Unlock()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### (5). server.Close()
+---
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(server *mongoServer)</span> <span class="title">Close</span><span class="params">()</span></span> &#123;</span><br><span class="line">    server.Lock()</span><br><span class="line">    server.closed = <span class="literal">true</span></span><br><span class="line">    liveSockets := server.liveSockets</span><br><span class="line">    unusedSockets := server.unusedSockets</span><br><span class="line">    server.liveSockets = <span class="literal">nil</span></span><br><span class="line">    server.unusedSockets = <span class="literal">nil</span></span><br><span class="line">    server.Unlock()</span><br><span class="line">    logf(<span class="string">"Connections to %s closing (%d live sockets)."</span>, server.Addr, <span class="built_in">len</span>(liveSockets))</span><br><span class="line">    <span class="keyword">for</span> i, s := <span class="keyword">range</span> liveSockets &#123;</span><br><span class="line">        s.Close()                             <span class="comment">// 注意： 这里关闭 socket</span></span><br><span class="line">        liveSockets[i] = <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> unusedSockets &#123;</span><br><span class="line">        unusedSockets[i] = <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### (6). socket.Close()
+---
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(socket *mongoSocket)</span> <span class="title">Close</span><span class="params">()</span></span> &#123;</span><br><span class="line">    socket.kill(errors.New(<span class="string">"Closed explicitly"</span>), <span class="literal">false</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<br>
+###### 7. sockete.kill()
+----
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(socket *mongoSocket)</span> <span class="title">kill</span><span class="params">(err error, abend <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">    socket.Lock()</span><br><span class="line">    <span class="keyword">if</span> socket.dead != <span class="literal">nil</span> &#123;</span><br><span class="line">        debugf(<span class="string">"Socket %p to %s: killed again: %s (previously: %s)"</span>, socket, socket.addr, err.Error(), socket.dead.Error())</span><br><span class="line">        socket.Unlock()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    logf(<span class="string">"Socket %p to %s: closing: %s (abend=%v)"</span>, socket, socket.addr, err.Error(), abend)</span><br><span class="line">    socket.dead = err</span><br><span class="line">    socket.conn.Close()                        <span class="comment">// 注意： 这里是真正关闭连接！ </span></span><br><span class="line">    stats.socketsAlive(<span class="number">-1</span>)</span><br><span class="line">    replyFuncs := socket.replyFuncs</span><br><span class="line">    socket.replyFuncs = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">uint32</span>]replyFunc)</span><br><span class="line">    server := socket.server</span><br><span class="line">    socket.server = <span class="literal">nil</span></span><br><span class="line">    socket.gotNonce.Broadcast()</span><br><span class="line">    socket.Unlock()</span><br><span class="line">    <span class="keyword">for</span> _, replyFunc := <span class="keyword">range</span> replyFuncs &#123;</span><br><span class="line">        logf(<span class="string">"Socket %p to %s: notifying replyFunc of closed socket: %s"</span>, socket, socket.addr, err.Error())</span><br><span class="line">        replyFunc(err, <span class="literal">nil</span>, <span class="number">-1</span>, <span class="literal">nil</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> abend &#123;</span><br><span class="line">        server.AbendSocket(socket)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><span class="redBold">注意：只有两个地方会调用 conn.Close() 也就是真正的关闭一个连接。</span></p>
+<ul>
+<li>1) 一个是使用 udp trick 去获得一个 tcp 地址的时候， 如果udp 连接成功了， 就获得了 ip 地址，<br>由于目的只是为了获得一个 ip， 所以获得之后就把连接关闭。</li>
+<li>2) 另外一个就是在 socket.kill() 里面 调用 conn.Close() 关闭连接。</li>
+</ul>
+<p><strong>结论：只要程序没有终止，已经获得的连接 conn 永远不会自动关闭， cluster.reference 永远至少是 1。</strong></p>
+<p>Socket 模块通过引用计数的方式来管理所有已连接的和未连接的 sockets， 从 pool（实际上就是一个 []*mongoSocket 数组） 里面取一个 socket，<br>调用 Acquire() 函数会把 referece++， </p>
+<p>调用 Session.Copy() 时会把 Cluster.reference++, 然后判断 session.masterSocket, session.slaveSocket 是否不为nil的话，就复用这个 socket。<br>否则就</p>
+<p>压力测试</p>
+<pre><code>$ ab -n100  -c1000 localhost/</code></pre><p>查询连接数</p>
+<pre><code>$ netstat -n| awk &apos;/^tcp/{++S[$NF]}END{for (key in S) print key,S[key]}&apos;</code></pre><p><strong>建议：对于数据库的连接来说，应该通过应用程序来控制并发连接数，而不是通过 pool 大小来控制并发连接数。</strong></p>
+<br>
+<br>
+<br>
+
+<h6 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h6><hr>
+<p><a href="https://github.com/go-mgo/mgo" target="_blank" rel="noopener">https://github.com/go-mgo/mgo</a><br><a href="http://www.cnblogs.com/shenguanpu/p/5318727.html" target="_blank" rel="noopener">http://www.cnblogs.com/shenguanpu/p/5318727.html</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Programming/">Programming</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Programming/go-mgo-source-analysis/" data-title="mgo source code ananlysis | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Git/git-git-undo/" title="Undo anything in Git">
+  <strong>Prev：</strong><br>
+  <span>
+  Undo anything in Git</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Programming/go-mgo-source-structure/" title="mgo source">
+ <strong>Next：</strong><br>
+ <span>mgo source
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

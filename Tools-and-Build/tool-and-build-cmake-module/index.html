@@ -1,0 +1,798 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Write custom CMake modules | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="注：本文中的大部分内容均参考至 CMake Practice 一书。   CMake 中默认的模块文件通常会位于 /usr/share/cmake-3.7.1/Module 目录下，如果我们需要为工程项目自定义 CMake 的模块文件，通常在工程根目录下新建一个名称为 cmake 的目录来存放，然后在 CMakeLists.txt 中通过 set(CMAKE_MODULE_PATH ${CMAKE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Write custom CMake modules">
+<meta property="og:url" content="https://juniway.net/Tools-and-Build/tool-and-build-cmake-module/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="注：本文中的大部分内容均参考至 CMake Practice 一书。   CMake 中默认的模块文件通常会位于 /usr/share/cmake-3.7.1/Module 目录下，如果我们需要为工程项目自定义 CMake 的模块文件，通常在工程根目录下新建一个名称为 cmake 的目录来存放，然后在 CMakeLists.txt 中通过 set(CMAKE_MODULE_PATH ${CMAKE">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.444Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Write custom CMake modules">
+<meta name="twitter:description" content="注：本文中的大部分内容均参考至 CMake Practice 一书。   CMake 中默认的模块文件通常会位于 /usr/share/cmake-3.7.1/Module 目录下，如果我们需要为工程项目自定义 CMake 的模块文件，通常在工程根目录下新建一个名称为 cmake 的目录来存放，然后在 CMakeLists.txt 中通过 set(CMAKE_MODULE_PATH ${CMAKE">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Tools-and-Build/tool-and-build-cmake-module/" title="Write custom CMake modules" itemprop="url">Write custom CMake modules</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2015-07-29T12:33:48.000Z"> 2015-07-29</time>
+    <span class="post-count">字数 1.9k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>注：本文中的大部分内容均参考至 <em>CMake Practice</em> 一书。</p>
+<br>
+
+<p>CMake 中默认的模块文件通常会位于 <code>/usr/share/cmake-3.7.1/Module</code> 目录下，如果我们需要为工程项目自定义 CMake 的模块文件，通常在工程根目录下新建一个名称为 cmake 的目录来存放，然后在 <code>CMakeLists.txt</code> 中通过 <code>set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)</code> 的方式引入该目录。</p>
+<h4 id="模块的使用和自定义模块"><a href="#模块的使用和自定义模块" class="headerlink" title="模块的使用和自定义模块"></a>模块的使用和自定义模块</h4><hr>
+<p>纯粹依靠 CMake 本身提供的基本指令来管理工程是一件非常复杂的事情，所以 CMake 设计成了可扩展的架构，使得我们可以通过编写一些自定义的模块来扩展 CMake。</p>
+<p>这里将着重介绍系统预定义的 <strong>Find 模块</strong>的使用以及如何编写用户自定义的 Find 模块，系统中提供了其他各种模块，一般情况需要使用 <code>INCLUDE</code> 指令显式的调用，<code>FIND_PACKAGE</code> 指令是一个特例，可以直接调用预定义的模块。</p>
+<p>下面，我就通过一个具体的例子来介绍如何编写用户自定义的 Find 模块。</p>
+<br>
+####（一）使用 CMake 默认提供的 FindCURL 模块
+
+<p>我们在 /proj/cmake/test/src 编写 <code>main.c</code>，这段代码通过 curl 命令获取 <a href="http://www.linux-ren.org" target="_blank" rel="noopener">www.linux-ren.org</a> 的首页并写入 /tmp/curl-test 文件中，其内容如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;curl/curl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">FILE*fp;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">write_data</span><span class="params">(<span class="keyword">void</span> *ptr, <span class="keyword">size_t</span> size, <span class="keyword">size_t</span> nmemb, <span class="keyword">void</span> *stream)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> written = fwrite(ptr, size, nmemb, (FILE *)fp);</span><br><span class="line">    <span class="keyword">return</span> written;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *path = “/tmp/curl-test”;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *mode = “w”;</span><br><span class="line">    fp = fopen(path,mode);</span><br><span class="line">    curl_global_init(CURL_GLOBAL_ALL);</span><br><span class="line">    CURL coderes;</span><br><span class="line">    CURL *curl = curl_easy_init();</span><br><span class="line"></span><br><span class="line">    curl_easy_setopt(curl, CURLOPT_URL, “http:<span class="comment">//www.linux-ren.org”);</span></span><br><span class="line">    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);</span><br><span class="line">    curl_easy_setopt(curl, CURLOPT_VERBOSE, <span class="number">1</span>);</span><br><span class="line">    res = curl_easy_perform(curl);</span><br><span class="line">    curl_easy_cleanup(curl);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码由于使用了 curl 库的函数，在执行 <code>gcc</code> 编译链接时，不仅需要能找到对应的头文件信息，还需要添加动态库选项 <code>-lcurl</code>。
+因此，编写 CMakeLiksts.txt 时也需要能实现这一点，下面就讲述如何实现：</p>
+<p>建立主工程文件 CmakeLists.txt，内容如下：</p>
+<pre><code>PROJECT(CURLTEST)
+ADD_SUBDIRECTORY(src)</code></pre><p>新建 src/CmakeLists.txt，内容如下</p>
+<pre><code>ADD_EXECUTABLE(curltest main.c)</code></pre><p>现在自然是没办法编译的，我们需要添加 curl 的头文件路径和库文件。</p>
+<p><strong>方法1:</strong><br>直接通过 <code>INCLUDE_DIRECTORIES</code> 和 <code>TARGET_LINK_LIBRARIES</code> 指令添加:</p>
+<p>我们可以直接在 <code>src/CMakeLists.txt</code> 中添加:</p>
+<pre><code>INCLUDE_DIRECTORIES(/usr/include)
+TARGET_LINK_LIBRARIES(curltestcurl)</code></pre><p>然后建立 build 目录进行外部构建即可。<br>现在要探讨的是使用 CMake 提供的 <code>FindCURL 模块</code>。</p>
+<p><strong>方法2:</strong><br>使用 FindCURL 模块。向 <code>src/CMakeLists.txt</code> 中添加下列内容:</p>
+<pre><code>FIND_PACKAGE(CURL)
+IF(CURL_FOUND)
+    INCLUDE_DIRECTORIES(${CURL_INCLUDE_DIR})
+    TARGET_LINK_LIBRARIES(curltest${CURL_LIBRARY})
+ELSE(CURL_FOUND)
+    MESSAGE(FATAL_ERROR”CURL library not found”)
+ENDIF(CURL_FOUND)</code></pre><p>对于系统预定义的 <code>Find&lt;name&gt;.cmake</code> 模块，使用方法一般如上例所示，每一个模块都会定义以下几个变量:</p>
+<pre><code>&lt;name&gt;_FOUND
+&lt;name&gt;_INCLUDE_DIR or &lt;name&gt;_INCLUDES
+&lt;name&gt;_LIBRARY or &lt;name&gt;_LIBRARIES</code></pre><p>可以通过 <code>&lt;name&gt;_FOUND</code> 来判断模块是否被找到，如果没有找到，按照工程的需要关闭某些特性、给出提醒或者中止编译，上面的例子就是报出致命错误并终止构建。<br>如果 <code>&lt;name&gt;_FOUND</code>为真，则将 <code>&lt;name&gt;_INCLUDE_DIR</code> 加入 <code>INCLUDE_DIRECTORIES</code>，将 <code>&lt;name&gt;_LIBRARY加入TARGET_LINK_LIBRARIES</code> 中。</p>
+<p>我们再来看一个复杂的例子，通过 <name>_FOUND 来控制工程特性:</name></p>
+<pre><code>SET(mySourcesviewer.c)
+SET(optionalSources)
+SET(optionalLibs)
+
+FIND_PACKAGE(JPEG)
+
+IF(JPEG_FOUND)
+    SET(optionalSources${optionalSources} jpegview.c)
+    INCLUDE_DIRECTORIES(${JPEG_INCLUDE_DIR} )
+    SET(optionalLibs${optionalLibs} ${JPEG_LIBRARIES} )
+    ADD_DEFINITIONS(-DENABLE_JPEG_SUPPORT)
+ENDIF(JPEG_FOUND)
+
+IF(PNG_FOUND)
+    SET(optionalSources${optionalSources} pngview.c)
+    INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR} )
+    SET(optionalLibs${optionalLibs} ${PNG_LIBRARIES} )
+    ADD_DEFINITIONS(-DENABLE_PNG_SUPPORT)
+ENDIF(PNG_FOUND)
+
+ADD_EXECUTABLE(viewer${mySources} ${optionalSources}
+TARGET_LINK_LIBRARIES(viewer${optionalLibs}</code></pre><p>通过判断系统是否提供了 JPEG 库来决定程序是否支持 JPEG 功能。</p>
+<br>
+#####（二）编写属于自己的 FindHello 模块 
+
+<p>接下来在 t6 示例中演示如何自定义 FindHELLO 模块并使用这个模块构建工程。在 /backup/cmake/ 中建立 t6 目录，并在其中建立 cmake 目录用于存放我们自己定义的 FindHELLO.cmake 模块，同时建立 src 目录，用于存放我们的源文件。</p>
+<p><strong>1. 定义 <code>cmake/FindHELLO.cmake</code> 模块</strong></p>
+<pre><code>FIND_PATH(HELLO_INCLUDE_DIR hello.h /usr/include/hello /usr/local/include/hello)
+
+FIND_LIBRARY(HELLO_LIBRARY NAMES hello PATH /usr/lib /usr/local/lib)
+
+IF(HELLO_INCLUDE_DIR AND HELLO_LIBRARY)
+    SET(HELLO_FOUNDTRUE)
+ENDIF(HELLO_INCLUDE_DIR AND HELLO_LIBRARY)
+
+IF(HELLO_FOUND)
+    IF(NOT HELLO_FIND_QUIETLY)
+        MESSAGE(STATUS&quot;Found Hello: ${HELLO_LIBRARY}&quot;)
+    ENDIF(NOT HELLO_FIND_QUIETLY)
+ELSE(HELLO_FOUND)
+    IF(HELLO_FIND_REQUIRED)
+        MESSAGE(FATAL_ERROR&quot;Could not find hello library&quot;)
+    ENDIF(HELLO_FIND_REQUIRED)
+ENDIF(HELLO_FOUND)</code></pre><p>针对上面的模块让我们再来回顾一下 FIND_PACKAGE 指令:</p>
+<pre><code>FIND_PACKAGE(&lt;name&gt;[major.minor] [QUIET] [NO_MODULE] [[REQUIRED|COMPONENTS][componets...]])</code></pre><p>前面的CURL例子中我们使用了最简单的FIND_PACKAGE指令，其实它可以使用多种参数：</p>
+<p>QUIET参数，对应与我们编写的FindHELLO中的 <code>HELLO_FIND_QUIETLY</code>，如果不指定这个参数，就会执行:</p>
+<pre><code>MESSAGE(STATUS&quot;Found Hello: ${HELLO_LIBRARY}&quot;)</code></pre><p>REQUIRED参数，其含义是指这个共享库是否是工程必须的，如果使用了这个参数，说明这个链接库是必备库,如果找不到这个链接库,则工程不能编译。对应于FindHELLO.cmake模块中的HELLO_FIND_REQUIRED变量。<br>同样,我们在上面的模块中定义了HELLO_FOUND,HELLO_INCLUDE_DIR, HELLO_LIBRARY变量供开发者在FIND_PACKAGE指令中使用。</p>
+<p>下面建立 <code>src/main.c</code>，内容为:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;hello.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    HelloFunc();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>建立 <code>src/CMakeLists.txt</code> 文件,内容如下:</p>
+<pre><code>FIND_PACKAGE(HELLO)
+IF(HELLO_FOUND)
+    ADD_EXECUTABLE(hellomain.c)
+    INCLUDE_DIRECTORIES(${HELLO_INCLUDE_DIR})
+    TARGET_LINK_LIBRARIES(hello${HELLO_LIBRARY})
+ENDIF(HELLO_FOUND)</code></pre><p>为了能够让工程找到 FindHELLO.cmake 模块(存放在工程中的cmake目录)我们在主工程文件 CMakeLists.txt 中加入:</p>
+<pre><code>SET(CMAKE_MODULE_PATH${PROJECT_SOURCE_DIR}/cmake)</code></pre><br>
+##### （三）使用自定义的 FindHELLO 模块构建工程 
+
+<p>仍然采用外部编译的方式,建立build目录,进入目录运行:</p>
+<pre><code>$ cmake ..</code></pre><p>我们可以从输出中看到:</p>
+<p>FoundHello: /usr/lib/libhello.so</p>
+<p>如果我们把上面的FIND_PACKAGE(HELLO)修改为FIND_PACKAGE(HELLO QUIET),</p>
+<p>不会看到上面的输出。接下来就可以使用make命令构建工程,运行:</p>
+<pre><code># ./src/hello</code></pre><p>可以得到输出：</p>
+<blockquote>
+<p>HelloWorld</p>
+</blockquote>
+<p>说明工程成功构建。</p>
+<br>
+#####（四）如果没有找到hellolibrary呢? 
+我们可以尝试将/usr/lib/libhello.x移动到/tmp目录,这样按照FindHELLO模块的定义,找不到hellolibrary了,我们再来看一下构建结果:
+
+<pre><code>$ cmake ..</code></pre><p>仍然可以成功进行构建,但是这时候是没有办法编译的。</p>
+<p>修改FIND_PACKAGE(HELLO)为FIND_PACKAGE(HELLO REQUIRED)，将hellolibrary定义为工程必须的共享库。<br>这时候再次运行</p>
+<pre><code>$ cmake ..</code></pre><p>我们得到如下输出:</p>
+<p>CMakeError: Could not find hello library.</p>
+<p>因为找不到libhello.x，所以,整个Makefile生成过程被出错中止。</p>
+<p>一些问题</p>
+<p>1.怎样区分debug、release版本<br>建立debug/release两目录，分别在其中执行cmake -D CMAKE_BUILD_TYPE=Debug（或Release），需要编译不同版本时进入不同目录执行make即可：</p>
+<p>Debug版会使用参数-g；<br>Release版使用-O3–DNDEBUG</p>
+<p>另一种设置方法——例如DEBUG版设置编译参数DDEBUG</p>
+<pre><code>IF(DEBUG_mode)
+    add_definitions(-DDEBUG)
+ENDIF()</code></pre><p>在执行cmake时增加参数即可，例如cmake -D DEBUG_mode=ON</p>
+<p>2.怎样设置条件编译<br>例如debug版设置编译选项DEBUG，并且更改不应改变CMakelist.txt<br>使用option command，eg：</p>
+<p>option(DEBUG_mode”ON for debug or OFF for release” ON)<br>IF(DEBUG_mode)<br>    add_definitions(-DDEBUG)<br>ENDIF()</p>
+<p>使其生效的方法：首先cmake生成makefile，然后make edit_cache编辑编译选项；Linux下会打开一个文本框，可以更改，改完后再make生成目标文件——emacs不支持make edit_cache；</p>
+<p>局限：这种方法不能直接设置生成的makefile，而是必须使用命令在make前设置参数；对于debug、release版本，相当于需要两个目录，分别先cmake一次，然后分别makeedit_cache一次；</p>
+<p>期望的效果：在执行cmake时直接通过参数指定一个开关项，生成相应的makefile。</p>
+<h6 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h6><p><a href="https://www.kancloud.cn/itfanr/cmake-practice/82982" target="_blank" rel="noopener">https://www.kancloud.cn/itfanr/cmake-practice/82982</a><br><a href="http://stackoverflow.com/questions/10765885/how-to-install-your-custom-cmake-find-module" target="_blank" rel="noopener">http://stackoverflow.com/questions/10765885/how-to-install-your-custom-cmake-find-module</a><br><a href="http://blog.csdn.net/z_h_s/article/details/50699905" target="_blank" rel="noopener">http://blog.csdn.net/z_h_s/article/details/50699905</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Tools-and-Build/">Tools and Build</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Tools-and-Build/tool-and-build-cmake-module/" data-title="Write custom CMake modules | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Tools-and-Build/tool-and-build-cmake-advanced/" title="CMake Advanced">
+  <strong>Prev：</strong><br>
+  <span>
+  CMake Advanced</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Tools-and-Build/tool-and-build-cmake-makefile/" title="Use CMake to generate Makefile">
+ <strong>Next：</strong><br>
+ <span>Use CMake to generate Makefile
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

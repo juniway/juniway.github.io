@@ -1,0 +1,905 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>第一部分：区块链核心技术：分布式理论概述 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="前言区块链行业是 2018 年最火热的行业，很多技术人员都纷纷转投这个行业，但是苦于缺乏理论背景，常常会感到力不从心。我面试过许多候选人，他们给我印象最多的就是，每个人都看过一点比特币或者以太坊的项目知识，知道一点它们的运作流程，但是当我试图了解更多细节时，回答便开始变得捉襟见肘。区块链技术仿佛云里雾里，看得见却又摸不着，为此，我决定从区块链的本质出发，详尽的叙述它的理论基础和技术背景，为立志进入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第一部分：区块链核心技术：分布式理论概述">
+<meta property="og:url" content="https://juniway.net/Distributed-System/blockchain-part1-theory-foundamentals/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="前言区块链行业是 2018 年最火热的行业，很多技术人员都纷纷转投这个行业，但是苦于缺乏理论背景，常常会感到力不从心。我面试过许多候选人，他们给我印象最多的就是，每个人都看过一点比特币或者以太坊的项目知识，知道一点它们的运作流程，但是当我试图了解更多细节时，回答便开始变得捉襟见肘。区块链技术仿佛云里雾里，看得见却又摸不着，为此，我决定从区块链的本质出发，详尽的叙述它的理论基础和技术背景，为立志进入">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/p2p/fail_time_model.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/total_order.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/vector_clocks.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/2pc_graph.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/2pc_demo.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/3pc_demo.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/paxos_majority.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/paxos_timeline_demo.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/paxos_livelocks.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/prepare_original.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/prepare_with_leader.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/cap_therory.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/shard_by_range.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/shard_by_range_with_dup.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/hash_ring.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/hash_ring1.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/hash_ring2.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/hash_ring3.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/consistant_hash_virtualnode.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/two_generals.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/byzantine_general_problem.png">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.415Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="第一部分：区块链核心技术：分布式理论概述">
+<meta name="twitter:description" content="前言区块链行业是 2018 年最火热的行业，很多技术人员都纷纷转投这个行业，但是苦于缺乏理论背景，常常会感到力不从心。我面试过许多候选人，他们给我印象最多的就是，每个人都看过一点比特币或者以太坊的项目知识，知道一点它们的运作流程，但是当我试图了解更多细节时，回答便开始变得捉襟见肘。区块链技术仿佛云里雾里，看得见却又摸不着，为此，我决定从区块链的本质出发，详尽的叙述它的理论基础和技术背景，为立志进入">
+<meta name="twitter:image" content="https://juniway.net/image/p2p/fail_time_model.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Distributed-System/blockchain-part1-theory-foundamentals/" title="第一部分：区块链核心技术：分布式理论概述" itemprop="url">第一部分：区块链核心技术：分布式理论概述</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2018-11-04T15:11:01.000Z"> 2018-11-04</time>
+    <span class="post-count">字数 11.8k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>区块链行业是 2018 年最火热的行业，很多技术人员都纷纷转投这个行业，但是苦于缺乏理论背景，常常会感到力不从心。我面试过许多候选人，他们给我印象最多的就是，每个人都看过一点比特币或者以太坊的项目知识，知道一点它们的运作流程，但是当我试图了解更多细节时，回答便开始变得捉襟见肘。区块链技术仿佛云里雾里，看得见却又摸不着，为此，我决定从区块链的本质出发，详尽的叙述它的理论基础和技术背景，为立志进入区块链行业甚至想成为专家的人打开一扇通道。</p>
+<p>由于涉及的内容非常多，因此，我决定把分成三个系列来阐述，分别是：理论基础，专业经验以及技术要求。</p>
+<h2 id="开篇"><a href="#开篇" class="headerlink" title="开篇"></a>开篇</h2><p>这篇文章是这个系列的第一篇：<strong>分布式理论</strong></p>
+<p>我们知道，不论什么区块链项目（bitcoin, ethereum, etc..），他们都是运行在千千万万个独立的机器（矿机）上的，这本质上就是一个分布式网络。</p>
+<p>区块链的核心技术主要就来自于分布式系统网络（我们也可以把它称作是点对点网络Peer to Peer），再加上其与<strong>密码学原理</strong>与<strong>经济激励机制</strong>的独特结合，才成就了如今欣欣向荣的数字货币市场。因而，要掌握好区块链的核心技术，就需要先系统的学习分布式系统理论，它是我们掌握区块链核心技术的关键。</p>
+<p>这篇文章我会对分布式系统的理论发展脉络进行梳理和介绍，争取给读者一个最为清晰的分布式理论介绍。</p>
+<h3 id="分布式系统定义"><a href="#分布式系统定义" class="headerlink" title="分布式系统定义"></a>分布式系统定义</h3><p>分布式系统理论是一个非常早就已经开始在研究的领域，几乎与互联网的出现是同时的，并且随着网络的发展不断发展。早期的互联网就是解决点对点通信的问题，后来随着规模化发展，中心化的网站变得流行，也就是现今互联网最突出的表现形式。</p>
+<p><strong>分布式系统理论</strong>主要集中解决在一个网络中，不同的节点机器如何就某一个值达成一致的问题，也就是<strong>共识，</strong>这也就是区块链技术中最核心要解决的问题。既然共识是所有分布式系统需要解决的核心问题，研究人员也为这个问题研究了数十载，我们要掌握它，就必须先了解分布式系统的特点和核心问题，以及围绕它所产生的一些理论成果。</p>
+<h3 id="分布式系统特点"><a href="#分布式系统特点" class="headerlink" title="分布式系统特点"></a>分布式系统特点</h3><p>分布式系统中节点的运行时相互独立的，它有两大特点：<strong>（1） 无共享内存</strong>，意味着一个节点不知道其他节点的状态；<strong>（2）没有全局时钟</strong>，意味着节点之间有着不同的本地时间。两个节点要合作完成一件事，只有一个途径，那就是互发消息。</p>
+<p>既然是互发消息，我们就要解决两个核心的事情，<strong>一）收到的消息是否可信</strong>，也就是说，发消息的人发的消息是否是真实的消息而不是故意伪造的；<strong>二）消息的顺序</strong>，当一个节点收到两个不同节点发来的消息时，如何确定谁先发，谁后发。</p>
+<h3 id="网络分类"><a href="#网络分类" class="headerlink" title="网络分类"></a>网络分类</h3><p>（1）容错类型分类<br>根据节点是否可以恶意伪造消息，我们把网络分为两种：非拜占庭网络（NON-BYZANTINE）和拜占庭网络（BYZANTINE）。</p>
+<p>对于一个包含 N 个节点的网络来说，如果每个节点都真实坦诚的发出消息，那么我们就说这个网络是非拜占庭网络（Non-Byzantine），又叫 Fail-stop 模型，也就是说，他们要么正常工作，要么宕机停止工作，但是不会做 Malicious 事情。而如果存在恶意节点可以伪造消息，那么我们就说这个网络是拜占庭网络（Byzantine）。是否可以伪造消息这个前提假设实际上是我们人为添加的，在现实的环境中（比如公链），由于经济利益的关系，是有可能存在恶意节点的，因此公网环境通常是拜占庭网络，也就是说必须能够容忍存在恶意节点。而在私有环境中，比如某个公司部署的分布式数据库中，所有机器可控并且都是自己服务的，所以不存在作恶的情形，因此私有网络通常是非拜占庭网络。</p>
+<p>对于非拜占庭网络和拜占庭网络，共识算法的本质是一样的，只不过约束条件不一样而导致算法有略微的差别。比如分布式数据库是最常见的非拜占庭网络，数据库主要解决各节点副本数据一致的问题，主流的算法有一致性哈希（Consistant Hashing），Paxos，Raft，zookeeper 中的 ZAB 协议等等。而区块链系统则是最常见的拜占庭网络，解决全网对同一区块的共识问题，主流的算法有 POW，POS，DPOS，PBFT 等等。</p>
+<p>（2）时间模型分类<br>根据网络对时间模型（timing model）的约定不同，我们把网络分为三种：同步网络，异步网络，和半同步网络。<br>在论文中，这三种时间模型的定义如下：</p>
+<ul>
+<li><p>同步网络 Synchronous<br>同步网络对时间的假设是必须要有一个时间上限，消息在一个确定的时间范围内到达接收方。</p>
+</li>
+<li><p>异步网络 Asynchronous<br>异步网络对于时间的无要求，消息可以在任意时间到达接收方。</p>
+</li>
+<li><p>半同步网络 Partially synchronous<br>这种模型略微复杂，Dwork, Lynch 和 Stockmeyer 在 1984 年发表著名的论文<a href="https://groups.csail.mit.edu/tds/papers/Lynch/jacm88.pdf" target="_blank" rel="noopener">《Consensus in the Presence of Partial Synchrony》</a>中提出的，也叫 DLS Protocol 或 DLS Algorithm，它包含两种 Partial Synchrony 模型：</p>
+</li>
+<li><p>假设消息被最终投递的时间上限是存在的，但是具体数值不是已知和先验的。那么系统的目标就是不管真正的时间限制是多少都能达到最终共识。</p>
+</li>
+<li><p>假设消息被最终投递的时间上限已知，但是它们只在某个未知的时间点（Global Standardization Time）才开始满足。那么系统的目标就是只要这个时间点到达，共识就一定能达到。</p>
+</li>
+</ul>
+<p>DLS Protocol/Algorithm 的具体原理和步骤是：<br>每一轮共识过程都被划分为 “trying” 和 “lock-release” 阶段：<br>1）每一轮都有一个 proposer 并且从一个它们都相信的数值开始通信<br>2）proposer 提出一个值 v，这个值需要至少 N - x 个节点都已经知道<br>3）当一个节点收到这个提议的值 v，那么它必须把自己 lock 在这个值上，然后广播自己 lock on v 的状态<br>4）如果 proposer 收到 x + 1 个节点发来的 lock on v 信息，它就 commit 这个值。</p>
+<p>DLS 协议是共识领域的一个重大突破，因为它创造了一个新的网络分类，那就是 Partial Synchrony，并且在这个网络模式下，共识被证明是可行的。</p>
+<p><img src="/image/p2p/fail_time_model.png" alt=""></p>
+<h2 id="分布式系统算法的演进"><a href="#分布式系统算法的演进" class="headerlink" title="分布式系统算法的演进"></a>分布式系统算法的演进</h2><p>在介绍这两种不同网络条件下的分布式算法之前，我们需要先理解分布式系统中的核心问题及相关理论背景。</p>
+<p>最早提出 Consensus/Agreement 问题的是 1978 年 Lamport 的论文 <a href="http://research.microsoft.com/users/lamport/pubs/time-clocks.pdf" target="_blank" rel="noopener">“Time, Clocks and the Ordering of Events in a Distributed System”</a> 。虽然论文中没有明确把问题定义为 Consensus 或 Agreement，但是他详细讨论了消息如何在有限时间内在不同处理器（Processors）中传输，其本质就是 Consensus。在这篇经典的论文中，他提出了 Total Order，Partial Order，Causal Order，Logical Clocks 等被现在认为是分布式理论中最基础、最核心的概念，他还使用 “Happen before” 关系来定义事件发生的顺序，并且给出了一个算法，使得在整个分布式系统中，在全局范围下，每个处理器观察到的事件的顺序都是一致的。他还介绍了一个分布式状态机（distributed state machine），在同一初始状态下的一组状态机，并保证他们在这同一状态开始，按照相同的顺序来处理后续的所有事件。也就是说，每一个人都用相同的方式处理下一条消息，而这，本质上就是共识。这个算法的目的就是得到事件发生的全局唯一顺序。但是 Lamport 描述的这个系统是不容错的，也就是说，一旦有一个处理器出现故障了，那么其他处理器就必须等待，整个系统就无法继续运行下去了。</p>
+<p>关于逻辑时钟（Logical Clocks）是用来确定事件发生顺序的核心要素，Colin Fidge 在 1991 年发表的 “Logical Time in Distributed Computing Systems” 论文中对其做了详尽的定义和阐述，Figde 定义了 Partial Ordered Clocks，即偏序时钟（又称“部分有序时钟”），包含 5 个核心条件：<br>1）Sequential order<br>2）Process Creation<br>3）Process Termination<br>4）Synchronous（unbuffered）message-passing<br>5）Asynchronous（buffered）message-passing<br>6）Transitivity。<br>由这些条件，再加上时间戳（Timestamps）信息，就可以得到所有的 Partial Ordered Pairs，并由此确定所有事件的 Total Order，如下图，用标量来表示：</p>
+<p><img src="/image/p2p/total_order.png" alt=""></p>
+<p>偏序时钟还可以用向量时钟（Vector Clocks）来表示，同样可以用来确定 Total ordering。</p>
+<p><img src="/image/p2p/vector_clocks.png" alt=""></p>
+<h3 id="2PC-Two-Phase-Commit-Protocol"><a href="#2PC-Two-Phase-Commit-Protocol" class="headerlink" title="2PC (Two-Phase Commit Protocol)"></a>2PC (Two-Phase Commit Protocol)</h3><hr>
+<p>1979 年，也就是在几乎与 Lamport 论文发表的同时，Jim Gray 发表了<a href="http://research.microsoft.com/~Gray/papers/DBOS.pdf" target="_blank" rel="noopener">“Notes on Database Operating Systems”</a>，这篇文章中描述了一个两阶段提交算法（Two-Phase Commit Protocol） ，简称 2PC。两阶段分别是 Prepare Phase 和 Commit Phase，在这个算法中，需要除了参与方节点（Cohort），还需要引入一个第三方角色，叫做 TC（Transaction Coordinator，即“事务协调员”），·</p>
+<p>1）Phase one（Proposal Phase）：Coordinator 提供一个值，然后联系每个 Cohort，询问他们是否赞成这个值</p>
+<p>2）Phase two（Commit-or-Abort Phase）：如果每个 Cohort 都赞成，Coordinator 就再联系他们一次，让他们进行 commit。否则，一旦收到一个不赞成，就让他们 abort。</p>
+<p>下图是 2PC 有限状态机的状态变迁示意图：</p>
+<p><img src="/image/p2p/2pc_graph.png" alt=""></p>
+<p>注：coordinator 无需是一个特点节点，任何一个节点都可以充当，只要他们想要发起一个 2PC 共识。</p>
+<p>我绘制了一个更简单的图来展示两阶段的过程：</p>
+<p><img src="/image/p2p/2pc_demo.png" alt=""></p>
+<p>在这篇文章中，作者也总结出了分布式系统算法最重要的两个特性：<strong>安全性（Safety）</strong>和<strong>活性（Liveness）</strong>，任何一致性算法必须要满足这两个特性以使得整个系统是一个确定性系统（Deterministic System）。</p>
+<p>注：Safety 和 Liveness 性质最早是由 Lamport 在其 1977 年发表的论文<br><a href="http://www.cis.umassd.edu/~hxu/courses/cis481/references/Lamport-1977.pdf" target="_blank" rel="noopener">Proving the Correctness of Multiprocess Programs</a>中进行总结和证明的。</p>
+<h5 id="Safety-and-Liveness"><a href="#Safety-and-Liveness" class="headerlink" title="Safety and Liveness"></a>Safety and Liveness</h5><p>Safety 和 Liveness 的具体含义如下：</p>
+<ul>
+<li><p><strong>Safety</strong>，也叫 Correctness，是指系统或算法能够正确运行，不会接受冲突的值。它有两点基本要求：</p>
+<ul>
+<li>如果有一个节点 commit，那么所有节点都会 commit，没有任何节点 abort</li>
+<li>如果有一个节点 abort，那么所有节点都会 abort，没有任何节点 commit</li>
+</ul>
+</li>
+<li><p><strong>Liveness</strong>，也叫 Avalibility 或者 Termination，是指系统或算法能够正确结束，不会出现永久等待的情况。也就是说在有限的时间内，算法一定会结束，<strong>最终状态一定是确定的</strong>，系统能够继续往下执行不阻塞。两个基本要求是：</p>
+<ul>
+<li>如果没有节点 abort，那么在规定的最大时间范围内，所有节点都会 commit。</li>
+<li>如果有一个节点 abort了，那么所有节点也会就最终状态达成一致。</li>
+</ul>
+</li>
+</ul>
+<p><strong>那么， 2PC 有没有解决上述两个问题呢？答案是没有。</strong> 这是因为，一但某个节点失败或者消息丢失，那么即使是有 Timeout 条件约束，也无法保证 Liveness。这是因为参与节点没有办法分辨 TC 到底是宕机 Crash 了，还是仅仅由于事务繁忙而导致长时间未响应，这样，参与方就无法知道该如何进行下一步，从而导致整个系统状态不确定。</p>
+<p>比如下面这种失败场景：</p>
+<p>TC 发出 commit 决定给 A，A 收到并且执行 commit，但是这时候 TC 和 A 同时 crash，那么其余的 cohorts 将既不能 commit 也不能 abort。</p>
+<p>这也就是为什么 2PC 被称为同步算法，它解决了 Safety 问题，但是却没解决 Liveness 问题。</p>
+<p>更多关于 2PC 内容可以参考这篇文章：</p>
+<p><a href="http://www.the-paper-trail.org/post/2008-11-27-consensus-protocols-two-phase-commit/" target="_blank" rel="noopener">http://www.the-paper-trail.org/post/2008-11-27-consensus-protocols-two-phase-commit/</a></p>
+<h3 id="3PC-Three-Phase-Commit-Protocol"><a href="#3PC-Three-Phase-Commit-Protocol" class="headerlink" title="3PC (Three-Phase Commit Protocol)"></a>3PC (Three-Phase Commit Protocol)</h3><hr>
+<p>为了克服 2PC 导致的 Liveness 问题，人们就想出来一个办法，把 commit-or-abort 阶段拆成 2 个子阶段。把最终决定（commit or abort）先发布给每个 Cohort，在确保每个人都知道最终决定之后，再执行 commit 或者 abort。</p>
+<p><img src="/image/p2p/3pc_demo.png" alt=""></p>
+<p>可见，实际决定过程还是前面两个阶段，而 Phase III 则用来做最后通知，即使这个阶段中任何机器出现故障，Phase II 中得到的决定都不会丢失。</p>
+<p>那么现在再来分析一下，3PC 是否解决了 2PC 中 Liveness 问题呢？ 答案是肯定的。因为可以看到，假如 Phase II 中出现 TC 和 A 出现同时 crash 的情况，那么因为没有人收到 preCommit，所有的 cohorts 都能 abort。而如果其他 cohorts 已经收到过 preCommit 结果，那么即使他们 crash，只要在 Phase III 中增加 Timeout 就可以另他们最终都 commit 之前的结果。因此，系统总是能够正确结束，状态确定。</p>
+<p>3PC 又被称为一个 Non-blocking 算法。<strong>但是 3PC 又出现了新的问题，那就是它无法保证 Safety。</strong>具体的场景就是，在面对网络分区（Network Partition）的时候，Correctness 失效。</p>
+<p>比如，A 从 TC 收到 preCommit 之后，A 与 B，C 之间断网，TC 也故障。那么，在 Timeout 超时时间过后，A 会 commit，而 B，C 由于尚未收到 precommit，则会 abort，那么，最终，A 和 B，C 的状态变得不一致。</p>
+<p>那么是否存在一种协议或算法，可以<strong>同时保证 Safety 和 Liveness 呢？</strong></p>
+<p><strong>答案是，在纯异步的网络条件下，不可能。</strong> 这就要谈到一个分布式领域中最具影响力之一的定理，FLP 不可能定理。</p>
+<h3 id="FLP-Impossibility"><a href="#FLP-Impossibility" class="headerlink" title="FLP Impossibility"></a>FLP Impossibility</h3><hr>
+<p>1985 年，Fischer, Lynch 和 Patterson 三位教授发表了著名的 <a href="https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf" target="_blank" rel="noopener">Impossibility of Distributed Consensus with One Faulty Process </a>论文，这是分布式领域中最具影响力之一的论文，其后来获得 Dijkstra 奖。这篇论文证明了一个惊人的结论，那就是：在异步通信场景，即使只有一个进程失败，也没有任何算法能保证非失败进程达到一致性。在此前的研究中，同步通信网络中的一致性被证明是可以达到的，因此在之前一直有人尝试各种算法解决以异步环境的一致性问题，有个 FLP 的这个结论，这样的尝试终于有了答案。</p>
+<p>需要强调的是，FLP 是指在异步网络（Asynchrounous network）中，什么是同步网络/异步网络呢，我在《Reactive Programming》一文中有阐述，简单来说，异步网络对时间（Timeout）的要求非常宽松，纯的异步环境是现实场景的一个体现，比如随着移动终端的发展，手机会为了省电而关机，也会因为不在服务区而离线，也就是说，一个节点可能随时离线而不回复网络，而何时重新加入网络则是不确定的。其最大的难处在于无法分辨一个节点是出现故障宕机还是只是由于繁忙没来得及回复，从而导致其他节点无法做出合适的处理。</p>
+<p><strong>注：对于同步网络来说，3PC 是可以同时保证 Safety 和 Liveness 的。</strong></p>
+<h3 id="Paxos"><a href="#Paxos" class="headerlink" title="Paxos"></a>Paxos</h3><hr>
+<p>到了 1990 年，Leslie Lamport 提交了后来被称为 Paxos 算法的著名论文 <a href="http://research.microsoft.com/users/lamport/pubs/lamport-paxos.pdf" target="_blank" rel="noopener">“The Part-Time Parliament”</a>，但是由于该算法晦涩难懂而被委员会忽略了，直到 1996 年 Butler Lampson 在  <a href="http://research.microsoft.com/lampson/58-Consensus/Acrobat.pdf" target="_blank" rel="noopener">“How to Build a Highly Availability System using Consensus” </a>论文中提及才重新被注意到，并在 1998 年得到正式发表。此后，在 2001 年，Leslie lamport 在 <a href="http://research.microsoft.com/users/lamport/pubs/paxos-simple.pdf" target="_blank" rel="noopener">Paxos Made Simple </a>论文中用更简洁的语言描述了 Paxos 算法。</p>
+<p>Paxos 算法的理论基础是：给定一组固定数量的节点，选取任何一组大多数成员，这些选择中，都必然有至少一个节点是公共的。</p>
+<p>如图：</p>
+<p><img src="/image/p2p/paxos_majority.png" alt=""></p>
+<p>对于一个有 3 个节点的网络来说，至少 2 个节点才能组成大多数，也就是 AB，AC，BC，他们之间任意两个都必然至少有一个公共节点，换句话说，任意一组 Majority，都和其他任何一组 Majority 都至少有一个公共节点。这样的话，下一组 Majority 选取的时候，必然存在一个公共节点，记住上一组 Majority 所做的决定。</p>
+<p>比如，上一个决定是 AB 所做的，而下一个决定轮到 BC 的时候，由于 B 记住了上一轮的决定，因此，可以容忍消息的丢失，延迟，甚至乱序等各种情况。只要有一个节点能够与这个网络中的大多数节点通信（至少两次，也就是一个来回），<strong>那么系统总是能以上一轮共识的结果为基础进行下一轮共识而不会出现混乱或丢失状态</strong>。</p>
+<p>Paxos 算法本质上是一个 2PC 算法，主要区别在于所有节点都是平等的可以并发提出议案，并且使用一种机制来记录议案号的顺序来避免冲突，同时它对于响应数也更加宽松。Paxos 中有两种角色：Proposer 和 Acceptor 。其中 Proposer 就相当于 2PC 中的 Coordinator，只不过，在 Paxos 中，每个人都可以成为 Proposer，所有人都是平等的（egalitarian）。也就是说，两个 proposers 可以同时发出提案，由 acceptors 根据收到的议案号大小来决定是否接受议案。2PC 要求所有节点在 Prepare/Abort-or-Commit 阶段都回复 yes/no，而 Paxos 则只要求大多数回复即可。Acceptor 就相当高于 2PC/3PC 中的 Cohort。</p>
+<p>Paxos 采用大多数回复的就可确认共识，其原理就在于：任意两个大多数集合中必然存在交集节点，这个节点一旦同意了 2 个 Proposals 中的一个，就必然不会同意另外一个，从而不会导致 consensus 冲突。</p>
+<p>Paxos 中使用 proposal number 来表示议案的全局顺序，每个 acceptor 都可以同时记录收到的多个 proposal number，并且只接受比当前最高 proposal number 更高的议案。</p>
+<p>算法大致流程如下：</p>
+<p><img src="/image/p2p/paxos_timeline_demo.png" alt=""></p>
+<p>注：一个节点可以同时担任 Proposer 和 Acceptor 两种角色，为了简化，上图把两种角色分开进行描述。</p>
+<p>Paxos 是一个异步算法（可以运行在异步网络环境中），其完全实现了 Safety 特性，也在很大程度上也能够达到 Liveness 的要求（又叫 Imperfect Liveness）。为什么不能完全达到 Liveness 呢，这是由异步网络的 FLP 不可能定理决定的。虽然，理论上，Paxos 没有显式的 Timeout 要求，但是，通常它只有在用同步的方式（也就是说，消息投递有时间上限）才能正确可靠的运行。</p>
+<p>实际上，从上述 Paxos 的算法过程演绎我们就可以看到，Paxos 算法中可能存在活锁，如下：</p>
+<p><img src="/image/p2p/paxos_livelocks.png" alt=""></p>
+<p>我们可以看到，在第一个 Proposer 进行 ACCEPT 之前，Acceptor 又收到并同意第二个 Proposer 的议案号，导致第一额 Proposer 的 ACCEPT 被拒绝。两个 Proposer 在不断的竞争提交议案，然后不断被 Reject，导致整个系统无法始终无法达成共识，算法在不断循环往复。这种活锁现象就会导致 Paxos 无法满足 Termination 性质（即 Liveness），所以严格的来说，它不是一个正确的一致性算法。</p>
+<p>注：Lamport 在自己的论文中建议使用 Leader 来代替 Paxos 中的 Proposer，而 Leader 则可以通过随机或其他方式来选定（Paxos 中假定随机过程会极大降低 FLP 发生的概率）。简单来说，只要我们在工程中能够实现随机地选择 Proposer，那么出现活锁的概率是非常低的。</p>
+<h3 id="Multi-Paxos"><a href="#Multi-Paxos" class="headerlink" title="Multi-Paxos"></a>Multi-Paxos</h3><hr>
+<p>现在我们对 Paxos 算法有了清晰的理解，现在有必要介绍一下 Multi-Paxos 算法，它是使得 Paxos 能够工程化的重要实践。</p>
+<p>为了区分，我们通常把前述 Paxos 算法称为 Basic Paxos。可以看到，Basic Paxos 已经解决了分布式系统最核心的一致性问题，也就是对某一个值能达成一致。但是还有一个问题我们并没有解决，那就是如何确定各个不同 Proposal 各个议案号的顺序。</p>
+<p>我们可以看到，Basic Paxos 中是通过不断提交议案，通过议案号的冲突拒绝来更新议案号的，效率非常低下，而且可能导致活锁。这是由于每个节点是独立运行的，没有全局时钟，每个节点都根据本地时戳（local time）来产生议案号（Proposal number），而本地议案号显然无法确定其真实的前后顺序（提交顺序），因为即使是先提交的，由于网络原因也可能晚到达。即使每个节点都采用相同的基准序号（比如都从 0 开始），也存在两个 Proposer 同时提交相同的序号而产生竞争（Contention），从而造成活锁现象，不仅极大的影响效率，还威胁到算法的 Liveness 性质。</p>
+<p>所以，从现实的角度来说，我们必须对 Basic Paxos 进行优化。可以看到，Basic Paxos 中，每个节点都需要独立运行 Prepare 和 Accept 两个阶段，而 Prepare 阶段是准备议案的过程，正是这个过程中产生的议案号导致了竞争，因此，我们可以把这个过程优化掉，让所有节点都运行同一个 Prepare 过程，这样议案号就不会冲突的，因为每个人都是按顺序得到一个新议案号的。</p>
+<p><img src="/image/p2p/prepare_original.png" alt=""></p>
+<p>变成这样：</p>
+<p><img src="/image/p2p/prepare_with_leader.png" alt=""></p>
+<p>我们引入 Leader 角色来完成统一的 Prepare 过程，每个 Proposer 需要提交议案时，就从 Leader 这里领取一个议案号，这样，每个议案都会有唯一单调递增的序号，就不会冲突了。</p>
+<p>既然引入了 Leader ，那么就存在谁来当这个 Leader 的问题了，也就是 Leader 选举。很简单，把 server ID 作为每个节点的标识，然后运行一遍 Basic Paxos 就可以选出一个大家都共识认可的 Leader。</p>
+<p>解决了序号冲突问题，我们还有一个涉及性能的，非常关键的部分，那就是 <strong>Basic Paxos 一轮只能对一个议案达成共识，这个在现实环境中是非常低效的</strong>。如果我们能够在一轮就对多个议案（互不冲突）达成共识，那么效率将大大提升。</p>
+<p>Multi-Paxos 算法就是为了解决上述问题而产生的。在 Multi Paxos 中，由于有了 Leader 节点来完成 Prepare 过程，因此，Proposal 总是唯一的，不会被覆盖，其他节点只需要处理 Accept 过程。而且，Leader 一旦选出，除非故障宕机，它永远是 Leader，不会退位，共识过程使用 Round ID 来表示，每一轮共识，Leader 可以提交多个议案（不冲突即可），可以一次对多个议案达成一致。</p>
+<p>简单来说，Multi-Paxos 把共识分成了两个阶段：Leader Election Phase 和 Consensus Phase。先选取 Leader，一旦 Leader 确定之后，就进入下一个阶段，由 Leader 接受请求之后，省去了 Prepare 过程，直接生成单调递增的议案号，并向其他节点发出 Accept 请求，当收到大多数响应之后，就可以确认 Commit。</p>
+<p>这里还需要提及的是 WAL（Write Ahead Log） 技术，它可以用来实现记录一致和回滚。因此，分布式日志是用来解决分布式网络中各种问题的一个重要技术，这里就不展开讨论了。</p>
+<p>由于 Lamport 在论文中只是对 Multi-Paxos 提及了一下，并没有阐明具体实现细节。所以现在开源项目中 Multi-Paxos 的变种非常多。</p>
+<h3 id="Raft"><a href="#Raft" class="headerlink" title="Raft"></a>Raft</h3><hr>
+<p>Raft 就是 Multi Paxos 变种中的其中一种，由斯坦福大学 的 PhD 学生 Diego Ongaro 和他的导师 John Ousterhout 在 2013 年发表的论文“In Search of an Understandable Consensus Algorithm”中提出，由于其易于理解的特性，这篇论文一发表就得到了大量的赞誉和推崇。而在工业界，基于 Raft 原理所实现的一致性协议更是得到了广泛的应用（比如 etcd）。</p>
+<p>Raft 最大的特点是强调了领导者选举的过程，通过单调递增的任期号以及连续的日志编号来记录每一轮共识的提交结果。Raft 突出易理解性，它主要利用日志的连续性做了一些简化，主要体现在两个方面：<br>（1）Leader 正常时：由 Leader 向 Follower 同步日志<br>（2）Leader 宕机是：选举新 Leader，执行 Leader Election 算法</p>
+<p>Raft 协议主要分三个部分，1）Leader 选举 2）日志复制 3）Safety 验证。</p>
+<p>Raft 使用 Term number 来表示共识轮次，单调递增，使用 LogEntry 来记录所有落地信息（term number，commit id，etc.）。Raft 对 Leader 的作用进行了强化，比如日志复制只能从 Leader 节点复制到其他节点。此外，Leader 的选举增加了超时机制，以便确保选举不会失败。此外，对于 Leader 的要求也更高了，其日志集必须包含最新的 term，以及 commit id，也就是作为 candidate 其必须包含最全的日志才能竞选 Leader，而 Multi paxos 中则无这个要求。</p>
+<p>至于如何判断哪个日志是更新的，直接比较 last entry 所在的 term id 以及 index 即可。</p>
+<p>至于 Safety 的验证，除了正常流程不会导致冲突之外，我们还需要保证在系统出错（Fail-stop），也就是 Leader 故障宕机的情况下，新 Leader 选举之后依然能够保证所有节点副本一致，不会出现丢失和覆盖的情况。</p>
+<p>我们可以通过下面这个场景来简单分析一下：</p>
+<p>当 leader crash 时，新的 Leader 如果不包含前一个 Leader 所有已提交的日志 CLE（committed log entries），如何避免不一致？</p>
+<p>Raft 算法中的要求是，一个 candidate 要想选举成为 new leader，它必然需要得到大多数 servers 的投票同意，那么至少有一个 server 会包含上一次（也就是最新的）CLE。如果这个 Candidate 的 CLE 比这个大多数 server 的 CLE 都要新，那么它就包含了所有的 CLE，满足成为新 Leader 的条件。而如果存在一个 CLE 比当前 Candidate 的 CLE 新，那么就不满足称为新 Leader 的条件，从而被拒绝。</p>
+<p>对于 follower crash 那就简单多了，只要其不影响网络的大多数分布（比如网络只有 3 个节点，在宕机 1 个之后只剩余 2个节点，就没法形成大多数），就对 Safety 没有任何影响。follower 失败时，只是不更新本地日志而已，重启并再次连入网络之后，从 Leader 复制最新日志到本地即可。</p>
+<h5 id="与-Multi-Paxos-的区别"><a href="#与-Multi-Paxos-的区别" class="headerlink" title="与 Multi-Paxos 的区别"></a>与 Multi-Paxos 的区别</h5><p>Raft 协议强调日志的连续性，Multi-Paxos 则允许日志有空洞。日志的连续性蕴含了这样一条性质：如果两个不同节点上相同序号的日志，任期（Term）相同，那么这和这之前的日志必然也相同的。Raft 协议利用日志的连续性，Leader 可以很方便的得知自己的 Follower 拥有的日志的情况，Follower 只要告诉 Leader 自己本地日志文件的最后一个日志的序号和 term id 就可以了；同时由于已经提交的日志本身也是连续的，只需要记录最后一条已经提交的日志的位置，就可以判定这条日志之前所有的日志都已被提交。而 Multi-Paxos 则不行，所以当新 Leader 产生时需要每个日志重新用 proposer  number 重走一遍所有的日志。</p>
+<p>简单来说，Raft 对于 Leader 故障，Membership 变更的方法做了详尽的阐述，利用连续的日志来做了许多简化，相比 Paxos/Multi-Paxos 是一个更规范并易于实现的共识算法。</p>
+<h3 id="CAP-理论"><a href="#CAP-理论" class="headerlink" title="CAP 理论"></a>CAP 理论</h3><p>接下来，再介绍一个分布式系统中极其著名的 CAP 理论，又叫不可能三角。</p>
+<p>早在 2000 年 7 月，加州大学伯克利分校的 Eric Brewer 教授在 ACM PODC 会议上提出 CAP 猜想。2 年后，麻省理工学院的 Seth Gilbert 和 Nancy Lynch 从理论上证明了CAP。之后，CAP 理论正式成为分布式计算领域的公认定理。</p>
+<p>CAP 理论讲的是一个分布式系统<strong>最多只能同时满足</strong>一致性（Consistency）、可用性（Availability）和分区容错性（Partition tolerance）这三项中的两项。</p>
+<p><img src="/image/p2p/cap_therory.png" alt=""></p>
+<p>由于 CAP 理论证明了三者不可兼得的结论，那么在实际应用中，我们通常需要对其做出权衡取舍。</p>
+<p>来看下面三种情况：</p>
+<p>1）CA without P：如果不要求 P（不允许分区），则 C（强一致性）和 A（可用性）是可以保证的。但其实分区不是你想不想的问题，而是始终会存在，因此CA的系统更多的是允许分区后各子系统依然保持CA。</p>
+<p>2）CP without A：如果不要求 A（可用），相当于每个请求都需要在Server之间强一致，而P（分区）会导致同步时间无限延长，如此CP也是可以保证的。很多传统的数据库分布式事务都属于这种模式。</p>
+<p>3）AP wihtout C：要高可用并允许分区，则需放弃一致性。一旦分区发生，节点之间可能会失去联系，为了高可用，每个节点只能用本地数据提供服务，而这样会导致全局数据的不一致性。现在众多的NoSQL都属于此类。</p>
+<p>对于多数大型互联网应用的场景，主机众多、部署分散，而且现在的集群规模越来越大，所以节点故障、网络故障是常态，而且要保证服务可用性达到N个9，即保证P和A，舍弃C（退而求其次保证最终一致性）。虽然某些地方会影响客户体验，但没达到造成用户流程的严重程度。</p>
+<p>对于涉及到钱财这样不能有一丝让步的场景，C必须保证。网络发生故障宁可停止服务，这是保证CA，舍弃P。貌似这几年国内银行业发生了不下10起事故，但影响面不大，报到也不多，广大群众知道的少。还有一种是保证CP，舍弃A。例如网络故障事只读不写。</p>
+<h3 id="分布式数据库"><a href="#分布式数据库" class="headerlink" title="分布式数据库"></a>分布式数据库</h3><p>下面来介绍一下分布式一致性算法在分布式数据库中的应用，之所以要介绍这部分内容，是因为分布式数据库目前是分布式算法最为普遍的应用（比特币本质上也是一个分布式数据库），了解它也是我们进入分布式领域重要的步骤。</p>
+<p>分布式数据库相比传统数据库最大的特点是<strong>水平扩展（Scaling）</strong>能力，这也是其最大优势。实现水平扩展的关键就是使用多个节点来分片存储数据，使得极大的扩大了存储容量的上限。扩展性（Scalability）是相对于系统来说的，而数据分片（Sharding）则是相对数据本身来说的，是实现扩展性的一种方法。通常数据会根据预先设定的规则（比如根据 Range，或者 Hash）切分，然后由数据分发器（Distributor）按照规则分发到不同的节点机器中进行存储。</p>
+<p>由于本文只涉及分布式一致性算法的应用，因此不详细介绍数据分片的设计。不同的节点机器保存不同 Range 的数据，比如节点 A 保存 Key 范围在 [0, 99] 范围内的数据，节点 B 则是 [100, 199]， 节点 C 为 [200, 299]，以此类推。。。</p>
+<p>示意图如下：</p>
+<p><img src="/image/p2p/shard_by_range.png" alt=""></p>
+<p>但是作为一个数据库系统，那么数据的可靠性，也就是容错性（Fault tolerance）是最为关键的。这也就是分布式一致性算法最能体现价值的地方了，那就是副本数据的复制，保证副本数据跟主数据的一致。一旦主数据丢失，可以立即从副本数据中恢复。</p>
+<p>这是对于任何数据库系统来说都是最为关键的（即使是传统数据库，也需要有主从备份，异地容灾等架构设计和措施），因此，我们为上述系统设计冗余备份如下：</p>
+<p><img src="/image/p2p/shard_by_range_with_dup.png" alt=""></p>
+<p>从上图可以看到，每台机器都保存了另外两个 Range 数据的备份，任何一台数据出现故障，都可以从其他机器中恢复其原本保存范围内的数据。</p>
+<h5 id="副本一致性"><a href="#副本一致性" class="headerlink" title="副本一致性"></a>副本一致性</h5><p>有了副本方案，我们需要保证的就是副本数据能够实时的与主数据同步，比如，A 机器是负责对外提供 [0, 99] 范围数据的所有读写操作的，当有数据需要写入该范围时，A 会向 B 机器和 C 机器发出写请求，得到 B 或 C 的响应之后（超过半数）就可以写入了。这时候，系统中至少有 2 台机器写入了新数据（AB，AC 或 ABC）。可以保证副本数据与主数据的一致。目前主流的分布式数据库都会采用 Paxos 或 Raft 等一致性算法来实现副本同步的操作。</p>
+<h5 id="强一致与弱一致（最终一致性）"><a href="#强一致与弱一致（最终一致性）" class="headerlink" title="强一致与弱一致（最终一致性）"></a>强一致与弱一致（最终一致性）</h5><p>强一致要求所有机器都写入才返回客户端操作，这时候系统对外界来说是强一致的，即一旦写入，从任何一台机器都都可以立即读取到这个结果。而弱一致只要求写入大部分机器即可返回，这时候系统对外界来说是弱一致的，执行写入操作之后，如果立刻读取，在某些机器上可能无法读到这个结果，而是过一段时间之后会读到正确结果。但是特点是，在一段时间之后，一定会读到该结果，这也就是为什么也称作最终一致性的原因。</p>
+<p>弱一致性的设计会大大提高系统的响应速度，因此很多数据库系统都采用这种方式。</p>
+<h3 id="一致性哈希（Consistant-Hashing）"><a href="#一致性哈希（Consistant-Hashing）" class="headerlink" title="一致性哈希（Consistant Hashing）"></a>一致性哈希（Consistant Hashing）</h3><hr>
+<p>上面介绍了使用 Key Range 的方式，也就是数字范围，来处理分布式系统中的数据分片问题，我们提到了还有一种使用哈希的方式来分片。</p>
+<p><strong>一致性哈希就是解决如何把数据分布在哪些机器上的</strong>，其本质上是一种负载均衡算法。如果机器的数量是有限的，那么一致性哈希可以把数据比较均匀的分布在各个机器上。</p>
+<h5 id="简单哈希（Basic-Hashing）"><a href="#简单哈希（Basic-Hashing）" class="headerlink" title="简单哈希（Basic Hashing）"></a>简单哈希（Basic Hashing）</h5><p>在介绍一致性哈希之前，先介绍下<strong>简单哈希</strong>。</p>
+<p>简单哈希很简单，其做法是，先对 Key 执行哈希运算，然后把这个值对节点总数量取余，即 hash(key) % n。由于哈希函数计算出来的值是在一定范围内的，比如 0 - 2<sup>32</sup>-1 之间。取余之后，会得到一个 [0, n) 范围内的值，这个就对应我们的机器号，我们把这个 Key 相对应的数据存到该机器即可。</p>
+<p>简单哈希虽然看上去很好，但是面对以下两种情形的时候会显得无所适从：</p>
+<ul>
+<li>其中一台机器出故障坏了，这时候节点数量变更为 n-1，此时的映射公式变成 hash(key) % (n-1)</li>
+<li>需要新增机器的时候，此时的映射公式变成 hash(key) % (n+1)</li>
+</ul>
+<p>可见，一旦出现需要增减机器的情况，对 key 进行取余运算的结果都会不同，这样，所有的数据都会被重新分配到新的机器上。这也就意味着，所有的数据都需要重新迁移，可以想而知这样会给系统带来多大的复杂性和性能损耗，系统几乎失去了扩展能力。</p>
+<h5 id="一致性哈希（Consistent-Hashing）"><a href="#一致性哈希（Consistent-Hashing）" class="headerlink" title="一致性哈希（Consistent Hashing）"></a>一致性哈希（Consistent Hashing）</h5><p>为了解决简单哈希带来的问题，一致性哈希的解决方案就出来了，<strong>它最大的特点就是可以尽可能地降低节点变动带来的数据迁移开销</strong>。</p>
+<p>一致性哈希对简单哈希进行了改进，摒弃了取余来进行映射的方法，取而代之的是对机器（可以用机器的 IP 或者主机名为关键字）也使用同样的哈希函数进行哈希运算，得出的结果会与之前的会在同一哈希空间。并且，他把哈希结果映射到了一个闭合的哈希环上（Hash Ring），也就是哈希运算的值空间，其范围是在 [0, 2<sup>32</sup>-1] 之间，0 和 2<sup>32</sup>-1在零点中方向重合。</p>
+<p>比如，对 A，B，C 三台机器进行 Hash 运算后得到</p>
+<p>Hash(NODEA) = KEY1;<br>Hash(NODEB) = KEY2;<br>Hash(NODEC) = KEY3;</p>
+<p>数据对象的哈希结果和机器的哈希结果在同一个值空间，值空间是一个闭合环，这里，我用一个下面这个图来直观的显示：</p>
+<p><img src="/image/p2p/hash_ring.png" alt=""></p>
+<p>从上图我们可以清晰的看到，机器和数据的哈希值都在环上了，那如何把数据分布到哪台机器上去呢？一致性哈希使用了最简单直观的办法，那就是把数据的哈希值沿着哈喜欢顺时针“行走”，把遇到的第一台服务器作为其目标存储机器，就像这样：</p>
+<p><img src="/image/p2p/hash_ring1.png" alt=""></p>
+<p>为什么一致性哈希能以较小的代价解决集群机器增减情况导致的数据迁移问题呢？</p>
+<p>我们从两个方面来分析：</p>
+<p>1）机器出现故障宕机，我们假如 C 机器宕机，那么原来 C 机器上的数据就无法访问了，那么我们只需要把这些数据（如果有备份的话）迁移到 D 机器上即可，而根据一致性哈希，任何新写入的数据，自然都会被存储到 D 节点上去。也就是说，系统一旦发生机器减少的情况，只需要迁移单个机器的数据。</p>
+<p><img src="/image/p2p/hash_ring2.png" alt=""></p>
+<p>2）增加一台机器，假设需要增加一台机器 E，这台机器经过哈希，位于 C 和 D 之间，这时候，部分原本存储在 D 机器上的数据需要迁移到 E 节点，并且，新写入的、哈希值位于 C 和 E 之间的数据，将不会再存储到 D 节点而是会存储在 E 节点。如下：</p>
+<p><img src="/image/p2p/hash_ring3.png" alt=""></p>
+<h5 id="数据的均衡分布（虚拟节点）"><a href="#数据的均衡分布（虚拟节点）" class="headerlink" title="数据的均衡分布（虚拟节点）"></a>数据的均衡分布（虚拟节点）</h5><p>采用了一致性哈希并不能保证数据会均匀分布在各台机器上，由于使用机器 IP 或主机名做哈希运算得出来的哈希值在 [0, 2<sup>32</sup>-1] 空间内可能是不均匀分布的，这样就会造成某台机器保存大量数据，而某台机器却保存极少量数据。为了平衡各台机器的使用，我们可以使用虚拟节点（Virtual nodes）来实现避免这个问题。</p>
+<p>具体原理和方法非常简单，如下：</p>
+<p>如果有 N 台机器，那么我们就把哈希空间（比如 [0, 2<sup>32</sup>-1]）分成 N 等分，每个等分可以看做是一个虚拟节点，每个虚拟节点对应一个实际的物理节点，这样我们可以为他们建立一对一的映射关系。这样，我们要存储的数据会被均匀分布在 N 个虚拟节点上，而通过虚拟节点，又存入真正的物理节点上。就实现了数据的均衡分布。</p>
+<p><img src="/image/p2p/consistant_hash_virtualnode.png" alt=""></p>
+<p>对于一致性哈希，网上也有大量的实现可以参考，比如开源的 ketama。</p>
+<h2 id="分布式系统的其他理论"><a href="#分布式系统的其他理论" class="headerlink" title="分布式系统的其他理论"></a>分布式系统的其他理论</h2><p>除了上述核心原理及理论成果，分布式系统中还有很多其他理论用来解决实际问题，比如 BASE，ACID 等等。</p>
+<h2 id="拜占庭协议"><a href="#拜占庭协议" class="headerlink" title="拜占庭协议"></a>拜占庭协议</h2><hr>
+<p>前面所有的内容我们都假定节点是诚实的，每个节点都诚实的发出每个消息，节点的失败模型是 Fail-Stop 的，也就是只存在故障宕机不工作或者运行良好诚实工作两种情况。但是，在真实的世界中，却存在节点故意伪造消息的情况，而拜占庭协议的产生就是为了解决真实世界中可能存在的作恶情况。</p>
+<p>实际上，拜占庭协议非常简单，只不过比之前介绍的非拜占庭协议 Paxos，Raft 等多了一个约束条件而已，那就是节点可以伪造消息。</p>
+<h3 id="两个将军问题"><a href="#两个将军问题" class="headerlink" title="两个将军问题"></a>两个将军问题</h3><p>讲到拜占庭协议，就必须要先讲到<a href="http://hydra.infosys.tuwien.ac.at/teaching/courses/AdvancedDistributedSystems/download/1975_Akkoyunlu,%20Ekanadham,%20Huber_Some%20constraints%20and%20tradeoffs%20in%20the%20design%20of%20network%20communications.pdf" target="_blank" rel="noopener">两军问题（Two General’s Problem）</a>，因为最早是起源于它。两军问题描述了两个将军在攻击同一个敌人的场景。将军1一个是领导，将军2 是跟随者。每个将军的军队都无法仅靠自己的力量成功打败敌军，所以他们需要合作并同一时间发起攻击。这看起来是一个简单的情况，但有一点要注意：</p>
+<p>为了两军的沟通和决定作战时间，将军 1 必须要派遣一个信使穿过敌人的营地去把攻击时间告诉将军2。但是，信使可能会被敌人抓住因而信息无法传到友军。那会导致将军 1 发起攻击时，将军 2 和他的军队还呆在原地。</p>
+<p>即使第一条信息传到了，将军2号也需要确认 ACK（这里与 TCP 的握手过程非常相似）他收到了信息，所以他要派遣一个信使回去，因此重复上一个信使可能被抓的情况。这会延伸到无限的 ACK，两位将军将无法达成一致。</p>
+<p>没有任何办法可以保证第二个要求，那就是每个将军都要确保对方同意了攻击计划。两个将军都总会怀疑他们最后的信使是否能到达。</p>
+<p>下面就是两军问题的通信模型：</p>
+<p><img src="/image/p2p/two_generals.png" alt=""></p>
+<p>很快，两个将军问题就被<a href="https://en.wikipedia.org/wiki/Two_Generals%27_Problem#Proof" target="_blank" rel="noopener">证实</a>是<strong>无解</strong>的。</p>
+<h3 id="拜占庭协议-1"><a href="#拜占庭协议-1" class="headerlink" title="拜占庭协议"></a><strong>拜占庭协议</strong></h3><p>于是，在 1982 年，Lamport、Shostak 和 Pease 三人一起对一个带反转的广义版本的两个将军问题进行了描述，这个场景中两个以上的将军需要对攻打他们共同敌人的时间作出同意。它增加的一个复杂性就是，其中一个或几个将军有可能是叛徒，意味着他们可以对他们的选择撒谎（比如他们同意在0900发起攻击但实际上他们不）。</p>
+<p>两个将军问题中领导者－跟随者的关系变成了指挥官－中尉的组合。为了在这里达成共识，指挥官和每个中尉必须就同一个决定达成一致（为了简单，只有<strong><em>攻击</em></strong>或<strong><em>撤退</em></strong>）。</p>
+<p><img src="/image/p2p/byzantine_general_problem.png" alt=""></p>
+<p>这里除了第二个条件之外，如果指挥官是叛徒，还是必须达成共识。结果，所有的中尉成为了多数票。</p>
+<p>在这种情况下达成共识的算法是基于一个中尉所观察到的大多数决策的价值。</p>
+<p>拜占庭协议得出来的一个定理：对于任意 m，如果有多于 3m 的将军和至多 m 个叛徒，算法可以达到共识。</p>
+<p>也就是说，只要 2/3 的成员是诚实的，算法就能达到共识。如果叛徒多于 1/3，无法达到共识，这些军队无法协调他们的攻击，敌军胜利。</p>
+<h5 id="拜占庭容错"><a href="#拜占庭容错" class="headerlink" title="拜占庭容错"></a>拜占庭容错</h5><p>拜占庭容错是一个定义容许属于拜占庭将军问题失败类别的系统的特性。拜占庭故障 (Byzantine Failure) 是<a href="https://en.wikipedia.org/wiki/Failure_cause" target="_blank" rel="noopener">失效模式</a>中最困难级别的。这意味着没有任何限制，也不会假设节点可以具有的行为类型（例如，一个节点可以生成任何类型的任意数据时假装成一个诚实的成员）。</p>
+<p>其实我们注意到，拜占庭协议跟非拜占庭协议最大的特点就是对请求-应答节点数量的要求，在非拜占庭网络中，要对某个值达成一致，只需要收到大多数回复即可，也就是大于 1/2 的节点数，而在拜占庭网络中，则要求收到大于 2/3 的回复。</p>
+<h5 id="区块链与拜占庭容错"><a href="#区块链与拜占庭容错" class="headerlink" title="区块链与拜占庭容错"></a>区块链与拜占庭容错</h5><p>区块链本质是一个去中心化帐簿，由于它存储在这些帐簿中的价值，不良成员有巨大的经济动机去尝试造成故障。所以，拜占庭容错的解决方案是区块链技术的核心要求。</p>
+<p>比如，拿<a href="https://bitcoin.org/bitcoin.pdf" target="_blank" rel="noopener">比特币</a>来说，它一个重大突破就是利用“<a href="https://en.bitcoin.it/wiki/Proof_of_work" target="_blank" rel="noopener">工作量证明”(Proof-of-Work)</a>来作为拜占庭将军问题的概率解决方案。</p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Distributed-System/">Distributed System</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Distributed-System/blockchain-part1-theory-foundamentals/" data-title="第一部分：区块链核心技术：分布式理论概述 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Distributed-System/blockchain-overview-blockchain-expert/" title="Theory and Practice needed for a Blockchain Expert">
+  <strong>Prev：</strong><br>
+  <span>
+  Theory and Practice needed for a Blockchain Expert</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Programming/network-programming-reactive-programming/" title="5 分钟理解什么是“响应式编程（Reactive Programming）”">
+ <strong>Next：</strong><br>
+ <span>5 分钟理解什么是“响应式编程（Reactive Programming）”
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

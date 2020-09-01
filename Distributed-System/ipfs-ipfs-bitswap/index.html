@@ -1,0 +1,736 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>IPFS 中的 BitSwap 协议 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="简介BitSwap 是 IPFS 网络中定义数据块交换方式的协议，它是一个一种基于统一格式的消息对等协议，有别于 request/response 方式。简单来说就是，在 IPFS 中，请求和响应的消息都使用同一类型的消息包。由于在 IPFS 网络中，所有的 Peers 都是对等节点，不存在 BitTorrent 中那样的 Tracker 服务器，所以通信方式更加简单。 BitSwap 协议还定义">
+<meta name="keywords" content="IPFS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IPFS 中的 BitSwap 协议">
+<meta property="og:url" content="https://juniway.net/Distributed-System/ipfs-ipfs-bitswap/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="简介BitSwap 是 IPFS 网络中定义数据块交换方式的协议，它是一个一种基于统一格式的消息对等协议，有别于 request/response 方式。简单来说就是，在 IPFS 中，请求和响应的消息都使用同一类型的消息包。由于在 IPFS 网络中，所有的 Peers 都是对等节点，不存在 BitTorrent 中那样的 Tracker 服务器，所以通信方式更加简单。 BitSwap 协议还定义">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/swarm.png">
+<meta property="og:image" content="https://juniway.net/image/ipfs_msg.png">
+<meta property="og:image" content="https://juniway.net/image/wantmanager.png">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.434Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IPFS 中的 BitSwap 协议">
+<meta name="twitter:description" content="简介BitSwap 是 IPFS 网络中定义数据块交换方式的协议，它是一个一种基于统一格式的消息对等协议，有别于 request/response 方式。简单来说就是，在 IPFS 中，请求和响应的消息都使用同一类型的消息包。由于在 IPFS 网络中，所有的 Peers 都是对等节点，不存在 BitTorrent 中那样的 Tracker 服务器，所以通信方式更加简单。 BitSwap 协议还定义">
+<meta name="twitter:image" content="https://juniway.net/image/swarm.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Distributed-System/ipfs-ipfs-bitswap/" title="IPFS 中的 BitSwap 协议" itemprop="url">IPFS 中的 BitSwap 协议</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2018-07-03T13:30:33.000Z"> 2018-07-03</time>
+    <span class="post-count">字数 2.1k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>BitSwap</strong> 是 IPFS 网络中定义数据块交换方式的协议，它是一个一种基于统一格式的消息对等协议，有别于 request/response 方式。简单来说就是，在 IPFS 中，请求和响应的消息都使用同一类型的消息包。由于在 IPFS 网络中，所有的 Peers 都是对等节点，不存在 BitTorrent 中那样的 Tracker 服务器，所以通信方式更加简单。</p>
+<p>BitSwap 协议还定义了如何请求数据、如何发送数据以及向谁发送数据等策略，每个节点都可以有自己的策略，作为数据交换的核心模块，BitSwap 使用一些预定义的激励机制来促进网络中数据的流动，通过一个点对点之间的传输记录账本来达到互惠的目的。</p>
+<p>IPFS 网络中使用 Bitswap 协议获取数据块一个最大的特点是，请求的数据块是跨文件的，这个是跟 BitTorrent 最大的区别所在，因为在 BitTorrent 中，块请求都是基于文件的，一个 Peer Swarm 都是对同一个文件（目录）进行数据传输。而在 IPFS 中，由于数据请求是基于块的，任何类型的数据块，只要其哈希值一样，都可以拿为己用，一个 Peer Swarm 对应的是整个 IPFS 网络中的数据，因此所有的数据块都可以被用来使用，实现真正的跨文件数据交换。这不仅大大减少了数据的冗余，还大大提高的块检索的效率。显然，BitSwap 的效率比 BitTorrent 更高。</p>
+<p> <img src="/image/swarm.png" alt=""></p>
+<p>基于上，BitSwap 协议定义了 Message, Networking, Decision Engine 以及 WantList 等主要模块。</p>
+<h3 id="1-Message-Protocol"><a href="#1-Message-Protocol" class="headerlink" title="1. Message Protocol"></a>1. Message Protocol</h3><p>IPFS 中使用 Protocol Buffer 对消息进行编码，Peers 之间通信的消息分为两种，一种是 WantList 用于描述请求，第二种是 Block 用于表示传递的块数据。<br>WantList 中包含了 blockCid, priority, cancel, full 等字段用于描述要请求的 Block 索引，优先级以及是否是完整请求等信息。</p>
+<p>我们知道，在 IPFS 中，文件被分为若干 Chunks，也叫 Blocks，Block 是 IPFS 网络中最基本的数据操作单位。每个 Block 使用一个 CID 标识符来索引，CID 是一个自描述的索引结构体，它集成了对 Block 编码所使用 codec, length, hash 等信息，可以唯一标识一个 Block。因此，要想从 Peer 下载一个 Block，只需在告诉它 CID 即可，收到 Block 时我们也可以容易进行验证。</p>
+<p>实际上，由于 IPFS 中使用了 Multicodec 自适应编码协议，因此消息发送前还会添加 multicodec 前缀，这样，就使得消息的格式范围大大增加了，而不仅仅是 Protobuf。比如 JSON, Cbor 等都可以支持！更加强大的是，IPFS 还定义了一套 Multistream 作为网络流的格式协议，因此它甚至还能支持协议的不同版本。</p>
+<p> <img src="/image/ipfs_msg.png" alt=""></p>
+<h3 id="2-Networking"><a href="#2-Networking" class="headerlink" title="2. Networking"></a>2. Networking</h3><p>Networking 模块定义了消息发送和处理，查找 Block Providers，Announce Keys，Session 管理，路由等组件。</p>
+<p>1）Message Stream<br>在 IPFS 网络中，消息都是被打包成 Multistream 流进行传输的，Peer 接收到一个 Stream 之后，会先对其解码成对应的消息格式，然后根据消息内容的要求决定是响应请求还是接收块数据。<br>如果 Decision Engine 决定响应 WantList 请求，那么 BitSwap 会从本地的块数据库中取出块数据，往 Peer Request Queue 中添加一个任务，把块数据发送给对方。</p>
+<p>2）Provider<br>当前节点想要下载一个数据块，本地块数据库中未找到时，就会调用 BitSwap 的网络模块（DHT）查找 Providers，一旦找到，就会连接它并向其发送 WantList 请求，<br>如果收到了块数据，那么会把存入本地的块数据库。更新本地的 WantList 以及传输记录账本，更新 Session 等一些列操作。</p>
+<p>3) Announce<br>Announce 操作是本地节点作为 Key Provider 进行的。在 IPFS 网络中，Block 是用 Key 来标识的（即 Cid Prefix），因此，每当本地新增一个 Block 数据是，provide worker 会异步的向网络中进行 Announce 操作，以声明自己拥有某个块。这样，当其他 Peer 想要下载时，就可以根据 DHT Table 方便的找到要连接的 Providers。</p>
+<p>4）Session<br>Session 管理 Peers 之间的连接，包括 Peers 的请求状态（优先级，是否已取消？等），以及 Peer 存活状态等等信息。</p>
+<h3 id="3-Decision-Engine"><a href="#3-Decision-Engine" class="headerlink" title="3. Decision Engine"></a>3. Decision Engine</h3><p>Decision Engine 是 BitSwap 协议的信用管理模块。它管理一个请求队列，使用一个账本来记录节点之间的传输记录，并以此决定是否响应对端的下载请求。<br>之所以建立一个信用账本，主要是为了以下目的：</p>
+<ul>
+<li>提高节点之间数据交换的效率</li>
+<li>防止 freerider</li>
+<li>防止一些攻击行为(比如：女巫攻击)</li>
+<li>对信任的节点建立宽松机制</li>
+</ul>
+<p>需要注意的是，信用记录是两个节点之间的，分为 Credit 和 Debt 两部分，比如，节点 A 向节点 B 发送过数据，那么 A 就拥有对 B 的 Credit，相反，B 欠了 A 的 Debt。如果 A 对 B 拥有的 Credit 超过 Debt，那么下次其向 B 发出 WantList 请求块数据的时候，B 就会立刻反馈数据。总的来说，A 的 Credit 减去其 Debt 就是净值，IPFS 中使用负债率（debt ratio，r）来表示。</p>
+<p>负债率的公式是：</p>
+<pre><code>debtRatio = bytes_sent/(bytes_recv + 1)</code></pre><p>节点根据负债率来计算出这个节点的发送率 P (send|r) = 1− 1/(1+exp(6−3r))</p>
+<p>根据这两个函数可以发现，当负债率达到某一个值的时候负债率会急剧下降。</p>
+<p>这个模型表达的意义：如果一个节点只接受数据不分享数据，别人发送给它数据的概率会越来越低（到达某一个值后就会急剧降低接近0），如果节点持续保持分享数据，别的节点向你发送数据的概率就会越来越大。</p>
+<p>Decision Engine 会记录下来和其他节点通信的账单（数据收发），可以保持节点间数据交换的历史和防止篡改。当两个节点之间建立连接的时候，BitSwap 会相互交换账单信息，如果账单不匹配，则清除重新记账。恶意节点可能会故意“丢失”账单，以希望清除掉自己的债务。其它交互节点会把这些都记下来，如果总是发生，节点就会被拒绝。</p>
+<p>这套信用系统跟 BitTorrent 和 Emule 的信用系统是类似的，Tit-for-Tat，其信用记录都是基于传输节点双方的，并不是全局共享的，也就是说，即使你往某个节点传输了大量的数据，如果你想要的数据不在那个节点上，你也无法根据你的贡献度从整个 IPFS 网络受益。</p>
+<p>为此，IPFS 的团队开发了一个全新的 Filecoin 项目，它就是构建与整个 IPFS 网络之上的激励层。后续文章再介绍。</p>
+<h3 id="4-WantManager"><a href="#4-WantManager" class="headerlink" title="4. WantManager"></a>4. WantManager</h3><p>WantManager 模块主要是管理 WantList 请求的，它是一个实现模块。WantList 是核心数据结构，通过管理一个消息队列，一旦有新的 WantList Entry 添加，就会触发消息队列的工作线程，从而往指定的 Peer 发送数据块。WantManager 提供了一些机制来保证数据块的分发，比如发送失败时会等待一定间隔后进行重发 Rebroadcast，通过 WantList Gauge 监控发送过程，完成数据下载之后的请求取消等。</p>
+<p> <img src="/image/wantmanager.png" alt=""></p>
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>假如我们想要下载一个 Video 文件，我们知道它的哈希是：<code>Qmdsrpg2oXZTWGjat98VgpFQb5u1Vdw5Gun2rgQ2Xhxa2t</code>，因此，在启动 <code>ipfs daemon</code> 之后，我们执行：</p>
+<pre><code>$ ipfs get Qmdsrpg2oXZTWGjat98VgpFQb5u1Vdw5Gun2rgQ2Xhxa2t﻿</code></pre><p>这时候，IPFS 的 WantManager 会计算出 WantList，搜寻网络中的 Peers 并下载相应的 Block。<br>我们可以通过下列命令查看 WantList。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ipfs bitswap wantlist</span><br><span class="line">QmYEqofNsPNQEa7yNx93KgDycmrzbFkr5oc3NMKXMxx5ff</span><br><span class="line">QmUmDEBm9a8MYyqRdb3YQnoqPmqAo4cEWdKQErirFJdSWD</span><br><span class="line">QmY5VJPbsRZzFCTMrFBx2qtZiyyeLhsjBysyfC1fx2gE9S</span><br><span class="line">QmdbzYgyhqUNCNL8xU2HTSKwao1ck2Gmi5U1ygjQuJd92b</span><br><span class="line">QmbZDe5Dcv9mJr8fiqp5aJL2cbyu64tgzwCS2Vy4P3krCL</span><br><span class="line">QmRjzMzVeYRE5b6tDF3sTXMV1sTffno92uL3WwuFavBrWQ</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>找到我们拥有 Debt 的节点列表</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">QmSoLMeWqB7YGVLJN3pNLQpmmEk35v6wYtsMGLzSr5QBU3</span><br><span class="line">QmSoLnSGccFuZQJzRadHn95W2CrSFmZuTdDWP8HXaHca9z</span><br><span class="line">QmUh2KnjAvgEbJFSd5JZws4CNvt6LbC4C1sRpBgCbZQiqD</span><br><span class="line">Qmc9pBLfKSwWboKHMvmKx1P7Z738CojuUXkPA1dsPrvSw2</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>选择一个并查看我们是否从该节点下载过数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ipfs bitswap ledger QmSoLMeWqB7YGVLJN3pNLQpmmEk35v6wYtsMGLzSr5QBU3</span><br><span class="line">Ledger for &lt;peer.ID SoLMeW&gt;</span><br><span class="line">Debt ratio: 0.000000</span><br><span class="line">Exchanges:  11</span><br><span class="line">Bytes sent: 0</span><br><span class="line">Bytes received: 2883738</span><br></pre></td></tr></table></figure>
+
+<p>全文完！</p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Distributed-System/">Distributed System</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/IPFS/">IPFS</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Distributed-System/ipfs-ipfs-bitswap/" data-title="IPFS 中的 BitSwap 协议 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Macbook/Macbook-macbook-cmd-proxy/" title="MacOS 下命令行使用代理">
+  <strong>Prev：</strong><br>
+  <span>
+  MacOS 下命令行使用代理</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/System-Programming/core-techs-02-algorithms/" title="Part II, Algorithms">
+ <strong>Next：</strong><br>
+ <span>Part II, Algorithms
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

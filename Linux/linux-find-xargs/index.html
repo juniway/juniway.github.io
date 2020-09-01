@@ -1,0 +1,874 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>find and xargs | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="find is one of the most frequently used command in Linux.The main purpose of find is to find files with specified condition like filename, file type, etc.By default, find will search files in specifie">
+<meta property="og:type" content="article">
+<meta property="og:title" content="find and xargs">
+<meta property="og:url" content="https://juniway.net/Linux/linux-find-xargs/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="find is one of the most frequently used command in Linux.The main purpose of find is to find files with specified condition like filename, file type, etc.By default, find will search files in specifie">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.435Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="find and xargs">
+<meta name="twitter:description" content="find is one of the most frequently used command in Linux.The main purpose of find is to find files with specified condition like filename, file type, etc.By default, find will search files in specifie">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Linux/linux-find-xargs/" title="find and xargs" itemprop="url">find and xargs</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-05-23T09:52:44.000Z"> 2016-05-23</time>
+    <span class="post-count">字数 2.4k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p><strong>find</strong> is one of the most frequently used command in Linux.<br>The main purpose of <code>find</code> is to find files with specified condition like filename, file type, etc.<br>By default, <code>find</code> will search files in specified directory recursively.</p>
+<ul>
+<li>Classic usage pattern</li>
+<li>Common options</li>
+<li>find and xargs</li>
+</ul>
+<h3 id="Syntax"><a href="#Syntax" class="headerlink" title="Syntax"></a>Syntax</h3><pre><code>find [path.] [-options] [file_pattern] [-action]</code></pre><p><strong>example</strong></p>
+<pre><code>$ find /data -type f -print</code></pre><p><strong>Dissection of a find expression:</strong></p>
+<pre><code>find start_dir
+     -options 
+     matching_criteria 
+     -action_to_perform_on_results</code></pre><h3 id="Examples"><a href="#Examples" class="headerlink" title="Examples"></a>Examples</h3><p><strong>1. List all files in current and sub directories</strong></p>
+<pre><code>$ find
+.
+./abc.txt
+./subdir
+./subdir/main.php
+./test.php</code></pre><p><strong>Note:</strong> the command is same as <code>find .</code> or <code>find . -print</code>, when <code>.</code> is omitted, <code>find</code> will search in current directory.</p>
+<p><strong>2. List all files in specific directories</strong></p>
+<pre><code>$ find /data</code></pre><p><strong>3. Searches file by name</strong></p>
+<pre><code>$ find /data -name sql.dat</code></pre><p><strong>4. Searches file by name and ignore case</strong></p>
+<pre><code>$ find /data -iname &quot;*.ExE&quot;</code></pre><p><strong>5. Invert match</strong></p>
+<pre><code>$ find ./project -not -name &quot;*.log&quot;</code></pre><p>or</p>
+<pre><code>$ ind ./project ! -name &quot;*.log&quot;</code></pre><p><strong>6. Combine multiple search criterias</strong></p>
+<pre><code>-a: and 
+-o: or 
+-not:</code></pre><ul>
+<li>And <code>$ find ./project -name &#39;test*&#39; ! -name &#39;*.php&#39;</code></li>
+<li>Or  <code>$ find -name &#39;*.php&#39; -o -name &#39;*.txt&#39;</code></li>
+</ul>
+<p><strong>7. Search hidden files:</strong></p>
+<pre><code>$ find ~ -type f -name &quot;.*&quot;</code></pre><p><strong>8. List out the found files</strong></p>
+<pre><code>$ find . -exec ls -ld {} \;</code></pre><p><code>-exec</code> command must be terminated with a ; to avoid interpretion by the shell (usually we need to type ; or +;)</p>
+<p><strong>9. Redirect error message to /dev/null</strong></p>
+<p>This is useful when you don’t want to see those error messages:</p>
+<p>e.g. If you search files using your account in root directory /, you will be prompted a lot of error message telling you <code>Permission denied</code>.</p>
+<p>like this:</p>
+<pre><code>$ find / -name &quot;*.conf&quot; 
+/sbin/generate-modprobe.conf 
+find: /tmp/orbit-root: Permission denied 
+find: /tmp/ssh-gccBMp5019: Permission denied 
+find: /tmp/keyring-5iqiGo: Permission denied 
+find: /var/log/httpd: Permission denied 
+find: /var/log/ppp: Permission denied </code></pre><p>We can avoid those messages by redirecting them to /dev/null</p>
+<pre><code>$ find / -name &quot;*.conf&quot; 2 &gt; /dev/null </code></pre><p>Or, we can use GNU’s <code>-readable</code> option:</p>
+<pre><code>$ find / -type d -name ! -readable -prune -o -print</code></pre><p>If you want keep other errors but not ‘permission denied’:</p>
+<pre><code>$ find . -name &quot;openssl&quot; 2&gt;&amp;1 | sed &apos;/Permission denied/d;&apos;
+
+/or
+$ find . 2&gt;&amp;1 &gt; files_and_folders | grep -v &apos;Permission denied&apos; &gt;&amp;2</code></pre><h3 id="Common-Options"><a href="#Common-Options" class="headerlink" title="Common Options"></a>Common Options</h3><p><strong>-name</strong>   Find files with filename</p>
+<p>(1) Find filename in /dir and its subdir</p>
+<pre><code>$ find /dir -name filename</code></pre><p>(2) Find all files with .c extension in current dir and its subdir</p>
+<pre><code>$ find . -name &quot;*.c&quot;</code></pre><p>(3) Limit find in specified directories</p>
+<pre><code>$ find /usr /home -name some.conf -type f </code></pre><p><strong>-perm</strong>   </p>
+<p>Find files with certain permission</p>
+<pre><code>$ find . -perm 755 –print </code></pre><p>Find readonly files</p>
+<pre><code>$ find /etc -maxdepth 1 -perm /u=r
+/etc/opt
+/etc/aliases
+/etc/localtime
+/etc/apparmor.d
+/etc/cron.hourly</code></pre><p>Find executable files</p>
+<pre><code>$ find /bin -maxdepth 2 -perm /a=x
+/bin/ping
+/bin/less
+/bin/zcat
+/bin/ps
+/bin/chmod</code></pre><p><strong>-maxdepth</strong></p>
+<p>Limit depth of directory traversal</p>
+<pre><code>$ find ./test -maxdepth 2 -name &quot;*.png&quot;
+./app/img/avatar.png
+./app/main.png
+
+$ find ./test -maxdepth 1 -name *.png&quot;
+./app/main.png</code></pre><p><strong>-user</strong></p>
+<p>Find files belongs to a spesific user</p>
+<pre><code>$ find ~ -user nick</code></pre><p><strong>-group</strong></p>
+<p>Find files belongs to a spesific group</p>
+<pre><code>$ find /data -group gem</code></pre><p><strong>-mtime -n +n</strong></p>
+<p>Find files modified in a range of days, <code>-n</code> means mtime is within n days, <code>-m</code> means mtime is before m days.</p>
+<pre><code>$ find / -mtime +50 –mtime -100</code></pre><p>Find files changed in last N minutes</p>
+<pre><code>$ find /home/alex -cmin -60</code></pre><p>Files modified in last hour</p>
+<pre><code>$ find /home/alex -mmin -60</code></pre><p>Find Accessed Files in Last 1 Hour</p>
+<pre><code>$ find /home/alex -amin -60</code></pre><p><strong>-nogroup</strong></p>
+<p>Find files that have no group, this means the files are not in /etc/groups.</p>
+<pre><code>find / –nogroup -print</code></pre><p><strong>-nouser</strong></p>
+<p>Find files that have no user, this means the files are not in /etc/passwd</p>
+<pre><code>find /home -nouser –print</code></pre><p><strong>-newer file1 ! file2</strong></p>
+<p>Find files that are newer than files1 but older than file2</p>
+<p><strong>-type</strong></p>
+<p>Find files that are a specific type, e.g.</p>
+<p>b - block<br>d - directory<br>c - character<br>p - named pipe<br>l - symbolic link<br>f - regular file<br>s - socket</p>
+<p><strong>Examples:</strong></p>
+<p>(1) List all sub directories in /etc</p>
+<pre><code>find /etc -type d –print </code></pre><p>(2) List all files in current directory, do not list directories. </p>
+<pre><code>find . ! -type d –print</code></pre><p>(3) Find all symbolic links in /etc</p>
+<pre><code>find /etc -type l –print</code></pre><p>(4) Search only files (not directories with the name matched) &amp; only directory (not files with the name matched)</p>
+<p>e.g. </p>
+<p>If we have a file named <code>abc.txt</code> and a directory named <code>abc</code> in current directory, use <code>find -name abc*</code> will list both of them.</p>
+<p>If we want only the file to be listed:</p>
+<pre><code>$ find -type f -name &quot;abc*&quot;</code></pre><p>If we want only the directories to be listed:</p>
+<pre><code>$ find -type d -name &quot;abc*&quot;</code></pre><p><strong>-size</strong></p>
+<p>Find files that have n block size (c means bytes)</p>
+<p>(1) Find files of given size</p>
+<pre><code>$ find / -size 50M</code></pre><p>(2) Find files in a size range</p>
+<pre><code>$ find / -size +50M -size -100M</code></pre><p>(3) Find largest and smallest files</p>
+<pre><code>// display the 5 largest file in the current directory and its subdirectory
+$ find . -type f -exec ls -s {} \; | sort -n -r | head -5
+
+// The 5 smallest files
+$ find . -type f -exec ls -s {} \; | sort -n | head -5</code></pre><p>(4) Find empty files and directories</p>
+<pre><code>// empty files
+$ find ~ -type f -empty
+
+// empty directories
+$ find ~ -type d -empty</code></pre><p><strong>-depth:</strong></p>
+<p>When finding files, process each directory’s contents before the directory itself</p>
+<pre><code>$ find / -name &quot;CON.FILE&quot; -depth –print</code></pre><h3 id="Actions"><a href="#Actions" class="headerlink" title="Actions"></a>Actions</h3><p><strong>-delete</strong></p>
+<p>Find files named core in or below the directory /tmp and delete them, but more efficiently than<br><code>find /tmp -name core -type f -print0 | xargs -0 /bin/rm -f</code><br>(because we avoid the need to use fork(2) and exec(2) to launch rm and we don’t need the extra xargs process)</p>
+<pre><code>$ find /tmp -depth -name core -type f -delete</code></pre><p><strong>-exec command ;</strong><br><strong>-exec command {} +</strong></p>
+<p><code>-exec</code> is used to execute commands on the found files, must be terminated with <code>\;</code>.</p>
+<pre><code>$ find * -exec sh -c &apos;echo &quot;{}&quot;&apos; \;
+
+$ find . -type f -name &quot;*.jpg&quot; -exec rm -f {} +
+or 
+$ find . -type f -name &quot;*.jpg&quot; -exec rm -f {} \;</code></pre><p>Rename all files that have spaces in their filename and replace it with <code>_</code></p>
+<pre><code>$ find . -type f -iname “*.mp3″ -exec rename “s/ /_/g” {} \; </code></pre><p><strong>-fls file</strong></p>
+<p>like -ls but write to file like -fprint.</p>
+<p><strong>-ls</strong></p>
+<p>list  current file in ls -dils format on standard output</p>
+<p><strong>-print</strong></p>
+<p>print the full file name on the standard output, followed by a null newline</p>
+<p><strong>-print0</strong></p>
+<p>print the full file name on the standard output, followed by a null character</p>
+<p><strong>-prune</strong></p>
+<p>if the file is a directory, do not descend into it. If -depth is given, false; no effect.<br>Since -delete implies -depth, -prune will have no effect when -delete specified.</p>
+<p>e.g. Exclude a directory when searching (If specify -depth, -prune will be ignored).</p>
+<pre><code>$ find /apps -path &quot;/apps/bin&quot; -prune -o –print
+$ find /usr/sam -path &quot;/usr/sam/dir1&quot; -prune -o –print</code></pre><p><strong>-quit</strong></p>
+<p>Exit  immediately</p>
+<br>
+
+<h4 id="find-and-exclude-specific-directories"><a href="#find-and-exclude-specific-directories" class="headerlink" title="find and exclude specific directories"></a>find and exclude specific directories</h4><p>&lt;1&gt; use “-prune -o -print”</p>
+<pre><code>$ find . -type f -name &quot;*.cpp&quot; -path &quot;./tmp/*&quot; -o -print | xargs wc -l</code></pre><p>&lt;2&gt; use “! -path”</p>
+<pre><code>$ find . -type f -name &quot;*.cpp&quot; ! -path &quot;./tmp/*&quot; ! -path &quot;./test/*&quot;</code></pre><p>&lt;3&gt; use “grep -v”</p>
+<pre><code>$ find . -name &quot;*.go&quot; | egrep -v &quot;_vendor&quot; | xargs wc -l</code></pre><p>or</p>
+<pre><code>$ find . -name &quot;*.go&quot; | egrep -v &quot;_vendor|test&quot; | xargs wc -l</code></pre><h3 id="find-and-xargs"><a href="#find-and-xargs" class="headerlink" title="find and xargs"></a>find and xargs</h3><p>When we use find command combined with <code>-exec</code>, find will send all matched files together to the commands following the <code>-exec</code>. 
+This may cause problem as there is a limit to the length of the parameter that exec can accept in some system, in that case,<br>after a couple of minitue that find has run, it get overflowed. A common error for this is <code>argument list is too long</code> or <code>arguments are overflowed</code>.</p>
+<p>Also, in some system <code>-exec</code> will load a process (<code>fork</code>) for each matched file instead of fetching all files together as an argument to the command,<br>therefore reduce the system performance.</p>
+<p>This the situation where <strong><code>xargs</code></strong> command comes for rescue.</p>
+<p><strong><code>xargs</code></strong> is extremely powerful when cooperated with <code>find</code> command, it fetch only a part of the matched filed from <code>find</code><br>(not like <code>-exec</code> which will fetch all at a time), process them, and then fetch another part, until there are no files left.</p>
+<p><strong>Examples</strong></p>
+<p>(1) Find all files and print the file info</p>
+<pre><code>find . -type f | xargs file </code></pre><p>(2) Find core dump info and save to a fild</p>
+<pre><code>find / -name &quot;core&quot; -print | xargs echo &quot;&quot; &gt;/tmp/core.log</code></pre><p>(3) Used combined with grep</p>
+<pre><code>find . -type f -print | xargs grep &quot;hostname&quot;</code></pre><p>(4) Delete all files that are modified 3 days before</p>
+<pre><code>find ./ -mtime +3 -print | xargs rm -f –r</code></pre><p>(5) Delete all files that have size 0</p>
+<pre><code>find ./ -size 0 | xargs rm -f &amp;</code></pre><h3 id="More-about-xargs"><a href="#More-about-xargs" class="headerlink" title="More about xargs"></a>More about xargs</h3><p><code>xargs</code> can also work with other commands, e.g. ls</p>
+<p>Delete all files that contain digit</p>
+<pre><code>$ ls | grep -E &apos;[0-9]&apos; | xargs rm</code></pre><p>Note this wouldn’t work if there are too many files produced by <code>ls</code> and the combined length of the filenames exceeds 128 KiB,<br>use <code>find</code> command to go round the limit.</p>
+<p><strong>Common options:</strong></p>
+<pre><code>-a file             Read file from file instead of standard input
+
+
+-0                  same with --null, Input items are terminated by a null character instead of by whitespace, and the quotes and backslash are not special
+                    (every character is taken literally).
+
+-d delim            Input items are terminated by the specified character. Quotes and backslash are not special; every character in  the input is taken literally.
+
+-I replace-str      Replace occurrences of replace-str in the initial-arguments with names read from standard input.
+
+-i                  Deprecated, use -I instead.
+
+-x                  Exit if the size (see the -s option) is exceeded.</code></pre><p><strong>Examples:</strong></p>
+<p><strong><code>-0</code></strong> If the filename contains a special character, xargs will fail, in that case we should use <code>-0</code> option</p>
+<pre><code>$ find -name &apos;*.bak&apos; -print0 | xargs -0 rm</code></pre><p>Generates a compact listing of all the users on the system</p>
+<pre><code>$ cut -d: -f1 &lt; /etc/passwd | sort | xargs echo</code></pre><p>When we use the <code>-I</code> option, each line read from the input is buffered internally.<br>This means that there is an upper limit on the length of input line that xargs will accept when used with the <code>-I</code> option.<br>To work around this limitation, we can use the <code>-s</code> option to increase the amount of buffer space that xargs uses,<br>and we can also use an extra invocation of xargs to ensure that very long lines do not occur.  </p>
+<p>For example:</p>
+<pre><code>ls | xargs -s 50000 echo | xargs -I &apos;{}&apos; -s 100000 rm &apos;{}&apos;</code></pre><p>Here, the first invocation of xargs has no input line length limit because it doesn’t use the -i option.<br>The second invocation of xargs does have such a limit, but we have ensured that the it never encounters a line which is longer than it can handle.</p>
+<p>This is not an ideal solution. Instead, the <code>-i</code> option should not impose a line length limit, which is why this discussion appears in the BUGS section.<br>The problem doesn’t occur with the output of find(1) because it emits just one filename per line.</p>
+<p><strong>Invoking the shell from xargs</strong></p>
+<pre><code>$ find . -type f | xargs bash -c &apos;exec vim &quot;$@&quot; &lt; /dev/tty&apos; vim
+
+$ find /foo -maxdepth 1 -atime +366 -print0 | xargs -r0 sh -c &apos;mv &quot;$@&quot; /archive&apos; move</code></pre><p><strong>Explanations:</strong></p>
+<p>Here, a shell is being invoked. There are two shell instances to think about.<br>The first is the shell which launches the <code>xargs</code> command.<br>The second is the shell launched by xargs (in fact it will probably launch several, one after the other, depending on how many files need to be archived).<br>We’l refer to this second shell as a subshell.</p>
+<p>We use the <code>-c</code> option of sh, its argument is a shell command to be executed by the subshell.<br>Along with the rest of that command, the <code>$@</code> is enclosed by single quotes to make sure it is passed to the subshell without being expanded<br>by the parent shell. It is also enclosed with double quotes so that the subshell will expand <code>$@</code> correctly even if one of the file names contains a space or newline.</p>
+<p>Another reason to use the sh -c construct could be to perform redirection:</p>
+<pre><code>$ find /usr/include -name &apos;*.h&apos; | xargs grep -wl mode_t | xargs -r sh -c &apos;exec vim &quot;$@&quot; &lt; /dev/tty&apos; vim</code></pre><p>Notice that we use the shell builtin exec here. That’s simply because the subshell needs to do nothing once <code>Vim</code> has been invoked.<br>Therefore instead of keeping a sh process around for no reason, we just arrange for the subshell to exec <code>Vim</code>, saving an extra process creation.</p>
+<p>Sometimes, though, it can be helpful to keep the shell process around:</p>
+<pre><code>$ find /foo -maxdepth 1 -atime +366 -print0 | xargs -r0 sh -c &apos;mv &quot;$@&quot; /archive || exit 255&apos; move</code></pre><p>Here, the shell will exit with status 255 if any mv failed. This causes xargs to stop immediately.</p>
+<p><strong>parallel</strong></p>
+<p><a href="https://www.gnu.org/software/parallel/" target="_blank" rel="noopener">GNU parallel</a> help utilize multi CPU cores to speed the processing when cooperate with <code>xargs</code> command. </p>
+<p>Assume we want to compressing files, we know that compressing a bounch of files could be time consuming operation.<br>You may want to compress several files at the same time, to make better use of the multiple CPU cores,<br>For this, you can use the GNU <code>parallel</code> tool.</p>
+<pre><code>$ find -name &apos;*.bak&apos; -print0 | xargs -0 parallel gzip --</code></pre><p>This example takes a bit of unravelling:</p>
+<ul>
+<li>find writes the pathnames of matching files, delmited by NUL bytes, to its stdout</li>
+<li>xargs reads files from its stdin, and assumes NUL delimiters</li>
+<li>the command to run is parallel gzip –</li>
+<li>the – tells parallel that it should run gzip on any arguments following the –, or in other words,<br>the – separates the command to be run from the filenames to give  the command as arguments</li>
+<li>parallel starts an instances of the command for each CPU core, and gives each instance the next filename argument;<br> when an instance terminates, it starts a new instance with the next filename argument, until it’s run the command for each argument</li>
+</ul>
+<p>This should be much more efficient than running one gzip at a time. </p>
+<p><strong>Reference</strong></p>
+<p><a href="http://www.th7.cn/system/lin/201404/53421.shtml" target="_blank" rel="noopener">http://www.th7.cn/system/lin/201404/53421.shtml</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Linux/">Linux</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Linux/linux-find-xargs/" data-title="find and xargs | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Linux/linux-ss/" title="ss">
+  <strong>Prev：</strong><br>
+  <span>
+  ss</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Distributed-System/distributed-system-consensus/" title="Consensus - Leader Election Algorithms">
+ <strong>Next：</strong><br>
+ <span>Consensus - Leader Election Algorithms
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

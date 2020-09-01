@@ -1,0 +1,785 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>Use VBoxManage to manage VirtualBox | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="VBoxManage is the command-line interface (CLI) to VirtualBox. With it, we can completely control VirtualBox from the command line of our host operating system. VBoxManage supports all the features tha">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Use VBoxManage to manage VirtualBox">
+<meta property="og:url" content="https://juniway.net/VirtualBox/vbox-vboxmanage/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="VBoxManage is the command-line interface (CLI) to VirtualBox. With it, we can completely control VirtualBox from the command line of our host operating system. VBoxManage supports all the features tha">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/vbox_storage_cd_hd.png">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.447Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Use VBoxManage to manage VirtualBox">
+<meta name="twitter:description" content="VBoxManage is the command-line interface (CLI) to VirtualBox. With it, we can completely control VirtualBox from the command line of our host operating system. VBoxManage supports all the features tha">
+<meta name="twitter:image" content="https://juniway.net/image/vbox_storage_cd_hd.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/VirtualBox/vbox-vboxmanage/" title="Use VBoxManage to manage VirtualBox" itemprop="url">Use VBoxManage to manage VirtualBox</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2016-05-13T12:43:48.000Z"> 2016-05-13</time>
+    <span class="post-count">字数 2.1k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>VBoxManage is the command-line interface (CLI) to VirtualBox. With it, we can completely control VirtualBox from the command line of our host operating system. VBoxManage supports all the features that the graphical user interface gives you access to, but it supports a lot more than that. It exposes really all the features of the virtualization engine, even those that cannot (yet) be accessed from the GUI.</p>
+<p>It is extremely helpful when we are manage the VirtualBox VMs from remotely but only have access to a terminal on a remote host machine.</p>
+<p>Other reasons that we may need VBoxManage is:</p>
+<ul>
+<li>Use a different user interface than the main GUI (for example, <code>VBoxSDL</code> or the VBoxHeadless server);</li>
+<li>Control some of the more advanced and experimental configuration settings for a VM.</li>
+</ul>
+<p><strong>VBoxManage</strong> is provided as an executable (<code>&quot;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&quot;</code>) in Windows, we can execute this program like any other utility in <strong>Windows Command Line</strong>. By default, it is not in PATH environment variable, so we should add it to PATH so that we can execute it directly.</p>
+<h5 id="VBoxManage-syntax"><a href="#VBoxManage-syntax" class="headerlink" title="VBoxManage syntax"></a>VBoxManage syntax</h5><pre><code>$ VBoxManage [-options] subcommand target</code></pre><h3 id="Observing-Existing-Virtual-Machines"><a href="#Observing-Existing-Virtual-Machines" class="headerlink" title="Observing Existing Virtual Machines"></a>Observing Existing Virtual Machines</h3><p>Assume we already have VMs registered in VirtualBox (say, with the help of the GUI), the first thing you we most likely want to do with VBoxManage is look through the list of those VMs:</p>
+<pre><code>$ VBoxManage list vms
+&quot;Ubuntu 12.04&quot; {774c5e04-a35b-49c5-a406-305f1a887295}
+&quot;Ubuntu 17.10&quot; {0d41ebff-4c96-48ec-a65a-233b4e21c10e}
+&quot;CentOS 7&quot; {ad697671-713f-4704-9c46-882dd931c254}</code></pre><p>If the command outputs nothing, you either currently have no VMs registered with Oracle VM VirtualBox or you’re running VBoxManage as a user different from the user who created those VMs.</p>
+<p>To view the VMs that are running at the moment, you might use the runningvms subcommand of VBoxManage list:</p>
+<pre><code>$ VBoxManage list runningvms
+&quot;Oracle Developer Days&quot; {c465cc52-dc11-4153-82d8-b5718182c117}</code></pre><p>The VBoxManage list command can be used with option -l, which instructs the list command to output a detailed list (truncated below to save space):</p>
+<pre><code>$ VBoxManage list -l running vms
+Name:            Ubuntu_16.10
+Groups:          /
+Guest OS:        Ubuntu (64-bit)
+UUID:            ad697671-713f-4704-9c46-882dd931c254
+Config file:     C:\Users\shichunhui\VirtualBox VMs\Ubuntu_16.10\Ubuntu_16.10.vbox
+Snapshot folder: C:\Users\shichunhui\VirtualBox VMs\Ubuntu_16.10\Snapshots
+Log folder:      C:\Users\shichunhui\VirtualBox VMs\Ubuntu_16.10\Logs
+Hardware UUID:   ad697671-713f-4704-9c46-882dd931c254
+Memory size:     4096MB
+Page Fusion:     off
+VRAM size:       16MB
+CPU exec cap:    100%
+HPET:            off
+Chipset:         piix3
+Firmware:        BIOS
+Number of CPUs:  3
+PAE:             off
+...</code></pre><h3 id="Creating-a-VM"><a href="#Creating-a-VM" class="headerlink" title="Creating a VM"></a>Creating a VM</h3><hr>
+<p>Use VBoxManage to create a VM in VirtualBox not only free us from manage the GUI interface, but also provides us an automated way to simplify the process. </p>
+<pre><code>$ VBoxManage createvm --name &quot;Ubuntu17.10&quot; --ostype Ubuntu --register</code></pre><p>The process of creating a VM is to build a VM definition in XML file. We can add the –register option to register the VM’s definition into the VirtualBox directly, or we can register it later with the help of the <code>VBoxManage registervm</code> command.</p>
+<p>In fact, the name of the VM is the only mandatory parameter of the createvm command. The details can be specified later through the various parameters of the <strong>modifyvm</strong> command. Both modifyvm and createvm, however, support the ostype optional parameter that you can use to give VirtualBox an idea of what guest operating system will be installed into the VM.</p>
+<p>To get a complete list of supported operating systems we can do:</p>
+<pre><code>$ VBoxManage list ostypes</code></pre><h3 id="Setting-Up-a-VM’s-Properties"><a href="#Setting-Up-a-VM’s-Properties" class="headerlink" title="Setting Up a VM’s Properties"></a>Setting Up a VM’s Properties</h3><p>Once the VM is created, we may want to inspect its current properties:</p>
+<pre><code>$ VBoxManage showvminfo Ubuntu17.10
+Name:            Ubuntu_16.10
+Groups:          /
+Guest OS:        Ubuntu (64-bit)
+UUID:            ad697671-713f-4704-9c46-882dd931c254
+Config file:     C:\Users\juniway\VirtualBox VMs\Ubuntu17.10\Ubuntu17.10.vbox
+Snapshot folder: C:\Users\juniway\VirtualBox VMs\Ubuntu17.10\Snapshots
+Log folder:      C:\Users\juniway\VirtualBox VMs\Ubuntu17.10\Logs
+Hardware UUID:   ad697671-713f-4704-9c46-882dd931c254
+Memory size:     4096MB
+Page Fusion:     off
+VRAM size:       16MB
+CPU exec cap:    100%
+HPET:            off
+Chipset:         piix3
+Firmware:        BIOS
+Number of CPUs:  3
+PAE:             off
+Long Mode:       on
+Triple Fault Reset: off
+APIC:            on
+X2APIC:          on
+CPUID Portability Level: 0
+CPUID overrides: None
+Boot menu mode:  message and menu
+Boot Device (1): Floppy
+Boot Device (2): DVD
+Boot Device (3): HardDisk
+Boot Device (4): Not Assigned
+ACPI:            on
+IOAPIC:          on
+BIOS APIC mode:  APIC</code></pre><p>Beside, we might need to modify its properties to meet our personal needs and to comply with the requirements of the guest OS that we are going to install in the VM.</p>
+<pre><code>$ VBoxManage modifyvm Ubuntu17.10 --cpus 2 --memory 2048 --vram 12 --acpi on --boot1 dvd --nic1 nat</code></pre><p>When setting the amount of RAM and CPUs for a VM, we should take into account the requirements of the guest OS, make sure that the host will have enough memory left to operate properly after we start all the VMs that are supposed to work simultaneously. Don’t assign more virtual CPUs than the number of physical cores on the host computer.</p>
+<p>Since <code>VBoxManage showvminfo</code> displays VM’s complete infomation (too much), we can use <code>grep</code> to filter the output:</p>
+<pre><code>$ VBoxManage showvminfo Ubuntu17.10 | grep &quot;Memory size&quot;
+Memory size:     2048MB</code></pre><h3 id="Configuring-a-Virtual-Network-Adapter"><a href="#Configuring-a-Virtual-Network-Adapter" class="headerlink" title="Configuring a Virtual Network Adapter"></a>Configuring a Virtual Network Adapter</h3><p>Network setting is very important when we set up a VM, we can configure a <strong>virtual network card</strong> over a physical network interface of the host system to provide your VM with the ability to interact with the outside world.<br>By default, VirtualBox configures one virtual adapter for a VM, setting it to operate in the NAT networking mode, in most case, this will satisfiy our need, the former command with option <code>--nic1 nat</code> explicitly specifies the networking mode to be NAT.</p>
+<p>If we want to the mode of that adapter, nic1, to another mode (say bridged, for bridged networking), we can do this:</p>
+<pre><code>$ VBoxManage modifyvm Ubuntu17.10 --nic1 bridged --bridgeadapter1 eth0</code></pre><p>To list the available interfaces on the host system, we can use <code>ipconfig</code> in Windows.</p>
+<h3 id="Attaching-Virtual-Media-to-a-VM"><a href="#Attaching-Virtual-Media-to-a-VM" class="headerlink" title="Attaching Virtual Media to a VM"></a>Attaching Virtual Media to a VM</h3><p>Like a real computer, VM needs a storage device, such as a hard disk, to boot from and for storing and retrieving system and user data. it’s time to create a virtual hard disk for the VM. </p>
+<p>This is actually a three-step process.<br>As the first step, you create a new virtual hard disk image. With the following command, you create a disk image file in VirtualBox’s VDI format. </p>
+<pre><code>$ VBoxManage createhd --filename /path/to/hard_drive_image/Ubuntu17.10.vdi --size 100000 --variant Standard
+0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
+Disk image created. 
+UUID: c69e22d2-1560-44cc-85f6-d81979c81990</code></pre><p>Here we create a virtual hard disk image with the size of 10 GB, the option <strong>–variant Standard</strong> means we create a dynamically allocated image file, if we want a fixed-size image, we could use <strong>–variant Fixed</strong>. In whichever case, we’ll be able to expand the image capacity anytime later with the <strong>VBoxManage modifyhd</strong> command.</p>
+<p>The next step is to add a storage controller to be used with that hard disk:</p>
+<pre><code>$ VBoxManage storagectl Ubuntu17.10 --name &quot;SATA Controller&quot; --add sata --bootable on</code></pre><p>Note: When choosing Serial ATA (SATA) as the controller type, make sure the guest OS has device support for Advanced Host Controller Interface (AHCI), which is the standard interface for SATA controllers. Be warned that older operating systems, such as Windows XP, do not support AHCI. In that case, use an Integrated Drive Electronics (IDE) controller.</p>
+<p>Finally, we need to attach the hard disk to the controller:</p>
+<pre><code>$ VBoxManage storageattach Ubuntu17.10 --storagectl &quot;SATA Controller&quot; --port 0 --device 0 --type hdd --medium /path/to/hard_drive_image/Ubuntu17.10.vdi</code></pre><p>We can connect up to 30 virtual hard drives to a VM through a single SATA controller. In the case of an IDE controller, you’re limited to just 4 virtual storage devices, where one of them is normally the virtual CD/DVD drive.</p>
+<p>Now a VM and the correspoding hardware device are set up completely, we are ready to install a Guest OS into the VM.</p>
+<h3 id="Install-Guest-OS-in-VM"><a href="#Install-Guest-OS-in-VM" class="headerlink" title="Install Guest OS in VM"></a>Install Guest OS in VM</h3><p>Assume we have already have a ISO image file for the OS we want to install, we need to configure the VM to boot from the it, to do that we need to create a virtual CD/DVD drive and connect it to the installation media. Like virtual hard drives, virtual CD/DVD drives also require a storage controller. While this can be done using a SATA controller for many operating systems, the following example illustrates adding an IDE controller for the CD/DVD drive.</p>
+<pre><code>$ VBoxManage storagectl Ubuntu17.10 --name &quot;IDE Controller&quot; --add ide --controller PIIX4</code></pre><p>Suppose we have a installation DVD disk. Insert the installation disk into the host’s CD/DVD drive and then issue the following command, connecting the VM’s virtual CD/DVD drive to the physical CD/DVD drive on the host computer:</p>
+<pre><code>$ VBoxManage storageattach Ubuntu17.10 --storagectl &quot;IDE Controller&quot; --port 0  --device 0 --type dvddrive --medium /full/path/to/unbuntu17.10_server.iso</code></pre><p><img src="/image/vbox_storage_cd_hd.png" alt=""></p>
+<p>We can use <strong>vboxmanage showviminfo</strong> command to inspect whether we have IDE or SATA controller installed correctly:</p>
+<pre><code>$ VBoxManage showvminfo Ubuntu17.10 | grep &quot;IDE&quot;
+Storage Controller Name (0):            IDE
+IDE (0, 0): D:\Program Files\VBoxGuestAdditions_5.0.17.iso (UUID: 94ae2d78-c3b3-4d7f-86f7-389311e8d9fa)
+
+$ VBoxManage showvminfo Ubuntu17.10 | grep &quot;SATA&quot;
+Storage Controller Name (1):            SATA
+SATA (0, 0): D:\Program Files\VDIs\ub1710.vdi (UUID: 31482d54-a73e-42ed-84be-ddde20546d9c)</code></pre><p>Now you can boot the VM and start the guest installation using the following command, which starts in GUI mode by default, taking you through a standard guest OS installer:</p>
+<pre><code>$ VBoxManage startvm Ubuntu17.10 </code></pre><h3 id="Things-to-do-after-we-have-successfully-installed-the-Guest-OS"><a href="#Things-to-do-after-we-have-successfully-installed-the-Guest-OS" class="headerlink" title="Things to do after we have successfully installed the Guest OS"></a>Things to do after we have successfully installed the Guest OS</h3><p>Once we have completed the OS installation, we shut down the VM from within the guest, which causes VirtualBox to power off the VM was well.<br>The below command is equivalent to briefly pressing the power button on a physical computer.</p>
+<pre><code>$ VBoxManage controlvm Ubuntu17.10 acpipowerbutton</code></pre><p>We can forcibly shut down a VM using the following command, which is equivalent to pressing and holding a computer’s power button:</p>
+<pre><code>$ VBoxManage controlvm Ubuntu17.10 poweroff</code></pre><p>Finally, since the OS is already installed in the guest, we can remove the DVD from the VM configuration:</p>
+<pre><code>$ VBoxManage storageattach Ubuntu17.10 --storagectl &quot;IDE Controller&quot; --port 0 --device 0 --type dvddrive --medium none
+$ VBoxManage modifyvm &quot;Ubuntu17.10&quot; --dvd none</code></pre><h3 id="Guest-Additions-and-Shared-Folders"><a href="#Guest-Additions-and-Shared-Folders" class="headerlink" title="Guest Additions and Shared Folders"></a>Guest Additions and Shared Folders</h3><p>(1) Mount Guest Addition </p>
+<pre><code>$ VBoxManage storageattach &quot;Ubuntu17.10&quot; --storagectl &quot;IDE Controller&quot; --port 1 --device 0 --type hdd --medium /path/to/VBoxGuestAdditions.iso</code></pre><p>(2) Adding/removing shared folders</p>
+<pre><code>$ vboxmanage sharedfolder add &quot;Ubuntu17.10&quot; --name shared_dir --hostpath /path/to/folder/ --automount
+$ vboxmanage sharedfolder remove &quot;io&quot; --name share_dir</code></pre><h3 id="Export-and-Import-VM"><a href="#Export-and-Import-VM" class="headerlink" title="Export and Import VM"></a>Export and Import VM</h3><p>Oracle offers a number of <a href="http://www.oracle.com/technetwork/community/developer-vm/index.html" target="_blank" rel="noopener">prebuilt developer VMs for Oracle VM VirtualBox</a>, providing a quick way to install and experience entire software stacks packaged into deployable appliances. The VBoxManage import command allows you to import such appliances packaged in OVA format into Oracle VM VirtualBox.<br>Also, if we want clone/package our local VM onto other Host Computer (System), we can export the VM out to a VirtualBox <code>.ovf</code> file and then import this file on other Host Computer.</p>
+<p>Now, suppose we want to import <em>Oracle Linux 7.2</em> into our VirtualBox from the <code>OracleLinux72.ova</code> package, which you have downloaded to your system from <a href="http://www.oracle.com/technetwork/systems/hands-on-labs/index.html" target="_blank" rel="noopener">Oracle Linux Hands-on Labs</a>. First, we might want to check the options available for the appliance to be imported. This can be done with the <code>--dry-run</code> option of the VBoxManage import command:</p>
+<pre><code>$ VBoxManage import /path/to/OracleLinux72.ova --dry-run </code></pre><p>Below command import an VM and pecify the amount of RAM and the number of CPUs to be allocated, also, use <code>--eula accept</code> option to accept the license agreement.</p>
+<pre><code>$ VBoxManage import /path/to/OracleLinux72.ova --vsys 0 --memory 1024 --cpus 2 --eula accept </code></pre><p>Once the import has successfully been completed, the Oracle Virtual Sysadmin Days VM icon should appear in the left pane of VirtualBox Manager. And, of course, you’ll be able to manipulate the VM from the command line using the VBoxManage commands.</p>
+<p>Export has similar syntax, we can use <code>--output</code> to specify a file name</p>
+<pre><code>$ VBoxManage export &quot;Ubuntu17.10&quot; --output ub1710_clone.ovf</code></pre><p><strong>Reference</strong><br><a href="https://www.virtualbox.org/manual/ch08.html" target="_blank" rel="noopener">https://www.virtualbox.org/manual/ch08.html</a><br><a href="https://community.oracle.com/docs/DOC-890092" target="_blank" rel="noopener">https://community.oracle.com/docs/DOC-890092</a><br><a href="http://nakkaya.com/2012/08/30/create-manage-virtualBox-vms-from-the-command-line/" target="_blank" rel="noopener">http://nakkaya.com/2012/08/30/create-manage-virtualBox-vms-from-the-command-line/</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/VirtualBox/">VirtualBox</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/VirtualBox/vbox-vboxmanage/" data-title="Use VBoxManage to manage VirtualBox | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/VirtualBox/vbox-vbox-resize-hd/" title="Change the virtual hard disk size of a VM">
+  <strong>Prev：</strong><br>
+  <span>
+  Change the virtual hard disk size of a VM</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Distributed-System/distributed-system-paxos/" title="Paxos">
+ <strong>Next：</strong><br>
+ <span>Paxos
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

@@ -1,0 +1,778 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>英语语料库及词频表介绍 | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="要学好英语，词汇是基础，词汇量的大小和掌握程度是一门语言的基石。而任何知识的学习，都包含学习材料和学习方法这是两个最核心因素。 这篇文章主要介绍学习材料。关于英语词汇的学习材料。 一、大型词汇集（英文语料库）顾名思义，语料库就是集合了英语书面和口语等各类英文表述方式的语言材料集合。它收集的英语词汇包罗万象，亘古棉今。是英文词汇的一个大全集合。 目前最知名的一些大型语料库主要有：GBC，BNC, C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="英语语料库及词频表介绍">
+<meta property="og:url" content="https://juniway.net/English/english-intro-corpus/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="要学好英语，词汇是基础，词汇量的大小和掌握程度是一门语言的基石。而任何知识的学习，都包含学习材料和学习方法这是两个最核心因素。 这篇文章主要介绍学习材料。关于英语词汇的学习材料。 一、大型词汇集（英文语料库）顾名思义，语料库就是集合了英语书面和口语等各类英文表述方式的语言材料集合。它收集的英语词汇包罗万象，亘古棉今。是英文词汇的一个大全集合。 目前最知名的一些大型语料库主要有：GBC，BNC, C">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/english/google_books.png">
+<meta property="og:image" content="https://juniway.net/image/english/google_ngrams.png">
+<meta property="og:image" content="https://juniway.net/image/english/ngrams_compare.png">
+<meta property="og:image" content="https://juniway.net/image/english/4n5grams.png">
+<meta property="og:image" content="https://juniway.net/image/english/lemma.png">
+<meta property="og:image" content="https://juniway.net/image/english/collions_cobuild.png">
+<meta property="og:image" content="https://juniway.net/image/english/macillan_en_cn.png">
+<meta property="og:image" content="https://juniway.net/image/english/macmillan_samplepage.png">
+<meta property="og:image" content="https://juniway.net/image/english/sixdict.png">
+<meta property="og:image" content="https://juniway.net/image/english/app_dicts.png">
+<meta property="og:image" content="https://juniway.net/image/english/app_dict_searchpage.png">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.425Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="英语语料库及词频表介绍">
+<meta name="twitter:description" content="要学好英语，词汇是基础，词汇量的大小和掌握程度是一门语言的基石。而任何知识的学习，都包含学习材料和学习方法这是两个最核心因素。 这篇文章主要介绍学习材料。关于英语词汇的学习材料。 一、大型词汇集（英文语料库）顾名思义，语料库就是集合了英语书面和口语等各类英文表述方式的语言材料集合。它收集的英语词汇包罗万象，亘古棉今。是英文词汇的一个大全集合。 目前最知名的一些大型语料库主要有：GBC，BNC, C">
+<meta name="twitter:image" content="https://juniway.net/image/english/google_books.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/English/english-intro-corpus/" title="英语语料库及词频表介绍" itemprop="url">英语语料库及词频表介绍</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2019-01-21T08:32:33.000Z"> 2019-01-21</time>
+    <span class="post-count">字数 2.7k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<p>要学好英语，词汇是基础，词汇量的大小和掌握程度是一门语言的基石。而任何知识的学习，都包含<strong>学习材料</strong>和<strong>学习方法</strong>这是两个最核心因素。</p>
+<p>这篇文章主要介绍学习材料。关于英语词汇的学习材料。</p>
+<h3 id="一、大型词汇集（英文语料库）"><a href="#一、大型词汇集（英文语料库）" class="headerlink" title="一、大型词汇集（英文语料库）"></a>一、大型词汇集（英文语料库）</h3><p>顾名思义，语料库就是集合了英语书面和口语等各类英文表述方式的语言材料集合。它收集的英语词汇包罗万象，亘古棉今。是英文词汇的一个大全集合。</p>
+<p>目前最知名的一些大型语料库主要有：GBC，BNC, COCA 等，下面分别介绍：</p>
+<p>GBC, Google Book’s Corpus 1980-2008， 官网：<a href="https://googlebooks.byu.edu/" target="_blank" rel="noopener">https://googlebooks.byu.edu/</a>，拥有 1550 亿美国英语词汇。</p>
+<p><img src="/image/english/google_books.png" alt=""></p>
+<p>BNC - <a href="http://www.google.com/url?sa=t&source=web&ct=res&cd=4&ved=0CB8QFjAD&url=http%3A%2F%2Fcorpus.byu.edu%2Fbnc%2F&ei=wo6_S7-cFI77nAeYrM2WCg&usg=AFQjCNGeAHZ7DKfYUxHInldwiDV_wxcg6Q" target="_blank" rel="noopener">British National Corpus</a>，是有同等影响力的权威语料库，只不过它的选词是来自于英国英语，主要取自 1980 年的各类英文材料。</p>
+<p>COHA, Corpus of Historical American English</p>
+<p>COCA, Corpus os Contenporary American English</p>
+<p>###二、N-GRAM 连词文法模型<br>N-GRAM 是一种连词分类法（模型），它表示一个词组或句子中连续出现的几个词。在人工智能领域，可以通过马尔可夫的概率模型来预测后续出现这些词的概率。 根据连词的数量，可以细分为 unigram, bigram ( or digram), trigram, four-gram, five-gram, etc. </p>
+<p>Google 中的 N-GRAMS 模型采用的选词原则是：由连续的三到四个词组成的一串词（string，可以是句子也可以是一个句子的一部分）在语料库中出现的次数超过 40 次。这个原则又叫 “40 Token Threshold”。这样的好处就是，即使 GBC 的词汇量是 COCA 的 400 倍，但是 N-GRAMS 选出来的 N-GRAMS 数量则几乎一致。 </p>
+<p>下面通过几个例子来理解 Google 的 N-GRAMS 模型。 我们搜索 [<code>j*</code>] groan（注：这里的 <code>j*</code> 表示形容词），可以搜到如下的结果：</p>
+<p><img src="/image/english/google_ngrams.png" alt=""></p>
+<p>下面是 Google 官网给出的 Google N-GRAMS 和 COHA N-GRAMS 的对比，</p>
+<p><img src="/image/english/ngrams_compare.png" alt=""></p>
+<p>解释下 tokens 和 types 的涵义，前者表示 token 总的出现次数，后者表示词组或句子的类型（the number of unique string）。</p>
+<p>可以看到，COHA N-GRAMS 给出的结果中，types 数量要比 Google N-GRAMS 的数量要多。</p>
+<p>简单来说就是，Google 集中，heavy groan 出现了很多次，但是 low groan + heavy groan hollow groan + muffled groan + … 出现的种类没有 COHA 集合中出现的多。</p>
+<p>这种现象在更长的词组或句子中更明显，比如长度增加到 4 grams 或 5 grams，如图：</p>
+<p><img src="/image/english/4n5grams.png" alt=""></p>
+<p>在 2 中，COHA 给出的 types 远远超过 Google 的数量，达到 6 倍之多。可见，Google N-GRAMS 使用的 “40-token-threshold” 这个取词原则也有一些弊端。</p>
+<p>###三、更多语料库：</p>
+<ul>
+<li><strong>Brown Corpus</strong> 100 万词汇。美国英语，1961 年全年，选词来自 15 个类别。</li>
+<li><strong>LOB Corpus - Lancaster-Oslo-Bergen Corpus</strong> 100万词汇。英国英语，与 Brown Corpus 选词方式类似，1970 年编撰。</li>
+<li><strong>ARCHER, A Representative Corpus of Historical English Registers</strong>（<a href="http://www.manchester.ac.uk/archer/" target="_blank" rel="noopener">http://www.manchester.ac.uk/archer/</a>），约 100 多万词汇，包含美国英语和英国英语，选词来自 1600-1999 年期间。</li>
+</ul>
+<p>#####总结：<br>我们可以看到，GBC 的词汇数量是宇宙级的，是 COCA 体量的 400 倍，它包含古今几乎所有出现过的词汇。从这个词汇集里面，我们可以了解几乎所有词根的变迁史。当然，这个天量的语料库对第二语言的学习者而言意义并不大，因为有些词在整个历史中仅出现过 1 词。GBC 官方自己甚至都没法确认这些词是不是完全是拼写错误造成，但是，它也指出，通过这个体量的词汇集与其它流行语料库比如 COCA 的对比，可以排除许多出现频率非常地的词。也就是通过对比比较，可以更加清晰词汇的主流使用范围。</p>
+<h3 id="四、其它词库（SCOWL）"><a href="#四、其它词库（SCOWL）" class="headerlink" title="四、其它词库（SCOWL）"></a>四、其它词库（SCOWL）</h3><p><strong>SCOWL</strong>，Spell Checker Oriented Word Lists</p>
+<p>这个词库主要是基于主流的英语词典制作，主要是用来作为各种英文输入工具的拼写检查的。</p>
+<p>因此它的词库量相对上述动则几百万甚至上亿的语料库要小很多（词典大多是在 20 万左右的词汇数量）。但是，相对的，它也更加精细和准确，取词更加考究和流行。非常适合母语为非英语的人来进行学习和使用。</p>
+<p>之所以介绍这个词库，主要是因为它可以作为辅助词库来帮助我们更好的理解词频和词汇分类，结合其它词频表，我们可以设计出更加合理词汇表来进行学习。</p>
+<p>SCOWL 提供了几个制作好的词库供用户免费使用，其中比较流行的是 12Dict 词库以及它的一些衍生版本，下面简单介绍一下它们。</p>
+<p>12Dict 来源于 n-Dict 项目，目的是以美式英语（American-English）为基础创建一个核心词汇列表。其中，n 是一个变量，表示来源的词库（权威词典）数量，最终被确定为 12。这 12 个词典由 8 本 ESL词典 和 4 本桌面词典组成。最小的包含 20000 条词目，最大的包含 46000 条词目。</p>
+<h6 id="6of12-和-2of12"><a href="#6of12-和-2of12" class="headerlink" title="6of12 和 2of12"></a>6of12 和 2of12</h6><p>6of12 是作者从 12 本中选择了其中 6 本来生成的词汇列表，这个列表大约包含 32000 条单词和短语。</p>
+<p>2of12 是作者从 12 本中选择其中 2 本来生成的词汇列表，它包含了约 41000 条词目。它的特点是：剔除了多词词组（multiword phrases），专有名词(proper names）和缩略语（abbreviations）。</p>
+<p>关于这两个列表的详细介绍请查看 readme 文件，具体链接是：</p>
+<p>Release 4 of the 12dicts word <a href="lists​wordlist.aspell.net">lists​wordlist.aspell.net</a></p>
+<p><strong>lemmatize</strong><br>把单词按“同源异形”进行归类，具体意思就是：把（文中的词）按屈折变化形式（或异体形式）进行归类。<br>比如：”take” : [“taken”, “taking”, “took”, “takes”]。这些单词是“同源异形” 的，可以归为同一类，并且只用一个单词来表示。</p>
+<p>在制作 list 时的具体做法就是：把文本文件处理成一个单词序列，对其中每一个单词，查找字典得到本体，加入到一个 dictionary 里，条目形式是：word: frequency ，单词每出现一次，frequency 加 1。</p>
+<p>12Dict Release 5 增加了 2+2lemma 和 2+2gfreq 两个 List。按照上述方式分类计算词频之后，每个文件包含的词汇条目约 5 万左右。</p>
+<p><img src="/image/english/lemma.png" alt=""></p>
+<h3 id="五、核心词频库"><a href="#五、核心词频库" class="headerlink" title="五、核心词频库"></a>五、核心词频库</h3><p>这一部分是我要介绍的重点，因为，这一部分列出的几个词库收集的词汇量更加核心与精简，因此更加适合学习。</p>
+<p>#####（1）柯林斯五星词频”（含 14600 词）<br>柯林斯五星词频来自于“柯林斯高阶双解学习词典”，即 Collins COBUILD Advanced Learner’s English-Chinese Dictionary。</p>
+<p>这本词典对每个单词都进行了标记，从 0 到 5 共六个星级别。</p>
+<p><img src="/image/english/collions_cobuild.png" alt=""></p>
+<ul>
+<li>五星 680 词</li>
+<li>四星 1040 词（累计 1720 词）</li>
+<li>三星 1580 词（累计3300词）</li>
+<li>二星 3200 词（累计6500词）</li>
+<li>一星 8100 词（累计14600词）</li>
+<li>0 星 22480 词</li>
+</ul>
+<p>#####（2）“麦克米伦 7500 高频”</p>
+<p>取词来源于“麦克米伦高阶英汉双解词典”，即 Macmillan English Dictionary for Advanced Learners。</p>
+<p>这本词典收录了大约10万左右的单词量，并对这些词汇做了分级处理。属于7500核心词汇的统一以红色字体呈现，并继续分为三个等级，每个级别 2500 个词：一级是最最常用的词，标注三个非常醒目的星号★★★；二级常用词标注两个红星★★；三级标注一个红星★。并没有把它们作为一个单独的词汇表给出。</p>
+<p><img src="/image/english/macillan_en_cn.png" alt=""></p>
+<p><img src="/image/english/macmillan_samplepage.png" alt=""></p>
+<p>#####（3） 专门类别的报刊期刊词频</p>
+<ul>
+<li>“纽约时报高频词汇”</li>
+<li>“经济学人高频词汇”</li>
+</ul>
+<p>它们都是由民间英语爱好者对历年来的英文期刊文章进行统计而总结的出的词频词汇集，收词数也在 2 万左右。</p>
+<p>对于这类词频词汇集，有兴趣的同学可以参考下面两篇文章：<br><a href="https://zhuanlan.zhihu.com/p/24718056" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/24718056</a><br><a href="https://zhuanlan.zhihu.com/p/24854424" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/24854424</a></p>
+<h3 id="六、应试词表"><a href="#六、应试词表" class="headerlink" title="六、应试词表"></a>六、应试词表</h3><p>这里列出的应试词表大多是对应相应的英文考试的，它们包括：中考，高考，四级，六级，考研，专四，专八，托福，雅思，GMAT/GRE 一共 10 个类别的分类词汇。</p>
+<p>所谓的应试词表，其实也是按照一定规则来进行提取和分类的。比如最高阶的 GRE 词汇表，其取词主要就来源于比较学术类的文章及资料，如果不是应试需要，通常情况下并不需要对这些词汇进行专门记忆。</p>
+<h3 id="七、词典"><a href="#七、词典" class="headerlink" title="七、词典"></a>七、词典</h3><p>介绍完了词汇（频）集，最后有必要来介绍一下主流的六大英语词典。</p>
+<p>这些词典都是双解（包括英汉双解和英英双解）、学习型的词典，非常适与非英语母语的人使用和学习。它们最大的特点就是既可以作为词典进行翻查释义，又可以进行学习。</p>
+<p>这六大词典主要是：</p>
+<ul>
+<li>[OALD] Oxford Advanced Learner’s Dictionary 牛津高阶英汉双解词典</li>
+<li>[LDOCE] Longman Dictionary of Contemporary English 朗文当代高级英语辞典（英英·英汉双解）</li>
+<li>[MWALED] Merriam-Webster Advanced Learner’s English Dictionary 韦氏高阶英汉双解词典</li>
+<li>[CCALD] Collins COBUILD Advanced Learner’s Dictionary 柯林斯 COBUILD 高阶英汉双解学习词典</li>
+<li>[CALD] Cambridge Advanced Learner’s Dictionary 剑桥高阶英汉双解词典</li>
+<li>[MED] Macmillan English Dictionary for Advanced Learners 麦克米伦高阶英汉双解词典</li>
+</ul>
+<p><img src="/image/english/sixdict.png" alt=""></p>
+<p>在如今的网络时代，很多人都喜欢利用手机来进行英语学习，这些词典也都有移动端 App，不过多数是收费的。很多英语学习爱好者，对这些词库进行了提取，制作了 .mdx 离线词库文件，可以供我们离线下载使用。通常，我们会用到一些第三方词典软件，比如（Mdict，欧陆，Goldendict 等），他们可以支持导入各种离线词库。比如我在欧陆移动端的 App 中导入各种离线词库后，如下：</p>
+<p><img src="/image/english/app_dicts.png" alt=""></p>
+<p>单词的查询效果如下：</p>
+<p><img src="/image/english/app_dict_searchpage.png" alt=""></p>
+<p>可见，释义非常详尽。如果不是非词典研究者，这六本词典足以应付几乎所有英语学习场景。在我看来，选用其中任意 2 到 3 本作为主要词典来使用就已经足够。</p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/English/">English</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/English/english-intro-corpus/" data-title="英语语料库及词频表介绍 | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/English/english-see-vocab/" title="如何看待背单词">
+  <strong>Prev：</strong><br>
+  <span>
+  如何看待背单词</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/English/english-process-coca-list/" title="COCA 词频表使用">
+ <strong>Next：</strong><br>
+ <span>COCA 词频表使用
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>

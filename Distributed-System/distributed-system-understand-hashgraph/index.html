@@ -1,0 +1,840 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  
+  <title>理解 Hashgraph | BN Stack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+  
+  <meta name="author" content="juniway">
+  
+
+  
+  <meta name="description" content="一、前言Hashgraph 算法最早是在 2016 年由 Leemon Baird 博士发表的一篇论文“ The Swirlds Hashgraph Consensus Algorithm: Fair, Fast, Byzantine Fault Tolerance”（https://swirlds.com/downloads/SWIRLDS-TR-2016-01.pdf）”中公开， 根据其介绍，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解 Hashgraph">
+<meta property="og:url" content="https://juniway.net/Distributed-System/distributed-system-understand-hashgraph/index.html">
+<meta property="og:site_name" content="BN Stack">
+<meta property="og:description" content="一、前言Hashgraph 算法最早是在 2016 年由 Leemon Baird 博士发表的一篇论文“ The Swirlds Hashgraph Consensus Algorithm: Fair, Fast, Byzantine Fault Tolerance”（https://swirlds.com/downloads/SWIRLDS-TR-2016-01.pdf）”中公开， 根据其介绍，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://juniway.net/image/p2p/event_structure.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/block_struct_compare.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/localhashgraph01.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/localhashgraph02.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/localhashgraph03.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/localhashgraph04.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/localhashgraph05.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/gossipa2b.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/syncb2a.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/localhashgraph_update.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/event_visibility.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/stronglysee.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/stronglysee1.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/roundconcept.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/receiveround.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/famous_witness.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/eventstate_migration.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/witness_votes.png">
+<meta property="og:image" content="https://juniway.net/image/p2p/round12.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/consensus_timestamp.jpeg">
+<meta property="og:image" content="https://juniway.net/image/p2p/consensus_timestamp1.jpeg">
+<meta property="og:image" content="https://juniway.net/image/qrcode_258.jpg">
+<meta property="og:updated_time" content="2019-12-10T06:19:50.425Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="理解 Hashgraph">
+<meta name="twitter:description" content="一、前言Hashgraph 算法最早是在 2016 年由 Leemon Baird 博士发表的一篇论文“ The Swirlds Hashgraph Consensus Algorithm: Fair, Fast, Byzantine Fault Tolerance”（https://swirlds.com/downloads/SWIRLDS-TR-2016-01.pdf）”中公开， 根据其介绍，">
+<meta name="twitter:image" content="https://juniway.net/image/p2p/event_structure.png">
+
+  
+  <link rel="alternative" href="/atom.xml" title="BN Stack" type="application/atom+xml">
+  
+  
+  <link rel="icon" href="/img/author.jpeg">
+  
+  
+  <link rel="apple-touch-icon" href="/img/author.jpeg">
+  <link rel="apple-touch-icon-precomposed" href="/img/author.jpeg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5KB3PM3');</script>>
+
+  <script>
+  (function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https'){
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else{
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+</head>
+</html>
+  <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5KB3PM3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+      
+
+<div>
+	
+		<div id="imglogo">
+			<a href="/"><img src="/img/author0.png" alt="BN Stack" title="BN Stack"></a>
+		</div>
+	
+	<div id="textlogo">
+		<h1 class="site-name"><a href="/" title="BN Stack">BN Stack</a></h1>
+		<h2 class="blog-motto"></h2>
+	</div>
+	<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu"></a></div>
+
+	<nav class="animated">
+		<ul>
+			<ul>
+			 	
+				<li><a href="/">Home</a></li>
+				
+				<li><a href="/archives">Archives</a></li>
+				
+				<li><a href="/about">About</a></li>
+				
+			<li>
+				
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search">
+						<input type="hidden" name="q" value="site:juniway.net">
+					</form>
+				
+			</li>
+		</ul>
+	</ul></nav>
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope="" itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/Distributed-System/distributed-system-understand-hashgraph/" title="理解 Hashgraph" itemprop="url">理解 Hashgraph</a>
+  </h1>
+
+  <p class="article-time">
+    <time datetime="2018-11-29T10:21:06.000Z"> 2018-11-29</time>
+    <span class="post-count">字数 4.7k 阅读 12 评论 6</span>
+  </p>
+</header>
+	<div class="article-content">
+		
+		<h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>Hashgraph 算法最早是在 2016 年由 Leemon Baird 博士发表的一篇论文“</p>
+<p>The Swirlds Hashgraph Consensus Algorithm: Fair, Fast, Byzantine Fault Tolerance”（<a href="https://swirlds.com/downloads/SWIRLDS-TR-2016-01.pdf）”中公开，" target="_blank" rel="noopener">https://swirlds.com/downloads/SWIRLDS-TR-2016-01.pdf）”中公开，</a></p>
+<p>根据其介绍，Hashgraph 算法实现了异步拜占庭容错（ABFT），因而能容纳非常高的吞吐量并能非常快速的处理交易（官网提供的数据显示，在真实环境下可以达到惊人的 250k TPS）。</p>
+<h2 id="二、简介"><a href="#二、简介" class="headerlink" title="二、简介"></a>二、简介</h2><p>Hashgraph 是一种异步拜占庭容错算法（ABFT），它跟我们目前常见的 PBFT 算法最大的不同就是它是完全异步的。我们知道 PBFT 算法能支撑的网络规模是非常有限的最大原因就 PBFT 模型的通信复杂度是 O(N^2），随着节点数量的增加，需要通信的消息数量呈指数级别的上升。而 Hashgraph 突破性的抛弃 PBFT 中使用的消息同步机制，使用异步 BFT，通过保证最终确定性来确保算法的高效和安全。</p>
+<p>Hashgraph 采用的是 DAG 数据结构，这跟当前的很多开源链（比如 Iota，byteball, nano 等）是类似的，因为它们都采用 DAG 作为底层数据结构模型。但是 Hashgraph 最特别的一点是，它无需中心权威节点，而是依靠独特的 Gossip about Gossip 和 Virtual Vote 两大机制来保证了算法可以在纯异步的环境中高效运行，并且通过绝对多数（超过 2/3 节点）强可见（强引用）机制来保证了共识结果的正确性（安全）。</p>
+<p>Hashgraph 算法是一种拜占庭容错算法，它要求节点数量是相对固定的（总量为 N 需要预先设定），这样的话，它就可以通过大于 2/3 忠诚节点的比例原则来达到拜占庭容错。这跟当前公链模型下（比如 DAG 主链，POW，POS 等）这些算法在达到共识的条件上有一些区别，所以更适用于私链（或联盟链）。但是，由于其独特的性质（在保证去中心化的同时不需要繁重的工作量证明），Hashgraph 在未来的公链也有相当潜在的使用价值。</p>
+<p>最后，再介绍一下 Hashgraph 跟其他开源项目在运作模式上的区别。</p>
+<p>根据原作者发布的白皮书介绍，Hashgraph 仅是一个算法的名字，它既不是区块链项目（比如比特币，以太坊这种完整的可运行的系统），也不是开源的。它是由发明它的 Leemon Baird 博士所创建的 Swirlds, Inc 公司负责掌控，并运营在 Hedera 项目（<a href="https://www.hedera.com）之下。Swirlds" target="_blank" rel="noopener">https://www.hedera.com）之下。Swirlds</a> 公司对该算法申请了专利并进行了很强的技术保护，它致力于在企业之间以合作的方式来运作和使用基于 Hashgraph 开发的应用。</p>
+<p>从这里我们可以大致看到，Hashgraph 是按照一个相对传统的方式在运作。虽然其核心算法的源代码并不公开，它还是做出了一定程度的开放来使得整个区块链社区和开发者受益，比如对外提供 SDK（<a href="https://dev.hashgraph.com/）。由于" target="_blank" rel="noopener">https://dev.hashgraph.com/）。由于</a> Hashgraph 算法是用 Java 和 LISP 实现的，因此很多基于 JVM 的语言都可以在其之上构建应用程序。当然，社区的开发者也基于 Hashgraph 公开的算法（论文）实现了许多其他语言的版本（比如 Go，Python, Javascript 等），由于算法的简洁和优雅，已经有越来越多的开发者被吸引。</p>
+<h2 id="三、算法原理"><a href="#三、算法原理" class="headerlink" title="三、算法原理"></a>三、算法原理</h2><p>介绍完了 Hashgraph 的相关背景，我们接下来进入主题，也即算法原理。 </p>
+<p>实际上，算法的大部分内容在论文中都有介绍，不过，毕竟论文发表的时间早，其中难免缺失许多细节。因此，Leemon 博士在其发表之后的数年时间内又不断对该算法做了更多更细致的描述和改进。在 Youtube 上也有它对该算法的一个长篇介绍，不过很多人看完仍然表示似懂非懂，不好理解。<strong>因此，这篇文章致力于把算法用更易懂的方式解释清楚。</strong></p>
+<p>在介绍算法之前，先了解论文中所提出的几个基本概念，比如绝对多数（Super majority）和事件（Event）</p>
+<ul>
+<li><p>绝对多数<br>Super majority 很好理解，就是指超过三分之二的节点数量。</p>
+</li>
+<li><p>事件<br>Event 是 Hashgraph 中最基本的元素和概念，它跟我们常见的区块链（比如比特币）中的 Block 概念是类似的。Event 由每个节点自行创建，它主要包含四类元素：交易集合，时间戳，以及对两个 Parent Events 的引用哈希。</p>
+</li>
+</ul>
+<p><img src="/image/p2p/event_structure.png" alt=""></p>
+<p>在传统的区块链中，新产生的区块只能是只能有一个先导区块的，<strong>而在 Hashgraph 中，每个 Event 必须要链接两个 parent Events，其中一个必须是自己，而另一个则是收到的其他任意节点发来最新的 Event。</strong></p>
+<p>我们来对比一下传统区块链的结构和 Hashgraph 的结构之间的区别，如下：</p>
+<p><img src="/image/p2p/block_struct_compare.jpeg" alt=""></p>
+<p>Hashgraph 算法的核心技术点是两个部分：谣言算法（Gossip about Gossip）和 虚拟投票（Virtual Voting）。</p>
+<p>接下来，我会一步一步详细介绍！</p>
+<p><strong>Gossip About Gossip</strong></p>
+<p>Hashgraph 共识的机制和 hashgraph 结构的构建是通过 Gossip 过程来完成的（更多关于 Gossip 机制的介绍，可以参考我这篇文章：“<a href="http://mp.weixin.qq.com/s?__biz=MzI1NjExNDEzMQ==&mid=2247483770&idx=1&sn=38a6bdfa9b5ed48ae684c1a66ff9b33a&chksm=ea2aedc6dd5d64d0945421c4596a5a1875a5cfc936f8e376d25777bb53ecd3e1223ab017acd6&scene=21#wechat_redirect" target="_blank" rel="noopener">P2P 网络核心技术：Gossip 协议</a>”）。</p>
+<p>Gossip 简单来说就是，节点随机选择一个可以连接的邻节点，向其发送一条信息（Event）。而 Gossip about Gossip 则是，收到 gossip 信息的节点，对该 gossip 信息进行签名，并且再把该签名打包进一个新的信息中，并随机发送给网络中的任一节点。这样，每个节点发出的 Gossip 信息都包含了对其收到的前一个 Gossip 信息的签名验证，实际上就是做了一个见证（Witness）工作。</p>
+<p>注意这里的 Gossip 过程是非常简单的，收到 Event 信息的节点可以向<strong>任意一个或多个节点</strong>继续 Gossip 新的 Event。每一次 Gossip 都是对前一次信息的背书和见证。</p>
+<p><strong>Local hashgraph copy</strong></p>
+<p>我们用小写的 hashgraph 表示该算法底层使用的数据结构，参与共识的每个节点都会保存一份完整的 hashgraph 副本图，初始时（genesis），每个节点上的这个副本图都是空的，当开始有节点产生 Event 之后，就会在自己的 hashgraph 副本图上进行记录。</p>
+<p>比如，每个节点都创建第一个 Event 时，他们各自的副本图如下：</p>
+<p><img src="/image/p2p/localhashgraph01.jpeg" alt=""></p>
+<p>当 A 收到 C 发来的 Event 时，A 就会更新本地的 hashgraph 副本，如下：</p>
+<p><img src="/image/p2p/localhashgraph02.png" alt=""></p>
+<p>同时，A 还会基于 a1 和 c1 创建一个新的 Event，并 Gossip 出去，如下：</p>
+<p><img src="/image/p2p/localhashgraph03.png" alt=""></p>
+<p>假设刚才在 A 收到 C 的 Event 时，C 也收到了 D 的 Event，那么各个节点的 hashgraph 副本图则会显示如下：</p>
+<p><img src="/image/p2p/localhashgraph04.png" alt=""></p>
+<p>某个时间点之后，大家都收到了彼此发给对方的消息</p>
+<p><img src="/image/p2p/localhashgraph05.png" alt=""></p>
+<p>可见，在节点相互 Gossip 通信的过程中，它们各自 hashgraph 副本的内容都不尽相同，但是有一点非常重要的就是，每个节点都会忠实的记录自己所创建的所有 Events。</p>
+<p>比如上图中的节点 A 和 B，A 记录了自己所创建的所有 Events，即 a1 和 a2，而 B 同样记录了自己所有的 Events，b1 和 b2。但是 A 缺少 B 的所有 Events，而 B 则缺少 A 的最新 Event a2。</p>
+<p>当 A 准备把 a2 发给（gossip）给 B ，如下：</p>
+<p><img src="/image/p2p/gossipa2b.png" alt=""></p>
+<p>并且，A 准备更新自己副本上 B 这部分的数据时，发现自己缺少 B 这部分前序的数据，因此，B 会把它的历史数据同步（Sync）给 A。而 B 的副本上由于已经有 a1 了，因此在收到 a2 之后无需再同步。</p>
+<p><img src="/image/p2p/syncb2a.png" alt=""></p>
+<p>最终，hashgraph 就会更新成如下状态：</p>
+<p><img src="/image/p2p/localhashgraph_update.png" alt=""></p>
+<p>现在，我们对于 Gossip 过程和副本结构有了一个初步的认识，接下来，我们来了解 Hashgraph 算法中定义了哪些状态</p>
+<h5 id="可见"><a href="#可见" class="headerlink" title="可见"></a>可见</h5><p>由于 hashgraph 中，所有 events 都会引用两个 parent events，因此，如果一个 child event y 可以回溯到某个 ancestor event x，那么就说 y 可见 x。</p>
+<p>而且，同一个节点产生的事件，后续事件总是可见先前所有事件。</p>
+<p>如下：</p>
+<p><img src="/image/p2p/event_visibility.png" alt=""></p>
+<h5 id="强可见"><a href="#强可见" class="headerlink" title="强可见"></a>强可见</h5><p>当事件 Y 能找到事件 X 的所有路径中跨越了绝对多数的节点，那么事件 Y 强可见事件 X。白皮书中提到经过数学论证可以保证两个强可见的节点在虚拟投票时能获得一致的结果 </p>
+<p>比如下图，想要判断 b5 是否强可见 c1，</p>
+<p><img src="/image/p2p/stronglysee.png" alt=""></p>
+<p>我们需要做的就是，把所有从 b5 能可见 c1 的路径都找出来，如果这些路径集合中，能够包含超过 2/3 的节点（也就是要包含至少 4 个节点），那么就说 b5 强可见 c1。</p>
+<p>如下：</p>
+<p><img src="/image/p2p/stronglysee1.png" alt=""></p>
+<p>可以看到，b5 有 3 条路径都能可见 c1，这 3 天路径经过的节点分别是，path1: (B, C)，path2:(B, D, C), path3(B, E, C)，</p>
+<p>三天路径一共经过了 B, C, D, E 4 个节点，满足超过 2/3 节点的要求，因此，可以确认事件 b5 强可见事件 c1。</p>
+<p><strong>轮次 Round</strong></p>
+<p>在 Hashgraph 中，根据事件所处的<strong>可见状态</strong>，把他们分为不同的轮次（Round）。</p>
+<p>当一个事件强可见绝对多数节点上的先前事件时，我们就说该事件在一个新的轮次上，记为 R。</p>
+<p>我们通过一个示意图来理解轮次的概念</p>
+<p><img src="/image/p2p/roundconcept.jpeg" alt=""></p>
+<p>上图中，事件 a5 强可见了 R 轮的 a1, b1, c1, d1 共 4 个事件，也就是说强可见了绝对多数节点的第 R 轮的事件，因此，a5 就在一个新的轮次 R + 1 上。</p>
+<p><strong>创建轮</strong></p>
+<p>所谓的创建轮（Creation Round），就是当一个事件被创建时，它所在的轮次。通常，一个事件被创建时，它会被立即赋予一个轮次号，跟其父事件是在同一个轮次一样。也就是说，如果同节点的父事件是 R 轮，那该事件被创建时也是在第 R 轮，它的创建轮就是 R 轮。</p>
+<p>比如，上图中，初始（Genisis）情况下，所有节点的状态都是相同的，把当前状态定义为第 R 轮，并且 R = 1。后续创建的事件都是在第 R 轮的。</p>
+<p>接收轮（Receive Round）很好理解，就是当某个事件强可见超过 2/3 节点的本轮或者上一轮的事件时，这个事件就达到了一个新的轮次，这个轮次就是他的接收轮。如下图：  </p>
+<p><img src="/image/p2p/receiveround.png" alt=""></p>
+<p>从上图中，我们可以看到，当 a5 和 d5 被创建时，它们的创建轮是第 R 轮，而当它们能够强可见绝对多数节点的第 R 轮的见证人事件（即 a1, b1, c1, d1）时，它的接收轮就变为 R + 1 轮，也就是说，a5 和 d5 都变成 R + 1 轮的事件了，并且，在它们之后创建的子孙事件都在 R + 1 轮。</p>
+<p>这里需要注意的是：如果事件 a5 只能强可见 R 轮某节点的见证人时，a5 的轮次是不会增加的，依然为此在 R 轮。只有当其强可见绝对多数节点的第 R 轮的见证人，它的轮次才变为 R + 1 轮。</p>
+<p><strong>见证人和知名见证人</strong></p>
+<p>见证人（Witness），就是第 R 轮所创建的第一个事件。比如上图的 a1，b1，c1, d1 和 e1，它们都是各自节点的见证人事件。</p>
+<p>知名见证人（Famous Witness），当 R 轮的见证人事件被 R + 1 轮的多数（超过 2/3）见证人强可见时，它就是知名见证人事件。</p>
+<p><img src="/image/p2p/famous_witness.png" alt=""></p>
+<p>由上图我们可以看到，c1 被 R +1 轮的大部分见证人事件强可见，因此 c1 就是知名见证人。</p>
+<blockquote>
+<p>我们注意到这里暗含了一个强约束条件，就是 R + 1 轮的见证人事件，这意味着 [a5, b5, c5, d5] 这几个事件必然是强可见大部分节点的第 R 轮见证人事件的，但不必然强可见 c1（比如他们都强可见 [a1, b1, d1, e1] 这 4 个见证人事件。所以，要判断 c1 是否是知名见证人，就必须要求 R + 1 轮的大部分事件都强可见 c1，一旦满足，说明 c1 就是知名见证人了，知名见证人意味着不可更改，这时候系统就可以对该事件进行 commit。</p>
+</blockquote>
+<p><strong>虚拟投票（Virtual Vote）</strong></p>
+<p>上述 Event 状态变迁和系统状态变迁的过程其实也包含了投票的过程，投票是在上述状态变迁过程中完成的。</p>
+<p>根据上述的算法介绍，我们知道一个 Event 的状态变迁过程是这样的：</p>
+<p>可见 -&gt; 强可见某祖先 Event -&gt; 强可见绝对多数节点的祖先 Events -&gt; 轮次增加（即 Round + 1） -&gt; 大多数 R+1 轮 Witness 强可见 R 轮某个 witness -&gt; R 轮该 Witness 成为 famous witness -&gt; commit。</p>
+<p>如图：</p>
+<p><img src="/image/p2p/eventstate_migration.jpeg" alt=""></p>
+<p><strong>虚拟投票</strong>实际上就是指上述两个黄色部分。它主要是分为两个步骤来进行的，① 处相当于 Pre-Vote 过程，这里其实是确定投票委员会成员，如果一个事件强可见大多数 witness，那么它对某 witness 的票就有效。而 ② 处则是 Pre-Commit 过程，收集投票委员会对某个祖先 Event 所投的票，如果票数超过 2/3，那么就可以把该 Event 标记为 Famous，也就是不可更改了。接下来只需要 commit 就行了。</p>
+<p>注：R + 1 轮的 Witness 只会对 R 轮的 Witness 投票，R 轮 Witness 后续的 Events 不会收到投票。 Witness 是指 R 轮创建的第一个 Event，如下：</p>
+<p><img src="/image/p2p/witness_votes.png" alt=""></p>
+<p>我们来看一下想要把 R 轮的 c1 标记为 Famous 需要经过哪些步骤：</p>
+<ul>
+<li>1）找出每个节点所有满足 R + 1 轮的 Events<br>这是一个对每个节点的各 Event 进行不断回溯验证的过程。</li>
+<li>2）判断每个节点中，R + 1 的 Event 是否强可见 c1，如果强可见，那就相当于投了一票赞成票（Yes）。</li>
+<li>3）计算 Vote 数量，如果超过 2/3 的 Event 都投票 Yes。就把 c1 标记为 famous。</li>
+</ul>
+<p>实际上，计票过程是在 R + 2 轮进行的。因为即使 R + 1 轮所有 Event 都强可见 c1，它们彼此之间也互相不知道对方的投票情况。因此，必须由下一轮的 Event 来收集大家的投票结果。</p>
+<p><img src="/image/p2p/round12.jpeg" alt=""></p>
+<p>由上图可见，R + 1 轮的 [a5, b5, c5, d5] 以绝对多数的比例对 c1 形成了强可见状态，使得 c1 满足知名见证人条件。R+2 轮上的每个见证人则对 R+1 轮进行收集投票。如图，a9 强可见了 R+1 轮的这 4 个强可见 c1 的事件，因为已经超过绝对多数，因此 a9 可以立即确认 c1 事件，也就是 c1 已经达到全网共识而且不可更改。</p>
+<blockquote>
+<p>提示：Hashgraph 根据数学理论证明，任何一个 R+2 轮见证人如果对投票结果做出了决定，那么这个结果就是全网的结论，如果这轮见证人无法做出决定，就由下一轮见证人计票决定，直到得出确切结论。 </p>
+</blockquote>
+<p>事实上，R + 2 轮这个收集投票的过程只是一个学习共识结果并进行提交的过程，因为一旦知名见证人被确定，剩下的过程就只是各个节点把这个结果进行提交了。</p>
+<h5 id="接收轮次和共识时间戳"><a href="#接收轮次和共识时间戳" class="headerlink" title="接收轮次和共识时间戳"></a>接收轮次和共识时间戳</h5><p>一旦某个轮次确定了所有的（or 绝对多数）知名见证人，就可以为这一轮次中的其他普通事件（non-witness）确定接收轮次和共识时间戳（Consensus timestamp）。 </p>
+<p>如果一个事件被某轮的所有知名见证人（知名见证人数量必须超过 2/3）都可见，就说它的接收轮为这些知名见证人所在的轮次。</p>
+<p>比如，第 R + 1 轮的所有知名见证人都已经得到确认，如果这些知名见证人都可见某个祖先事件，那么就说这个祖先事件的接收轮为 R + 1。</p>
+<p>比如下图，假定 a5, b5, c5, d5 都是 R = 2 轮的知名见证人，它们都可见 a3 事件，我们就说 a3 在 R = 2 轮被接受。而对于 b4 来说，只有 b5 可见它，其他见证人并不可见它，因此，它的接收轮还不确定，只能等待后续轮次的见证人满足可见的条件，才能确定它的接收轮。</p>
+<p><img src="/image/p2p/consensus_timestamp.jpeg" alt=""></p>
+<p>现在假定我们有一个 Event x，其接收轮为 R + 1，我们想要确定其在所有 event 中的 timestamp。</p>
+<p>Hashgraph 采用的方法是，先找出各个节点中的可见 Event  x 的最早 Events，然后把它们的 timestamps 集合取中位数作为 x 最终的 timestamp。比如，找到节点 A 中最早可见 x 的 Event，样，找到节点 B，C， D 中最早可见 x 的 Event 。对于 A 来说，最早可见 x 的就是 x 自己，而对 B， C， D 来说，最早可见可以是任意 Event。</p>
+<p>为了便于理解，我画了一个示意图来描述，如下：</p>
+<p><img src="/image/p2p/consensus_timestamp1.jpeg" alt=""></p>
+<p>想要确定 a3 的 timestamp，我们从各个可见它的见证人节点中，查找最早可见 a3 的 events。</p>
+<p>如上图，A 节点最早可见 a3 的时间就是 a3 自己，而 B 节点最早可见 a3 的则是 b3，同理得到 c4 和 d4。</p>
+<p>这样，我们就得到一个 timestamp 集合：[a3, b3, c4, d4]，取它们的中位数，就得到一个基准 timestamp，把它作为 a3 的真实 timestamp。</p>
+<p>根据相同的做法，我们可以得到其他所有 Events 的 timestamp，也就是说我们可以得到一个 Total order。</p>
+<p><strong>Tie breaker</strong></p>
+<p>当然，仅有 timestamp 可能还无法确定 Event 的先后顺序，因为很有可能两个 events 会有相同的 timestamp。所以还需要一些其他条件和规则来约定顺序。</p>
+<p>在 Hashgraph 中，是按照如下规则来排序的</p>
+<ul>
+<li><p>Round received</p>
+</li>
+<li><p>Median timestamp</p>
+</li>
+<li><p>Extended median timestamp</p>
+</li>
+<li><p>whitened signature</p>
+</li>
+</ul>
+<p><strong>全文完！</strong></p>
+<p>本文欢迎转载，请务必注明出处。</p>
+<hr>
+<p><strong>相关阅读：</strong></p>
+<br>
+<p style="text-align:center;">如果你对我的文章感兴趣，欢迎留言或者关注我的专栏。</p>
+<p style="text-align:center;">微信公众号：“知辉”</p>
+<p style="text-align:center;">搜索“deliverit”或</p>
+<p style="text-align:center;">扫描二维码</p>
+
+<!-- <p style="text-align:center;">a</p> ![](/image/qrcode_258.jpg) -->
+
+<div align="center"><img width="258" height="258" src="/image/qrcode_258.jpg"></div>
+
+
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Distributed-System/">Distributed System</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://juniway.net/Distributed-System/distributed-system-understand-hashgraph/" data-title="理解 Hashgraph | BN Stack" data-tsina="1324264260" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev">
+ <a href="/Distributed-System/blockchain-blockchain-treasure/" title="寻宝挑战，由 “310 BTC Challenge” 所想到的">
+  <strong>Prev：</strong><br>
+  <span>
+  寻宝挑战，由 “310 BTC Challenge” 所想到的</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/Macbook/Macbook-resolution-vs-picture-dimension/" title="Macbook pro 截屏尺寸与屏幕分辨率">
+ <strong>Next：</strong><br>
+ <span>Macbook pro 截屏尺寸与屏幕分辨率
+</span>
+</a>
+</div>
+
+</nav>
+
+
+	
+
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  <div class="widget popular">
+  <h3 class="title">Popular</h3>
+  <ul class="entry" id="js-popular">
+  </ul>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/BigData/" title="BigData">BigData<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Blockchain/" title="Blockchain">Blockchain<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/C/" title="C++">C++<sup>8</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Database/" title="Database">Database<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Distributed-System/" title="Distributed System">Distributed System<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/English/" title="English">English<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Go/" title="Go">Go<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Life/" title="Life">Life<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Macbook/" title="Macbook">Macbook<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Music/" title="Music">Music<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Network-Technology/" title="Network Technology">Network Technology<sup>4</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Operating-System/" title="Operating System">Operating System<sup>5</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/Programming/" title="Programming">Programming<sup>58</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Sublime-Text/" title="Sublime Text">Sublime Text<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/System-Programming/" title="System Programming">System Programming<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SystemProgramming/" title="SystemProgramming">SystemProgramming<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Tools-and-Build/" title="Tools and Build">Tools and Build<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Vim/" title="Vim">Vim<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/VirtualBox/" title="VirtualBox">VirtualBox<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web/" title="Web">Web<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/life/" title="life">life<sup>1</sup></a></li>
+		  
+		
+		  
+		
+		  
+			<li><a href="/categories/南昌/" title="南昌">南昌<sup>3</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle"><a href="/archives">Archives</a></p>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">十一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">36</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">六月 2016</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">19</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">四月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">一月 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/11/">十一月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">九月 2014</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">九月 2012</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/06/">六月 2012</a><span class="archive-list-count">1</span></li></ul>
+  </div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Blockchain/" title="Blockchain">Blockchain<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CPP/" title="CPP">CPP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Proxying/" title="Proxying">Proxying<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/IPFS/" title="IPFS">IPFS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文化/" title="文化">文化<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ethereum/" title="Ethereum">Ethereum<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Protobuf/" title="Protobuf">Protobuf<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/方言/" title="方言">方言<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/HTML/" title="HTML">HTML<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/德州扑克/" title="德州扑克">德州扑克<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukelele/" title="Ukelele">Ukelele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Ukulele/" title="Ukulele">Ukulele<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/历史/" title="历史">历史<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Python/" title="Python">Python<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/tags/" title="tags">tags<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Virtual-Host/" title="Virtual Host">Virtual Host<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C-14/" title="C++14">C++14<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to Alex&#39;s blog! <br>
+			Let&#39;s do something technically.</p>
+	</section>
+	 
+	<div class="social-font">
+		
+		<a href="http://weibo.com/1324264260" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/juniway" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/juniway" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a>
+		
+		<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<span id="busuanzi_container_site_uv" style="display:none">
+			<br>total: <span id="busuanzi_value_site_uv"></span>, current: <span id="busuanzi_value_page_pv"></span>
+		</span>
+		
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'juniway';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-140202478-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-140202478-1');
+</script>
+
+
+
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+
+  </body>
+</html>
